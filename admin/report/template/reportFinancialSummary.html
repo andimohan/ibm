@@ -1,0 +1,39 @@
+{% extends "template-html.html" %}
+{% block JS %}  
+
+<script type="text/javascript"> 
+        
+	var FIXED_COLUMN = 2;
+    function expandLevel(obj){  	 
+            var liObj = obj.closest("tr");
+            var id = liObj.attr("relId");   
+
+             if (liObj.hasClass("expand")){
+                $( "." + id).removeClass("expand").hide();
+                liObj.removeClass("expand");
+             }else{
+                $( "[relParentId="+id+"]").show();
+                liObj.addClass("expand");
+             }
+        } 
+    
+</script>
+{% endblock %} 
+
+{% block filter %}  
+ <div>  
+<style>.export-excel{display: none !important;}</style>
+     <div class="form-group">
+        <label class="col-xs-12 control-label" >Periode</label>
+        <div class="col-xs-12"> 
+            <div>{{ inputEndDate|raw }} </div> 
+        </div>
+    </div>   
+	 
+</div>	 
+{% endblock %} 
+{% block reportContent %} 
+<table class="html-report main-table">    
+    <tbody></tbody>
+</table>
+{% endblock %}

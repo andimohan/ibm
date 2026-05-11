@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns=http://www.w3.org/1999/xhtml>
+<head>
+<meta name=viewport content="width=device-width, initial-scale=1">
+<meta http-equiv=Content-Type content="text/html; charset=utf-8" />
+{% block meta %}
+<meta name=title content="{{ META_TITLE }}">
+<meta name=description content="{{ META_DESCRIPTION }}">
+<meta name=keywords content="{{ META_KEYWORDS }}">
+<meta name=author content="{{ settings.companyName }}">
+<meta property=og:url content="{{ CANONICAL }}" />
+<meta property=og:site_name content="{{ settings.companyName }}" />
+<meta property=og:url content="{{ META_URL }}" />
+<meta property=og:type content="{{ META_TYPE }}" />
+<meta property=og:title content="{{ META_TITLE }}" />
+<meta property=og:description content="{{ META_DESCRIPTION }}" />
+<meta property=og:image content="{{ META_IMAGE }}" /> 
+{% endblock %}
+<link rel=apple-touch-icon sizes=180x180 href="{{ TEMPLATE_IMG_PATH }}ico/apple-touch-icon.png">
+<link rel=icon type=image/png sizes=32x32 href="{{ TEMPLATE_IMG_PATH }}ico/favicon-32x32.png">
+<link rel=icon type=image/png sizes=16x16 href="{{ TEMPLATE_IMG_PATH }}ico/favicon-16x16.png">
+<link rel=manifest href="{{ TEMPLATE_IMG_PATH }}ico/site.webmanifest">
+<meta name=msapplication-TileColor content=#ffffff>
+<meta name=msapplication-TileImage content=/ms-icon-144x144.png>
+<meta name=theme-color content=#ffffff>
+<link rel="shortcut icon" href="{{ favicon }}" />
+<link rel=canonical href="{{ CANONICAL }}" />
+<link rel=stylesheet type=text/css href="{{ TEMPLATE_CSS_PATH }}bootstrap.min.css">
+<link rel=stylesheet type=text/css href="{{ TEMPLATE_CSS_PATH }}mmenu.min.css">   
+
+<script type="text/javascript" src="{{ TEMPLATE_JS_PATH }}jquery-3.3.1.min.js"></script> 
+<script type="text/javascript" src="{{ TEMPLATE_JS_PATH }}jquery.easing.1.3.min.js"></script>  
+
+<script type=text/javascript>function loadCSS(a,d,f,g){var b=window.document.createElement("link");var c=d||window.document.getElementsByTagName("script")[0];var e=window.document.styleSheets;b.rel="stylesheet";b.href=a;b.media="only x";if(g){b.onload=g}c.parentNode.insertBefore(b,c);b.onloadcssdefined=function(h){var k;for(var j=0;j<e.length;j++){if(e[j].href&&e[j].href===b.href){k=true}}if(k){h()}else{setTimeout(function(){b.onloadcssdefined(h)})}};b.onloadcssdefined(function(){b.media=f||"all"});return b};loadCSS("{{ TEMPLATE_CSS_PATH }}jquery-font-awesome.min.css");</script>
+{% import "twigMacro.html" as macro %}
+ 
+
+{{ settings.googleSiteVerification|raw }}
+<title>{% block pagetitle %} {{ HTTP_HOST|trim('/') }} {% endblock %}</title>
+</head>
+<body> 
+ <div class="sticky-box header"> 
+  <a href="#side-menu" id="btn-side-menu"><div class="burger" ><span></span><span></span><span></span><span></span></div> </a>
+   <div class="company-name">WINTERA.CO.ID</div> 
+   <div class="module">{{ selCategory|raw }}</div> 
+   <div style="clear: both"></div>
+ </div>
+ <div style="clear: both;" class="margin-top"></div>     
+ <div class="content-wrapper">
+    <div class="div-table table-help">
+        <div class="div-table-row">
+            <div class="div-table-col-3 page-menu  hide-mobile">
+                <ul class="menu">
+                    {% for categoryRow in categoryTree %}  
+                    {% if  categoryRow.isleaf == 1 %}
+                        {% set indent = (categoryRow.level-1) * 1.5  %}
+                        <li style="margin-left: {{ indent }}em;"><a href="/help/{{ categoryRow.pkey }}/{{ categoryRow.title|urlfilter|raw }}">{{ categoryRow.title|raw }}</a></li>
+                    {% else %}
+                        <li>{{ categoryRow.title|raw }}</li>   
+                    {% endif %}
+                    {% endfor %}  
+                </ul>     
+            </div>
+            <div class="div-table-col-3 content">
+                <h1>{{ title|raw }}</h1>
+                    {{ content|raw }}
+            </div> 
+        </div>
+        
+    </div>
+</div>
+<div style="clear: both; height: 5em"></div>   
+	
+<nav id="side-menu" class="hide">   
+ 
+    {{ macro.buildCategoriesSidemenu(helpRootKey,compiledCategory) }} 
+  
+</nav>
+	
+<link rel=stylesheet type=text/css href="{{ TEMPLATE_CSS_PATH }}help.min.css">
+<script type="text/javascript" src="{{ TEMPLATE_JS_PATH }}mmenu.min.js"></script>  
+<script type="text/javascript">
+			document.addEventListener(
+            "DOMContentLoaded", () => {
+                
+                const menu = new Mmenu( "#side-menu" , {
+                  
+                    "hooks" : {  "open:before": ( panel ) => {  document.querySelector(".burger").classList.toggle('open');  document.querySelector("#side-menu").classList.remove('hide'); },
+                                 "close:before": ( panel ) => { document.querySelector(".burger").classList.toggle('open');  },
+                            }
+                });
+ 
+                  const api = menu.API;
+                  api.open();
+                  api.close(); // buat benerin bugs utk positif fixed di body (wa floating button) 
+   
+            }
+        );
+	
+	jQuery(document).ready(function(){  
+
+			 $('[name=selCategory]').on('change', function () {
+				  var baseUrl = window.location.origin + '/help';
+				  document.location.href = baseUrl+'?categorykey='+ $(this).val(), true; 
+				  return false;
+			 });
+	});
+</script>
+</body>
+
+</html>
+{{ settings.chatSupport|raw }}
+{{ settings.googleAnalytics|raw }}

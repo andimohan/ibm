@@ -1,0 +1,113 @@
+{% extends "template.html" %}
+{% set ACTIVE_MENU = ['/services.php'] %}  
+{% block pagetitle %}Website Development Profesional untuk Bisnis | {{ parent() }}{% endblock %}
+{% block meta %}
+<meta name="title" content="Website Development Profesional untuk Bisnis | Wintera">
+<meta name="description"  content="Jasa website development profesional dari Wintera dengan desain custom, responsif, SEO friendly, dan CMS. Solusi website untuk profil perusahaan & penjualan online.">
+<meta name="keywords" content="jasa website development, jasa website perusahaan, website development profesional, jasa pembuatan website bisnis, website responsif dan SEO friendly, jasa website custom Indonesia, website company profile, website penjualan online, jasa web development Jakarta">
+<meta name="author" content="{{ settings.companyName }}"> 
+<meta property=og:url content="{{ CANONICAL }}" />
+<meta property=og:site_name content="{{ settings.companyName }}" /> 
+<meta property="og:type" content="{{ META_TYPE }}" />
+<meta property="og:title" content="Website Development Profesional untuk Bisnis | Wintera" />
+<meta property="og:description" content="Jasa website development profesional dari Wintera dengan desain custom, responsif, SEO friendly, dan CMS. Solusi website untuk profil perusahaan & penjualan online." /> 
+<meta property="og:image" content="{{ META_IMAGE }}" /> 
+<meta property="fb:app_id" content="{{ settings.FBAppID }}" /> 
+{% endblock %} 
+
+{% block headerBannerContent %}   
+<div class="service-banner banner-header-panel"> 
+<div class="content-wrapper">
+        <div class="flex  flex-start">
+            <div class="content-desc consume"> 
+                <h1 class="flex flex-center">
+                     <div class="icon-image" style="background-image:url('{{ TEMPLATE_IMG_PATH }}icon-webdev-white.png')"></div>
+                     <div style="margin-left:.3em">Website Development</div> 
+                </h1>
+                <h2>Website Adalah Representasi Online Perusahaan Anda</h2>
+                <div class="tag-line">
+                     Selain harus memiliki desain yang menarik, website harus dapat menjadi sarana untuk mengkomunikasikan visi, misi dan nilai perusahaan serta meningkatkan kredibilitas perusahaan.
+                </div>
+                <div class="advantage-panel">
+                    <ul class="advantage-list">
+                        <li>Design website yang dibuat khusus untuk Anda</li>
+                        <li>Website responsif dan <i>SEO friendly</i></li>
+                        <li>Dilengkapi dengan <i>Content Management System</i></li>
+                    </ul>
+                </div>
+                 <div class="btn-panel" style="">
+                    <ul class="content-list">
+                        <li ><a class="button btn-white" href="/">{{ LANG.contactUs }}</a></li>
+                    </ul>
+                </div>
+
+            </div>
+            <div class="content-image">
+                <img src="{{ TEMPLATE_IMG_PATH }}webdev-banner.png"> 
+            </div>
+        </div>
+    </div>
+    </div> 
+{% endblock %}
+
+{% block content %} 
+
+<div class="website">
+<div  id="services" >
+<div class="content-wrapper"> 
+        <div style="clear: both; height:5em;"></div>
+        
+                <div class="feature flex">
+                    <div class="img-panel">
+                     <img src="{{ TEMPLATE_IMG_PATH }}design-tailored.png">
+                    </div>
+                    <div class="consume">
+                        <h2>Desain yang dibuat khusus untuk Anda</h2>
+                        <div class="desc">
+                            Kami percaya setiap perusahaan memiliki identitas dan karakteristik yang berbeda-beda. Oleh karena itu, di <span class="brand-color">Wintera</span> selain website harus memiliki tampilan yang menarik, desain website juga dibuat sejalan dengan identitas perusahaan agar dapat secara utuh menggambarkan "wajah" perusahaan Anda. 
+                        </div>  
+                    </div>  
+                </div>
+                
+                  <div class="feature flex">
+                    <div class="consume">
+                        <h2>Website untuk profil perusahaan atau pun untuk jualan online</h2>
+                        <div class="desc">
+                            Apapun kebutuhan Anda, dari pembuatan website untuk profil perusahaan agar dapat meningkatkan kredibilitas perusahaan, atau pun membuat katalog online hingga website <i>e-commerce</i> untuk channel penjualan Anda, <span class="brand-color">Wintera</span> telah memiliki pengalaman dan kapabilitas yang mengesankan untuk memenuhi kebutuhan Anda.
+                        </div>  
+                    </div>   
+                    <div class="img-panel">
+                     <img src="{{ TEMPLATE_IMG_PATH }}compro.png">
+                    </div>
+                </div>
+                
+                <div class="feature flex">
+                    <div class="img-panel">
+                     <img src="{{ TEMPLATE_IMG_PATH }}responsive.png">
+                    </div>
+                    <div class="consume">
+                        <h2>Responsif di semua perangkat</h2>
+                        <div class="desc">
+                           Di <span class="brand-color">Wintera</span>, sudah menjadi standar kami bahwa website yang dibangun harus responsif dan mampu beradaptasi secara otomatis dengan semua perangkat, baik itu laptop, tablet, atau <i>smartphone</i>.<br><br>Dengan menerapkan teknik desain responsif, kami memastikan bahwa website Anda terlihat dan berfungsi secara optimal di semua perangkat, memberikan pengalaman yang konsisten dan ramah pengguna bagi semua pengunjung  di berbagai ukuran layar dan resolusi.
+                        </div>  
+                    </div>  
+                </div>
+                
+                  <div class="feature flex">
+                    <div class="consume">
+                        <h2><i>Content Management System</i></h2>
+                        <div class="desc">
+                            Website yang kami bangun selalu dilengkapi dengan <i>Content Management System</i>, atau yang sering disingkat menjadi CMS. Dengan adanya CMS, Anda dapat dengan mudah mengupdate berbagai konten di website Anda, seperti visi misi perusahaan, katalog produk, ketersediaan stok, berita, dan artikel.<br><br>CMS memungkinkan Anda untuk mengelola konten secara efisien tanpa memerlukan pengetahuan teknis mendalam. Dengan antarmuka yang intuitif, Anda dapat mengedit, menambah, atau menghapus konten dengan cepat dan fleksibel. Ini memungkinkan Anda untuk menjaga website Anda tetap relevan, terkini, dan memberikan informasi terbaru kepada pengunjung Anda.
+                        </div>  
+                    </div>   
+                    <div class="img-panel">
+                     <img src="{{ TEMPLATE_IMG_PATH }}cms.png">
+                    </div>
+                </div>
+    </div>
+    </div>
+</div>
+ <div style="clear: both; height:5em;"></div>
+        
+
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "template.html" %}
+{% block JS %}
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+
+
+    });
+</script>
+{% endblock %}
+{% block filter %}
+<div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label">Kode</label>
+        <div class="col-xs-12"> {{ inputSalesCode|raw }} </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label">Kode Log</label>
+        <div class="col-xs-12"> {{ inputcodeLog|raw }} </div>
+    </div>
+    <div class="form-group mnv-date-range">
+        <label class="col-xs-12 control-label" >Periode</label>
+        <label class="col-xs-12" >{{ inputSelDateType|raw }}</label>
+        <div class="col-xs-6" style="padding-right:5px;"> {{ inputStartDate|raw }} </div>
+        <div class="col-xs-6" style="padding-left:5px;"> {{ inputEndDate|raw }} </div>
+    </div>  
+    <div class="form-group  mnv-date-range">
+        <label class="col-xs-12 control-label">Nama Tertanggung</label>
+        <div class="col-xs-12"> {{ inputInsuredName|raw }} </div>
+    </div>
+    <div class="form-group  mnv-date-range">
+        <label class="col-xs-12 control-label">Nomor Polis</label>
+        <div class="col-xs-12"> {{ inputPolicyNumber|raw }} </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label">Category</label>
+        <div class="col-xs-12">
+            {{ inputSelCategory|raw }}
+        </div>
+    </div>
+    <div class="form-group  mnv-date-range">
+        <label class="col-xs-12 control-label">Perusahaan</label>
+        <div class="col-xs-12"> {{ inputCompany|raw }} </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label">Perusahaan Asuransi</label>
+        <div class="col-xs-12"> {{ inputSelSupplier|raw }} </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label">Status</label>
+        <div class="col-xs-12">
+            {{ inputSelStatus|raw }}
+        </div>
+    </div>
+    <div class="form-group" style="margin-bottom:0">
+        <label class="col-xs-12 control-label" >{{ LANG.others }}</label> 
+    </div>
+    <div class="form-group">  
+        <div class="col-xs-12"> {{ inputIsDetail|raw }} <span style="margin-left: 5px">{{ LANG.showDetail }}</span></div>
+    </div> 
+</div>
+{% endblock %}

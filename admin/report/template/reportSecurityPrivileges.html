@@ -1,0 +1,33 @@
+{% extends "template.html" %} 
+{% block JS %}
+<script>
+    jQuery(document).ready(function(){   
+          
+	});
+     
+</script>
+{% endblock %}
+{% block filter %} 
+
+<div>  
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.user }}</label>
+        <div class="col-xs-12"> {{ inputSelUser|raw }} </div> 
+    </div>  
+</div>	 
+<div>  
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Nama Modul</label>
+        <div class="col-xs-12"> {{ inputSelSecurityObject|raw }} </div> 
+    </div>  
+</div>	 
+<div>  
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Jenis Hak Akes</label>
+        <div class="col-xs-12"> {{ inputSelPrivilegesType|raw }} </div> 
+    </div>  
+</div>	 
+
+
+
+{% endblock %}

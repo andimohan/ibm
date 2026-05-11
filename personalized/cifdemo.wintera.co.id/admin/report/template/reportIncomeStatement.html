@@ -1,0 +1,102 @@
+{% extends "template-html.html" %} 
+{% block JS %}   
+<script type="text/javascript">
+
+    var FIXED_COLUMN = true;
+    function expandLevel(obj){  	 
+        var liObj = obj.closest("tr");
+        var id = liObj.attr("relId");   
+
+         if (liObj.hasClass("expand")){
+            $( "." + id).removeClass("expand").hide();
+            liObj.removeClass("expand");
+         }else{
+            $( "[relParentId="+id+"]").show();
+            liObj.addClass("expand");
+         }
+    } 
+	
+	 jQuery(document).ready(function(){ 
+		$("[name=selReportType]" ).on( "change", function() { 
+			$(".periodOpt").hide();
+			$(".periodOpt-"+$(this).val()).show(); 
+		});
+		 
+//		 $("[name=btnSubmit]" ).on( "click", function(e) { 
+//			 
+//			 var reportType = parseInt($("[name=selReportType]").val());
+//			 
+//			 var hasError = false;
+//			 
+//			 switch(reportType){
+//					 
+//				 case 4: if (parseInt($("[name=trQuarterlyYOYStartDate]" ).val()) == parseInt($("[name=trQuarterlyYOYEndDate]" ).val())){
+//							 	alert("Periode tahun tidak boleh sama");
+//							 	hasError = true;
+//							 }
+//							 
+//					 	break;
+//			 }
+//			 
+//			 if(hasError)
+//			 	e.preventDefault();
+//		});
+	});
+    
+</script>
+{% endblock %}
+{% block filter %}
+<style>.export-excel{display: none !important;}</style>
+<div>  
+<div class="form-group mnv-date-range">
+    <label class="col-xs-12 control-label" >Jenis Laporan</label>
+    <div class="col-xs-12"> {{ inputSelReportType|raw }} </div>
+</div>   
+<div class="form-group mnv-date-range">
+    <label class="col-xs-12 control-label" >Periode</label>
+	<div class="periodOpt periodOpt-0">
+		<div class="col-xs-6" style="padding-right:5px;"> {{ inputStartDate|raw }} </div>
+		<div class="col-xs-6" style="padding-left:5px;"> {{ inputEndDate|raw }} </div> 
+	</div>
+	<div class="periodOpt periodOpt-1" style="display: none">
+		<div class="col-xs-6" style="padding-right:5px;"> {{ inputMonthStartDate|raw }} </div>
+		<div class="col-xs-6" style="padding-left:5px;"> {{ inputMonthEndDate|raw }} </div> 
+	</div>
+	<div class="periodOpt periodOpt-2" style="display: none">
+		<div class="col-xs-6" style="padding-right:5px;"> {{ inputYearStartDate|raw }} </div>
+		<div class="col-xs-6" style="padding-left:5px;"> {{ inputYearEndDate|raw }} </div> 
+	</div>
+	<div class="periodOpt periodOpt-3" style="display: none">
+		<div class="col-xs-12"> {{ inputQuarterlyStartDate|raw }} </div>
+	</div>
+	<div class="periodOpt periodOpt-4" style="display: none"> 
+		<div class="col-xs-12"> {{ inputQuarterlyYOYYear|raw }} </div> 
+	</div>
+	
+	<div class="periodOpt periodOpt-5" style="display: none"> 
+		<div class="col-xs-12"> {{ inputMonthlyYOYMonth|raw }} </div>  
+		<div class="col-xs-12" style="margin-top: 0.5em"> {{ inputMonthlyYOYYear|raw }} </div> 
+	</div>
+	
+	
+	
+</div>
+<div class="form-group">
+	<label class="col-xs-12 control-label" >{{ LANG.warehouse }}</label>
+	<div class="col-xs-12"> {{ inputSelWarehouse|raw }} </div>
+</div> 
+
+<div class="form-group">
+    <label class="col-xs-12 control-label" >{{ LANG.currency }}</label>
+    <div class="col-xs-12"> 
+        <div>{{ inputSelCurrency|raw }} </div> 
+    </div>
+</div> 
+
+ </div>	 
+{% endblock %}
+{% block reportContent %}
+ <table class="html-report main-table" style="width: 100%;">    
+    <tbody></tbody>
+</table>
+{% endblock %}

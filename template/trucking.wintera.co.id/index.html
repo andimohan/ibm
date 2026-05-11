@@ -1,0 +1,17 @@
+{% extends "template.html" %}
+{% block pagetitle %}{{ settings.companyName }} | {{ parent() }}{% endblock %}
+{% block pageclass %}index{% endblock %}
+ 
+{% block css %} 
+<link rel="stylesheet" type="text/css" href="{{ TEMPLATE_CSS_PATH }}ekko-lightbox.min.css">
+{% endblock %}   
+{% block content %}    
+<div style="clear: both; height: 2em"></div>
+{% endblock %}
+
+{% block JSLoadFiles %}   
+{% endblock %}
+
+{% block JSOnLoad %}
+{{ parent() }}  
+{% endblock %}

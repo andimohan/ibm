@@ -1,0 +1,65 @@
+{% extends "template.html" %}
+{% block pagetitle %}{{ LANG.aboutUs }} | {{ parent() }}{% endblock %}
+{% block content %}
+<div id="banner-home" class="mobile-wrapper">
+    <div class="hero-section"
+        style="background-image: url('{{ TEMPLATE_IMG_PATH }}hero.jpg'); background-repeat: no-repeat; background-size: cover; background-position: center; width: 100vw; height: 100vh;">
+    </div>
+</div>
+<div class="bg-blue-sbox text-white text-about-panel">
+    <div class="text-center"><span class="about">{{ LANG.about }}</span> <span style="font-weight: 600;">Pusat Perak</span></div>
+</div>
+<div class="bg-white">
+    <div class="content-wrapper">
+        <div class="section-break-8"></div>
+        <div class="flex about-us-panel">
+            <div class="title-about-panel">
+                <div>
+                    <h1 class="font-title italic title-about-us">
+                        {{ LANG.aboutUs }}
+                    </h1>
+                    <div class="section-break-2"></div>
+                    <div class="desc-about">
+                        {{ LANG.contentAboutUs }}
+                    </div>
+                    <div class="section-break-2"></div>
+                    <div class="desc-about">
+                        {{ LANG.contentAboutUs2 }}
+                    </div>
+                </div>
+            </div>
+            <div class="image-panel img-bg" style="background-image: url('{{ TEMPLATE_IMG_PATH }}image-about.png'); height: 43em; background-size: contain;">
+            </div>
+        </div>
+        <div class="section-break-6"></div>
+        <div>
+            <h1 class="text-center font-bold font-title italic sub-brand">[Our Sub-Brands]</h1>
+            <div class="section-break-4"></div>
+            <div class="flex sub-brand-panel">
+                    <div class="card-sub-brand">
+                        <div class="card-image">
+                            <img src="{{ TEMPLATE_IMG_PATH }}image-aboutus-1.png" alt="img">
+                        </div>
+                        <h2 class="font-bold font-libre-baskerville text-blue-sbox">Sub-Brand name</h2>
+                        <div class="short-desc">short description</div>
+                    </div>
+                    <div class="card-sub-brand">
+                        <div class="card-image">
+                            <img src="{{ TEMPLATE_IMG_PATH }}image-aboutus-2.png" alt="img">
+                        </div>
+                        <h2 class="font-bold font-libre-baskerville text-blue-sbox">Sub-Brand name</h2>
+                        <div>short description</div>
+                    </div>
+                    <div class="card-sub-brand">
+                        <div class="card-image">
+                            <img src="{{ TEMPLATE_IMG_PATH }}image-aboutus-3.png" alt="img">
+                        </div>
+                        <h2 class="font-bold font-libre-baskerville text-blue-sbox">Sub-Brand name</h2>
+                        <div>short description</div>
+                    </div>
+            </div>
+        </div>
+        <div class="section-break-8"></div>
+    </div>
+</div>
+{% endblock %}

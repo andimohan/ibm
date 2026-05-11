@@ -1,0 +1,67 @@
+{% extends "template.html" %}
+{% block pagetitle %}{{ LANG.pointReport }}{% endblock %}
+{% block reporttitle %}{{ LANG.pointReport }}{% endblock %}
+{% block JS %}
+
+<script type="text/javascript">
+
+	jQuery(document).ready(function(){  
+		$( "[name=customerName]" ).autocomplete({
+		  source: "../ajax-customer.php?action=searchData",
+		  minLength: 1,
+		  select: function( event, ui ) {      
+				$("[name=hidCustomerKey]" ).val(ui.item.pkey); 
+			},  
+		  search: function( event, ui ) {  $("[name=hidCustomerKey]" ).val("");},
+		  change: function( event, ui ) {   
+				 if (ui.item == null) 
+					clearAutoCompleteInput(this,'hidCustomerKey');
+				 
+			}, 
+		}).change(function() {
+		   if ($(this).val() == "") 
+					clearAutoCompleteInput(this,'hidCustomerKey'); 
+		});  
+        
+        $( "[name=trStartDate], [name=trEndDate]" ).change(function() { 
+            var trStartDate = Date.parse(convertDateToStandartFormat($("[name=trStartDate]").val()));
+            var trEndDate = Date.parse(convertDateToStandartFormat($("[name=trEndDate]").val()));
+               
+            if (trStartDate > trEndDate) 
+                $("[name=trEndDate]").val($("[name=trStartDate]").val()); 
+            
+		});
+	});
+
+</script>
+{% endblock %}
+{% block filter %}
+{{ inputHidCustomerKey|raw }}
+ <div class="div-table" > 
+ 
+   <div class="form-group">
+        <label class="col-lg-3 control-label" >Periode</label>
+        <div class="col-lg-3">
+            <div style="width:48%; float:left;">{{ inputStartDate|raw }} </div> 
+            <div style="width:48%; float:right;">{{ inputEndDate|raw }} </div> 
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label class="col-lg-3 control-label" >Kode</label>
+        <div class="col-lg-9">
+            {{ inputCustomerCode|raw }}
+        </div>
+    </div>
+	<div class="form-group">
+        <label class="col-lg-3 control-label" >Nama</label>
+        <div class="col-lg-9">
+            {{ inputCustomerName|raw }}
+        </div>
+    </div>
+    
+ </div>	 
+{% endblock %} 
+{% block reportContent %} 
+<div class="main-table"></div>
+{% endblock %}

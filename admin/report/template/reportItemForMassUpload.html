@@ -1,0 +1,77 @@
+{% extends "template.html" %}
+{% block pagetitle %}{{ LANG.itemReportForMassUpload }}{% endblock %}
+{% block reporttitle %}{{ LANG.itemReportForMassUpload }}{% endblock %}
+{% block JS %}
+<script type="text/javascript">
+
+	jQuery(document).ready(function(){  
+         $(".loading-icon").hide();
+         
+        //setAutoComplete('filterForm', {objName:'itemName', objValue :'hidItemKey', url : 'ajax-item.php?action=searchData' }); 
+         
+	});
+
+</script>
+{% endblock %}
+{% block filter %}
+{{ inputHidItemKey|raw }}
+ <div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Kode</label>
+        <div class="col-xs-12"> {{ inputItemCode|raw }}</div>
+    </div>
+	<div class="form-group">
+        <label class="col-xs-12 control-label" >Nama</label>
+        <div class="col-xs-12"> {{ inputItemName|raw }} </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Kategori</label>
+        <div class="col-xs-12"> {{ inputSelCategory|raw }}</div> 
+    </div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Merk</label>
+        <div class="col-xs-12"> {{ inputSelBrand|raw }}</div>
+    </div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Gudang</label>
+        <div class="col-xs-12"> {{ inputSelWarehouse|raw }}</div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Ketersediaan</label>
+        <div class="col-xs-12"> {{ inputChkAvailable|raw }} Sembunyikan Stok Kosong </div>
+    </div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Status</label>
+        <div class="col-xs-12">{{ inputSelStatus|raw }}</div>
+    </div>
+     
+    <div class="title" style="margin-top:2em">Online Shop</div> 
+     
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Online Shop</label>
+        <div class="col-xs-12"> {{ inputOLShop|raw }}</div>
+    </div>  
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Kategori Online Shop</label>
+        <div class="col-xs-12"> {{ inputOLCategoryKey|raw }}</div>
+    </div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Katalog Produk</label>
+        <div class="col-xs-12"> {{ inputOLCatalogName|raw }}</div>
+    </div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Stok Default<div class="field-information">jika stok kosong akan diganti dengan nilai ini.</div></label>
+        <div class="col-xs-12"> {{ inputOLStockDefault|raw }}</div>
+    </div>  
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Gramasi Default (gram)<div class="field-information">jika gramasi kosong akan diganti dengan nilai ini.</div></label>
+        <div class="col-xs-12"> {{ inputOLGramasiDefault|raw }}</div>
+    </div>  
+    
+    <div style="clear:both; height: 2em"></div> 
+ </div>	 
+{% endblock %} 
+{% block reportContent %}
+<div class="main-table"></div>
+{% endblock %}
+

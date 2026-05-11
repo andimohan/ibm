@@ -1,0 +1,128 @@
+{% extends "template.html" %}
+{% import "twigMacro.html" as macro %}  
+{% block pagetitle %}{{ LANG.contactUs }}{% endblock %} 
+{% block JS %}
+<script type="text/javascript" src="{{ TEMPLATE_JS_PAGE_PATH }}contact-us.min.js"></script>
+<script type="text/javascript">
+jQuery(document).ready(function(){   
+  var opt = new Array();    
+ var errMsg = new Array();  
+ var lang = new Array();     
+
+ errMsg['name'] = {{ ERRORMSG.name|json_encode()|raw }}; 
+ errMsg['phone'] = {{ ERRORMSG.phone|json_encode()|raw }}; 
+ errMsg['email'] = {{ ERRORMSG.email|json_encode()|raw }}; 
+ errMsg['subject'] = {{ ERRORMSG.subject|json_encode()|raw }}; 
+ errMsg['message'] = {{ ERRORMSG.message|json_encode()|raw }}; 
+ lang['contactUsSuccessful'] = "{{ LANG.contactUsSuccessful|raw }}";
+
+ opt['errMsg'] = errMsg;
+ opt['lang'] = lang;
+
+ var contactUs = new ContactUs(opt);
+ contactUs.loadOnReady(); 
+});
+    
+</script>
+<script  type="text/javascript"  src='https://www.google.com/recaptcha/api.js'></script>  
+{% endblock %}
+
+{% block content %}    
+<!--{{ macro.buildPagePath(_context,'','no-banner') }}-->
+ 
+ <div class="content-wrapper"> 
+
+<div class="section-break-2"></div>
+<div class="page-path"><a href="/" title="{{ LANG.home }}"><i class="home fa-solid fa-house"></i></a> <span>{{ LANG.contactUs|raw }}</span></div>
+<div class="section-break-2"></div>
+
+	 
+	 <div class="div-table mobile-table contact-table">
+		 <div class="div-table-row"> 
+			 <div class="div-table-col-5 contact-information">
+			 	<h1>{{ LANG.getInTouchWithUs }}</h1>
+				<div class="section-break-2"></div> 
+				<div class="company-address">
+					<h2>{{ settings.companyName }}</h2>
+					{{ settings.companyAddress|raw }}
+					<div style="clear:both; height: 1em"></div> 
+					 
+					 <div class="div-table">
+						{% for item in settings.companyPhone %}   
+						<div class="div-table-row"> 
+							<div class="div-table-col-3" style="padding-right: .5em"><i class="fa fa-phone"></i></div> 
+							<div class="div-table-col-3">{{ item.value }}</div>
+						</div>
+						{% endfor %}
+
+						{% for item in settings.companyEmail %}   
+						<div class="div-table-row"> 
+							<div class="div-table-col-3" style="padding-right: .5em "><i class="fa fa-envelope"></i></div> 
+							<div class="div-table-col-3">{{ item.value }}</div>
+						</div>
+						{% endfor %} 
+					</div>	
+
+					 <div style="clear:both; height: 1em"></div> 
+					
+					 <div class="div-table">
+						{% for item in settings.companyMedsos %}   
+						<div class="div-table-row"> 
+							<div class="div-table-col-3" style="padding-right: .5em"><i class="{{ macro.getMedsosIcon(_context,item.label) }}"></i></div> 
+							<div class="div-table-col-3"> <a href="{{ item.value }}" title="{{ LANG.linkto }} {{ item.desc }}" target="_blank">{{ item.desc }}</a></div>
+						</div>
+						{% endfor %} 
+					</div>	 
+				 </div>
+			 </div>
+			 <div class="div-table-col-5">
+			  <form id="form-contactus"   method="post"  class="form-horizontal form-default prevent-form-submit" action="/ajax-contact-us.php">  
+                <div class="notification-msg"></div>  
+                <div class="form-group">
+                    <label class="col-lg-12 control-label" >{{ LANG.name }}</label>
+                    <div class="col-lg-12">
+                      {{ inputName|raw }}
+                    </div>
+                </div>
+
+                 <div class="form-group">
+                    <label class="col-lg-12 control-label">{{ LANG.email }}</label>
+                    <div class="col-lg-12">
+                      {{ inputEmail|raw }}
+                    </div>
+                </div>
+
+                 <div class="form-group">
+                    <label class="col-lg-12 control-label">{{ LANG.phone }}</label>
+                    <div class="col-lg-12">
+                      {{ inputPhone|raw }}
+                    </div>
+                </div>
+
+                 <div class="form-group">
+                    <label class="col-lg-12 control-label">{{ LANG.subject }}</label>
+                    <div class="col-lg-12">
+                      {{ inputSubject|raw }}
+                    </div>
+                </div>
+
+                 <div class="form-group">
+                    <label class="col-lg-12 control-label">{{ LANG.message }}</label>
+                    <div class="col-lg-12">
+                      {{ inputMessage|raw }}
+                    </div>
+                </div>
+ 
+                <div style="clear: both; height: 1em"></div>
+                <div style="text-align: center">
+                    <div class="g-recaptcha" data-sitekey="{{ settings.reCaptchaSiteKey }}"></div>
+                    <div style="clear: both; height: 1em"></div>
+                    <div>{{ btnSubmit|raw }}</div>
+                </div>
+            </form>  
+			 </div>
+		 </div> 
+	 </div> 
+ </div>
+<div class="section-break-6"></div>
+{% endblock %}

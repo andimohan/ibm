@@ -1,0 +1,68 @@
+{% extends "template.html" %}
+{% import "twigMacro.html" as macro %}
+{% block pagetitle %}{{ LANG.mediaAndInformation}}{% endblock %}
+{% block JS %}
+<script type="text/javascript" src="{{ TEMPLATE_JS_PAGE_PATH }}news.min.js"></script>  
+<script type="text/javascript">
+jQuery(document).ready(function(){   
+ var opt = new Array();   
+ var news = new News(opt);
+ news.loadOnReady();   
+});
+</script> 
+{% endblock %}
+{% block content %}
+<div class="section-break-4"></div>
+<div class="content-wrapper">            
+<h2 style="text-align: center;">{{ LANG.news }}</h2>
+<!--<div class="header-description" style="margin-bottom: 15px;">{{ page['news'].detail|raw }}</div> -->
+<div class="section-break-4"></div> 
+ <ul class="ul-list">
+     {% if rsNews is empty %}{{ LANG.noDataFound }}{% endif %}
+       {% for data in rsNews %}  
+        <li class="col-3-panel">
+            <div class="content-panel">
+             <div class="img-panel img-bg" style="background-image: url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}news/{{ data.pkey }}/{{ data.image }}&f=png&far=C&hash={{  getPHPThumbHash(data.image) }}');">&nbsp;</div>
+             <div class="auto-height">
+                 
+                 {% set class = '' %} 
+                 {% set target = '' %}
+                 {% set rel = '' %}
+                 
+                 {% if not data.file is empty %} 
+                    {% set url = '/download/?filename=news-file/'~data.pkey~'/'~data.file %} 
+                    {% set target = '_blank' %} 
+                {% elseif not data.videourl is empty %} 
+                    {% set url = '#' %}
+                    {% set class = 'vid-popup' %}
+                    {% set rel = data.videourl %}
+                 {% else %} 
+                    {% set url = '/news-detail/' ~ data.title|urlfilter|raw ~ '/' ~ data.pkey %}
+                    {% set target = '_self' %}
+                 {% endif %}
+                <a href="{{ url }}" class="{{ class }}" title="{{ data.title|urlfilter|raw }}" target="{{ target }}" rel="{{ rel }}"> 
+                    <h3 style="margin-top: 0.5em">{{ data.title|raw }}</h3>
+                </a>
+                {{ data.shortdesc|raw }}
+             </div>
+            <div style="clear: both; height: 1em"></div>
+            <!-- <div class="publish-date text-red-cardinal">{{ data.categoryname }} &bull; {{ data.publishdate|date("d M Y") }}</div>
+            </div> -->
+        </li>
+        {% endfor %}  
+        {{ addDummyCol(3,rsNews|length,'<li class="col-3-panel dummy-empty-col"></li>')|raw }}
+     <div style="clear: both"></div>
+</ul>
+    
+<div class="hor-bar-2"></div>
+
+{% set path = 'news/' %}
+{% if not categoryPath is empty  %}
+{% set path = path ~ categoryPath[0]['name']|urlfilter ~ '/cat=' ~ categoryPath[0]['pkey']  %}
+{% endif %}
+    
+{{ macro.buildPageList(_context,path) }}
+	
+<div class="section-break-4"></div>
+</div>
+{% endblock %}

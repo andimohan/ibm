@@ -1,0 +1,13 @@
+{% extends "template.html" %}
+{% set item = rsService[0] %} 
+{% block pagetitle %}{%if rsService[0].name is empty %}{{ rsService[0].code|raw }}{%else %}{{ rsService[0].name|raw }}{% endif %} | {{ parent() }}{% endblock %}
+{% block content %}
+<div class="content-wrapper">
+<div class="title">
+<h1>{%if rsService[0].name is empty %}{{ rsService[0].code|raw }}{%else %}{{ rsService[0].name|raw }}{% endif %}</h1>
+</div> 
+<div class="service-detail" style="width:100%"> 
+{{ rsService[0].detail|raw }}
+</div>     
+</div>
+{% endblock %}

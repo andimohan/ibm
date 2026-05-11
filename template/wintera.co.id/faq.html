@@ -1,0 +1,14 @@
+{% extends "template.html" %}
+{% block pagetitle %}{{ LANG.faq }} | {{ parent() }}{% endblock %} 
+{% block content %}  
+
+<div class="content-wrapper">
+<div style="clear: both; height: 4em"></div>
+<h1>{{ LANG.faq }}</h1> 
+<ul class="faq-index">
+    {% for data in rsFAQ %} 
+    <li><a href="/faq-detail/{{ data.question|urlfilter }}/{{ data.pkey }}" target="_blank"><div class="question">{{ data.question|raw }}</div> </a> </li>
+    {% endfor %}  
+</ul>      
+</div>
+{% endblock %}

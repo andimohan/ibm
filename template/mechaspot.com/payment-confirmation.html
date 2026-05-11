@@ -1,0 +1,237 @@
+{% extends "template.html" %}
+{% block pagetitle %}{{ LANG.paymentConfirmation}} | {{ parent() }}{% endblock %}
+{% block JS %}
+<script type="text/javascript" src='https://www.google.com/recaptcha/api.js'></script>
+{% endblock %}
+{% block JSOnLoad %}
+{{ parent() }}
+$('#form-payment-confirmation')
+.bootstrapValidator({
+feedbackIcons: {
+valid: 'glyphicon glyphicon-ok',
+invalid: 'glyphicon glyphicon-remove',
+validating: 'glyphicon glyphicon-refresh'
+},
+fields: {
+invoiceId: {
+validators: {
+notEmpty: {
+message: '{{ ERRORMSG.invoice[1] }}'
+},
+}
+},
+email: {
+validators: {
+notEmpty: {
+message: '{{ ERRORMSG.email[1] }}'
+},
+emailAddress: {
+message: '{{ ERRORMSG.email[3] }}'
+}
+}
+},
+bankName: {
+enabled: false,
+validators: {
+notEmpty: {
+message: '{{ ERRORMSG.bank[1] }}'
+},
+}
+},
+bankAccountName: {
+enabled: false,
+validators: {
+notEmpty: {
+message: '{{ ERRORMSG.bankaccountname[1] }}'
+},
+}
+},
+bankAccountNumber: {
+enabled: false,
+validators: {
+notEmpty: {
+message: '{{ ERRORMSG.bankaccountnumber[1] }}'
+},
+}
+},
+}
+})
+.on('success.form.bv', function(e) {
+$("[name=btnSave]").prop('disabled', true).addClass("btn-primary-loading");
+// Prevent form submission
+e.preventDefault();
+// Get the form instance
+var $form = $(e.target);
+// Get the BootstrapValidator instance
+var bv = $form.data('bootstrapValidator');
+// Use Ajax to submit form data
+$.post($form.attr('action'), $form.serialize(), function(result) {
+if (!result[0].valid){
+var error = "";
+for (i=0;i<result.length;i++) error=error + "<li>" + result[i].message + "</li>";
+if (error != "")
+error = "<ul class=\"message-dialog-ul\">" + error + "</ul>";
+$(".notification-msg").html(error).hide().fadeToggle("fast");
+$(".notification-msg").removeClass("bg-green-avocado").addClass("bg-red-cardinal");
+$form.data('bootstrapValidator').resetForm();
+}else{
+if ($form.find("[name=action]").val() == "add"){
+alert("{{ LANG.paymentConfirmationSuccessful }}");
+location.href="/";
+}
+$(".notification-msg").hide();
+$(".search-sales-id").slideUp();
+$(".payment-confirmation-panel").slideDown();
+$form.find("[name=action]").val("add");
+$form.find(".invoice-id").html(result[0].message.code);
+$form.find(".amount").html(result[0].message.amount).formatCurrency({roundToDecimalPlace: DECIMAL });
+$form.find(".view-invoice a").attr("href","/invoice/" + result[0].message.pkey + "/" + result[0].message.token );
+$form.bootstrapValidator('enableFieldValidators', 'bankName', true);
+$form.bootstrapValidator('enableFieldValidators', 'bankAccountName', true);
+$form.bootstrapValidator('enableFieldValidators', 'bankAccountNumber', true);
+}
+grecaptcha.reset();
+$("[name=btnSave]").prop('disabled', false).removeClass("btn-primary-loading");
+}, 'json');
+});
+$( "[name=trDate]" ).datepicker({
+currentText: 'Now',
+dateFormat:'dd / mm / yy',
+});
+$( ".btn-confirm" ).click(function(){
+$(".notification-msg").hide();
+$(".payment-confirmation-table").slideUp();
+$(".payment-confirmation-panel").slideDown();
+$(".btn-submit").show();
+$form = $("#form-payment-confirmation");
+$form.find("[name=action]").val("add");
+$form.find(".invoice-id").html($(this).attr("relid"));
+$form.find(".amount").html($(this).attr("relamount")).formatCurrency({roundToDecimalPlace: DECIMAL });
+$form.find(".view-invoice a").attr("href","/invoice/" + $(this).attr("relkey") + "/" + $(this).attr("reltoken"));
+$form.find("[name=hidInvoiceKey]").val($(this).attr("relkey"));
+$form.bootstrapValidator('enableFieldValidators', 'bankName', true);
+$form.bootstrapValidator('enableFieldValidators', 'bankAccountName', true);
+$form.bootstrapValidator('enableFieldValidators', 'bankAccountNumber', true);
+});
+$( "[name=btnBack]" ).click(function(){
+$(".payment-confirmation-table").slideDown();
+$(".payment-confirmation-panel").slideUp();
+$(".btn-submit").hide();
+scrollToTopForm($("#form-payment-confirmation"));
+});
+{% endblock %}
+{% block contenttitle %}
+<div class="title">
+<h1>{{ LANG.paymentConfirmation }}</h1>
+</div>
+{% endblock %}
+{% block content %}
+<div class="content">
+<div style="margin:auto;width:100%">
+{% if not loginName is empty %}
+<div class="payment-confirmation-table">
+{% if rsSalesOrder is empty %}
+{{ LANG.noDataFound }}
+{% else %}
+<div class="div-table">
+<div class="div-table-row row-header">
+<div class="div-table-col-5 div-table-col-header"> {{ LANG.code }}</div>
+<div class="div-table-col-5 div-table-col-header" style="text-align:center"> {{ LANG.date }}</div>
+<div class="div-table-col-5 div-table-col-header" style="text-align:right"> {{ LANG.amount }}</div>
+<div class="div-table-col-5 div-table-col-header"> {{ LANG.status }}</div>
+<div class="div-table-col-5 div-table-col-header"> </div>
+</div>
+{% for salesOrder in rsSalesOrder %}
+<div class="div-table-row">
+<div class="div-table-col-5"><a href="/invoice/{{ salesOrder.pkey }}/{{ salesOrder.token }}" target="_blank">{{ salesOrder.code }}</a></div>
+<div class="div-table-col-5" style="text-align:center"> {{ salesOrder.trdate|date("d M Y") }}</div>
+<div class="div-table-col-5" style="text-align:right">{{ salesOrder.grandtotal|number_format }}</div>
+<div class="div-table-col-5">{{ salesOrder.statusname }}</div>
+<div class="div-table-col-5">{% if salesOrder.statuskey == 1 %}<div class="btn-confirm" relkey="{{ salesOrder.pkey }}" relid="{{ salesOrder.code }}" relamount="{{ salesOrder.grandtotal }}" reltoken="{{  salesOrder.token}}"> {{ LANG.confirm }}</div>{% endif %}</div>
+</div>
+{% endfor %}
+</div>
+{% endif %}
+</div>
+{% endif %}
+<form id="form-payment-confirmation" method="post" class="form-horizontal form-default  prevent-form-submit" action="/ajax-payment-confirmation.php">
+{{ inputHidAction|raw }}
+{{ inputHidInvoiceKey|raw }}
+<div class="notification-msg"></div>
+<div style="clear:both;height:1em"></div>
+{% if loginName is empty %}
+<div class="search-sales-id">
+<div class="form-group">
+<label class="col-lg-3 control-label">{{ LANG.email|upper }}</label>
+<div class="col-lg-9">
+{{ inputEmail|raw }}
+</div>
+</div>
+<div class="form-group">
+<label class="col-lg-3 control-label">{{ LANG.invoiceId|upper }}</label>
+<div class="col-lg-9">
+{{ inputInvoice|raw }}
+</div>
+</div>
+<div class="form-group">
+<label class="col-lg-3 control-label"></label>
+<div class="col-lg-9">
+<div class="g-recaptcha" data-sitekey="{{ settings.reCaptchaSiteKey }}" style="display:inline-block"></div>
+</div>
+</div>
+</div>
+{% endif %}
+<div class="payment-confirmation-panel" style="display:none">
+<div class="form-group">
+<label class="col-lg-3 control-label">{{ LANG.invoiceId|upper }}</label>
+<div class="col-lg-9 invoice-id"></div>
+</div>
+<div class="form-group">
+<label class="col-lg-3 control-label">{{ LANG.amount|upper }}</label>
+<div class="col-lg-9 amount"></div>
+</div>
+<div class="form-group">
+<label class="col-lg-3 control-label"></label>
+<div class="col-lg-9"><div class="view-invoice"><a href="/" target="_blank">{{ LANG.showInvoice }}</a></div></div>
+</div>
+<div class="form-group">
+<label class="col-lg-3 control-label">{{ LANG.paymentDate|upper }}</label>
+<div class="col-lg-9">
+{{ inputPaymentDate|raw }}
+</div>
+</div>
+<div class="form-group">
+<label class="col-lg-3 control-label">{{ LANG.paymentMethod|upper }}</label>
+<div class="col-lg-9">
+{{ inputPaymentMethod|raw }}
+</div>
+</div>
+<div class="form-group">
+<label class="col-lg-3 control-label">{{ LANG.bankName|upper }}</label>
+<div class="col-lg-9">
+{{ inputBankName|raw }}
+</div>
+</div>
+<div class="form-group">
+<label class="col-lg-3 control-label">{{ LANG.bankAccountName|upper }}</label>
+<div class="col-lg-9">
+{{ inputBankAccountName|raw }}
+</div>
+</div>
+<div class="form-group">
+<label class="col-lg-3 control-label">{{ LANG.bankAccountNumber|upper }}</label>
+<div class="col-lg-9">
+{{ inputBankAccountNumber|raw }}
+</div>
+</div>
+</div>
+<div class="form-group btn-submit" {% if not loginName is empty %}style="display:none"{% endif %}>
+<label class="col-lg-3 control-label"></label>
+<div class="col-lg-9">
+{% if not loginName is empty %}{{ btnBack|raw }}{% endif %}{{ btnSubmit|raw }}
+</div>
+</div>
+</form>
+</div>
+</div>
+{% endblock %}

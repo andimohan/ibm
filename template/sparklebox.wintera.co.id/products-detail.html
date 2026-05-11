@@ -1,0 +1,134 @@
+{% extends "template.html" %}
+{% set data = rsItem[0] %}
+{% set favClass = (data.isfavorite == 1) ? 'text-red-cardinal' : ''  %}
+{% set favIcon = (data.isfavorite == 1) ? 'fa-solid fa-heart' : 'fa-regular fa-heart'  %}
+{% block JS %} 
+<script type="text/javascript" src="{{ TEMPLATE_JS_PATH }}jquery.formatCurrency-1.4.0.min.js"></script>
+<script type="text/javascript" src="{{ TEMPLATE_JS_PAGE_PATH }}products-detail.min.js"></script>
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        var opt = new Array(); 
+        var errMsg = new Array(); 
+        var lang = new Array(); 
+        opt.lang = lang;
+        
+        errMsg['profile'] = {{ ERRORMSG.qty|json_encode()|raw }};  
+        opt['errMsg'] = errMsg; 
+ 
+        var productsDetail = new ProductsDetail(opt);
+        productsDetail.loadOnReady(); 
+    })
+</script>
+{% endblock %}
+{% block JSOnLoad %} 
+<!-- blm tau knp harus dionload template -->
+{{ parent() }}
+ 
+{% endblock %}
+{% block pagetitle %}{%if rsItem[0].name is empty %}{{ rsItem[0].code|raw }}{%else %}{{ rsItem[0].name|raw }}{% endif %}
+| {{ parent() }}{% endblock %}
+
+{% set combined = [] %}
+{% for item in rsItemImage %}
+{% set combined = combined | merge([item]) %}
+{% endfor %}
+{% for variant in rsVariant %}
+{% set combined = combined | merge([variant]) %}
+{% endfor %}
+
+{% block content %}
+<div class="bg-gray">
+    <div class="section-break-2"></div>
+    <div id="content-wrapper" class="content-wrapper">
+        <div>
+            <div class="section-break-2"></div>
+            <div id="breadcrumb" class="font-libre-baskerville text-blue-sbox">
+                <a href="/"><span style="text-decoration: underline;" class="text-blue-sbox">Home</span></a>
+                <span><i class="path-icon fas fa-slash fa-xs"></i></span>
+                <a href="/products/{{ data.categoryname|urlfilter }}/cat={{ data.categorykey }}"><span style="text-decoration: underline;" class="text-blue-sbox">{{ categoryPath[0].name|raw|ucwords }}</span></a> 
+                <span><i class="path-icon fas fa-slash fa-xs"></i></span>
+                <span>{{ data.name|raw }}</span>
+            </div>
+            <div class="section-break-2"></div>
+            <!-- PRODUCT START -->
+            <div class="flex align-items-start">
+                <div class=consume>
+                <div class="flex align-items-start product-information">
+                        <div class="img-col"> 
+                            <ul class="slick-100 product-image" >  
+                                {% for data in rsItemImage %} 
+                                    <li><div class="img-bg" style=" background-image: url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}item/{{ data.refkey }}/{{ data.file }}&hash={{ getPHPThumbHash(data.file) }}'); "></div></li>
+                                {% endfor %}  
+                            </ul>
+                            <div class="product-img-nav" >
+                            {% for data in rsItemImage %}
+                                <div class="index" rel-index="{{ loop.index }}">
+                                    <div class="img-thumb img-bg variant-img-{{ data.refkey }}" style="background-image: url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}item/{{ data.refkey }}/{{ data.file }}&hash={{ getPHPThumbHash(data.file) }}'); "></div>
+                                </div>                        
+                            {% endfor %}
+                            </div>
+
+                        </div>
+                        <div class="product-name-panel consume" style="padding: 0 1em"> 
+                            <div class="font-bold font-libre-baskerville product-name">{{ data.name|raw }}</div>
+                            <!-- <div class="">{{ data.categoryname|raw }}</div> -->
+                            <div class="product-price" rel-price="{{ data.sellingprice }}">Rp. <span class="price-value inputnumber">{{ data.sellingprice|number_format }}</span></div>  
+                            
+                            <div class="section-break-2"></div>
+                            <!-- <div>Select Size</div> -->
+                            <div class="section-break-1"></div>
+                            <div class="flex wrap">
+                                {% if rsVariant|length > 0 %}
+                                    {% for dataVariant in rsVariant %}
+                                        <div id="variant-{{ dataVariant.pkey }}" style="cursor: pointer;" class="variant" rel-name="{{ dataVariant.name }}" rel-price="{{ dataVariant.sellingprice|raw }}" rel-refkey="{{ dataVariant.pkey }}">
+                                            {{ dataVariant.name|raw }}
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div>{{ LANG.notHaveVariant }}</div>
+                                {% endif %}
+                            </div> 
+                            <div class="section-break-2"></div>
+                            <div class="total-col sticky-top fixed-mobile">
+                                <form id="order-form" class="form-horizontal" method="post" action="/ajax-cart.php">
+                                    {{ inputHidItemkey|raw }}
+                                    {{ inputHidItemVariantKey|raw }}
+                                    {{ inputHidAction|raw }}
+                                    <div class="add-to-cart">
+                                        {{ btnSubmit|add_class("btn-submit-default")|raw }}
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="section-break-2"></div>
+                            <!-- <div class="rewards-points">
+                                <i class="far fa-gift fa-lg"></i> <span class="font-bold">{{ LANG.getPoint }}</span>
+                                <br>
+                                <br>
+                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Minus libero qui numquam! Dolorum, exercitationem.
+                            </div> -->
+                            <div class="section-break-2"></div>
+                            <div class="product-description-panel"> 
+                                <div class="flex justify-content-between description-header">
+                                    <h2 class="title-product-detail">{{ LANG.productDetail|upper }}</h2>
+                                    <i class="far fa-plus fa-lg icon-desc"></i>
+                                </div>
+                                <div class="product-description trim-height">
+                                    <div class="description">
+                                        {{ rsItemDescription[0].value|raw }}
+                                    </div>
+                                </div>
+                                <!-- <div class="flex justify-content-between size-guide-header">
+                                    <h2 class="title-product-detail">{{ LANG.sizeGuide|upper }}</h2>
+                                    <i class="far fa-plus fa-lg icon-size"></i>
+                                </div> -->
+                                <div class="border-bottom"></div>
+                            </div>
+                        </div>
+                    </div> 
+                    <div class="section-break-2"></div>
+                </div> 
+            </div>
+    </div>
+    <div class="section-break-2"></div>
+</div>
+{% endblock %}

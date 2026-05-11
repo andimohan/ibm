@@ -1,0 +1,65 @@
+{% extends "profile-template.html" %}
+{% block pagetitle %}{{ LANG.profile }} | {{ parent() }}{% endblock %}
+{% block profilecontent %}
+  <form id="form-editprofile" class="form-horizontal" method="post" action="/ajax-member.php">
+        <div class="notification-msg"></div>
+        <div style="clear:both;height:1em"></div>
+        {{ inputHidId|raw }}
+        {{ hidModifiedOn|raw }}
+        {{ inputHidAction|raw }}
+      <div class="flex" style="gap: 0.5em;">
+        <i class="fa-regular fa-circle-user"></i>
+        <div class="text-header">
+          {{ LANG.profile }}
+        </div>
+      </div>
+      <div class="section-break-1"></div>
+      {% if LOGIN_USER.ssotypekey == 0 %}
+          <div class="form-group input-panel">
+            <div for="name" class="control-label">{{ LANG.username }}</div>
+            <div class="">
+              {{ inputUserName|raw }}
+            </div>
+          </div>
+
+           <div class="form-group input-panel">
+            <div for="currentpassword" class="control-label">{{ LANG.currentpassword }}</div>
+            <div class="">
+              {{ inputCurrentPassword|raw }}
+            </div>
+          </div>
+
+        <div class="section-break-1"></div> 
+      {% endif %}
+    
+        <div class="form-group input-panel">
+          <div for="name" class="control-label">{{ LANG.name }}</div>
+          <div class="">
+            {{ inputName|raw }}
+          </div>
+        </div>
+        <div class="form-group input-panel">
+          <div for="date" class="control-label">{{ LANG.dateOfBirth }}</div>
+          <div class="">
+            {{ inputBirthDate|raw }}
+          </div>
+        </div>
+        <div class="form-group input-panel">
+          <div for="phone" class="control-label">{{ LANG.handphone }} No. Hp</div>
+          <div class="">
+            {{ inputMobile|raw }}
+          </div>
+        </div>
+     
+        <div class="form-group input-panel">
+          <div for="email" class="control-label">{{ LANG.email }}</div>
+          <div class="">
+            {{ inputEmail|raw }}
+          </div>
+        </div>
+
+        <div class="flex justify-content-end action-panel">
+          <div>{{ btnSubmit|raw }}</div>
+        </div>
+      </form>
+{% endblock %}

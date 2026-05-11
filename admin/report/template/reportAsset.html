@@ -1,0 +1,47 @@
+{% extends "template.html" %}  
+{% block filter %}
+ <div>  
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.code }}</label>
+        <div class="col-xs-12">
+            {{ inputAssetCode|raw }}
+        </div>
+    </div>
+	<div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.name }}</label>
+        <div class="col-xs-12">
+            {{ inputAssetName|raw }}
+        </div>
+    </div> 
+	   <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.warehouse }}</label>
+        <div class="col-xs-12"> {{ inputSelWarehouse|raw }}</div>
+    </div>
+      <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.category }}</label>
+        <div class="col-xs-12">
+            {{ inputSelCategory|raw }}
+        </div>
+    </div> 
+      <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.type }}</label>
+        <div class="col-xs-12">
+            {{ inputSelType|raw }}
+        </div>
+    </div> 	 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.status }}</label>
+        <div class="col-xs-12">
+            {{ inputSelStatus|raw }}
+        </div>
+    </div> 
+	<div class="form-group" style="margin-bottom:0">
+        <label class="col-xs-12 control-label" >{{ LANG.others }}</label> 
+    </div>    
+    <div class="form-group">  
+        <div class="col-xs-12"> {{ inputIsShowDetail|raw }} <span style="margin-left: 5px">{{ LANG.showDetail }}</span></div>
+    </div> 
+    
+ </div>
+{% endblock %}
+

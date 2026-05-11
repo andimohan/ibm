@@ -1,0 +1,105 @@
+{% extends "template.html" %} 
+{% block JS %}
+<script type="text/javascript">
+
+	jQuery(document).ready(function(){ 
+         
+         
+	});
+
+</script>
+{% endblock %}
+{% block filter %} 
+<div> 
+    
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.code }}</label>
+        <div class="col-xs-12"> {{ inputJOCode|raw }} </div>
+    </div> 
+
+
+    <!-- <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.hblNumber }}</label>
+        <div class="col-xs-12"> {{ inputHBLNumber|raw }} </div>
+    </div>  -->
+	
+    <div class="form-group mnv-date-range">
+        <label class="col-xs-12 control-label" >{{ LANG.period }}</label> 
+        <div class="col-xs-12" style="margin-bottom: 0.2em"> {{ inputSelDateType|raw }} </div>
+        <div class="col-xs-6" style="padding-right:5px;"> {{ inputStartDate|raw }} </div>
+        <div class="col-xs-6" style="padding-left:5px;"> {{ inputEndDate|raw }} </div>
+    </div>
+    
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.mblNumber }}</label>
+        <div class="col-xs-12"> {{ inputMBLNumber|raw }} </div>
+    </div> 
+    
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.currency }}</label>
+        <div class="col-xs-12"> {{ inputSelCurrency|raw }}</div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.customer }}</label>
+        <div class="col-xs-12"> {{ inputSelCustomer|raw }} </div> 
+    </div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.agent }}</label>
+        <div class="col-xs-12"> {{ inputSelAgent|raw }} </div> 
+    </div> 
+
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.salesman }}</label>
+        <div class="col-xs-12"> {{ inputSelSales|raw }} </div> 
+    </div> 
+
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.port }}</label>
+<!--        <label class="col-xs-6 control-label" style="padding-left:5px" >{{ LANG.pod }}</label> -->
+        <div class="col-xs-12">{{ inputSelPol|raw }} </div>   
+<!--        <div class="col-xs-6" style="padding-left:5px">{{ inputSelPod|raw }} </div>   -->
+    </div>  
+
+    <div class="form-group">
+        <label class="col-xs-12 control-label">{{ LANG.continent }}</label>
+<!--        <label class="col-xs-6 control-label" style="padding-left:5px">{{ LANG.continent }} {{ LANG.pod }}</label> -->
+        <div class="col-xs-12">{{ inputSelContinentPOL|raw }} </div>   
+<!--        <div class="col-xs-6" style="padding-left:5px">{{ inputSelContinentPOD|raw }} </div>   -->
+    </div>
+
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.typeOfJob }}</label>
+        <div class="col-xs-12"> {{ inputSelTypeOfJob|raw }}</div>
+    </div>
+    
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.shipmentType }}</label>
+        <div class="col-xs-12"> {{ inputSelShipmentType|raw }}</div>
+    </div>
+    
+
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Transportation Type</label>
+        <div class="col-xs-12"> {{ inputSelTransportationType|raw }}</div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.containerType }}</label>
+        <div class="col-xs-12"> {{ inputSelContainerType|raw }}</div>
+    </div>
+
+    
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.createdBy }}</label>
+        <div class="col-xs-12"> {{ inputSelCreated|raw }} </div>
+    </div>
+
+
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.status }}</label>
+        <div class="col-xs-12"> {{ inputSelStatus|raw }} </div> 
+    </div> 
+
+</div>	 
+{% endblock %}

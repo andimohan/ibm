@@ -1,0 +1,37 @@
+{% extends "template.html" %} 
+{% block JS %}
+<script>
+    jQuery(document).ready(function(){   
+          
+	});
+
+</script>
+{% endblock %}
+{% block filter %}
+ <div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Kode</label>
+        <div class="col-xs-12">
+            {{ inputServiceCode|raw }}
+        </div>
+    </div>
+	<div class="form-group">
+        <label class="col-xs-12 control-label" >Nama</label>
+        <div class="col-xs-12">
+            {{ inputServiceName|raw }}
+        </div>
+    </div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Kategori</label>
+        <div class="col-xs-12">
+            {{ inputSelCategory|raw }}
+        </div>
+    </div>   
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Status</label>
+        <div class="col-xs-12">
+            {{ inputSelStatus|raw }}
+        </div>
+    </div>    
+ </div>	 
+{% endblock %}

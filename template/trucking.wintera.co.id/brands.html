@@ -1,0 +1,58 @@
+{% extends "template.html" %}  
+{% block pagetitle %}{{ LANG.productsAndServices }} | {{ parent() }}{% endblock %}
+ 
+{% block contenttitle %} 
+<div class="content-wrapper"> 
+<div style="clear:both; height: 2em"></div>
+    <div class=" title" > 
+        <h1> 
+         {{ LANG.productsAndServices }} 
+        </h1> 
+        <div class="line"></div>
+    </div>	 
+</div>	   
+{% endblock %}  
+
+{% block content %}  
+<div class="content-wrapper">     
+<div style="height:2em;"></div>       
+{% if rsBrand is empty %}
+<div style="text-align:center">{{ LANG.noDataFound }}</div>
+{% endif %}
+  
+{{ inputHidAction|raw }}       
+<ul class="brand-list" style="width:100%;">          
+{% for item in rsBrand %}  
+<li class="auto-height"> 
+<div class="description-panel">
+    <div class="image-mobile"><img src="/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}brand/{{ item.pkey }}/{{ item.file }}&f=png&w=500&h=500&hash={{ item.phpThumbHash }}" /> </div>
+    <div class="div-table mobile-table panel">
+    <div class="div-table-row"> 
+        <div class="div-table-col-5 description-col"> 
+            <div class="hide-mobile"><a href="/brands-detail/{{ item.pkey|e }}/{{ item.name|urlfilter }}" title="{{ item.name|raw }}"><div class="image" style="background-image:url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}brand/{{ item.pkey }}/{{ item.file }}&f=png&w=500&h=500&hash={{ item.phpThumbHash }}')"></div></a></div>
+            <br>
+            <div class="short-desc">{{ item.shortdesc|raw }}</div>
+            <div><a href="/brands-detail/{{ item.pkey|e }}/{{ item.name|urlfilter }}" title="{{ item.name|raw }}">{{ LANG.learnMore }} ...</a></div>
+        </div>  
+    </div>
+    </div>
+</div>    
+</li>  
+{% endfor %}   
+
+</ul> 
+<div style="clear:both; height: 1em"></div>   
+
+<div class="section-break" style="border-color: #666;" ></div>      
+<div class="div-table index-overview" style="width:100%; ">
+    <div class="div-table-row">
+        <div class="div-table-col overview"> 
+            {{ page.service.detail|raw }} 
+            <div style="clear:both"></div>
+        </div> 
+    </div>
+</div>    
+    
+<div style="clear:both; height: 1em"></div>   
+</div>
+{% endblock %}

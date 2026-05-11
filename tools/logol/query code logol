@@ -1,0 +1,3 @@
+{"261":"select trucking_service_order_category.code from  trucking_service_order_category, trucking_service_work_order, trucking_service_order_header where trucking_service_work_order.refkey = trucking_service_order_header.pkey and trucking_service_order_header.categorykey = trucking_service_order_category.pkey"}
+
+{"253":{"query":"select trucking_service_order_category.code from  trucking_service_order_category, trucking_service_order_header where trucking_service_order_header.categorykey = trucking_service_order_category.pkey","paramPkey":"hidRefKey2"}}

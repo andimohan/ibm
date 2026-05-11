@@ -1,0 +1,236 @@
+{% extends "template.html" %}
+{% block pagetitle %}{{ LANG.contactUs}} | {{ parent() }}{% endblock %}
+{% block JS %} 
+<script  type="text/javascript"  src='https://www.google.com/recaptcha/api.js'></script>
+{% endblock %}
+
+{% block JSOnLoad %}   
+ {{ parent() }}
+			$('#form-contactus')
+				.bootstrapValidator({ 
+					feedbackIcons: {
+						valid: 'glyphicon glyphicon-ok',
+						invalid: 'glyphicon glyphicon-remove',
+						validating: 'glyphicon glyphicon-refresh'
+				},
+				fields: {
+					name: { 
+						validators: {
+							notEmpty: {
+								message: '{{ ERRORMSG.name[1] }}'
+							}, 
+						}
+					},  
+					
+					phone: { 
+						validators: {
+							notEmpty: {
+								message: '{{ ERRORMSG.phone[1] }}'
+							}, 
+						}
+					},
+					
+					email: { 
+						 validators: {
+							notEmpty: {
+								message: '{{ ERRORMSG.email[1] }}'
+							},  
+							emailAddress: {
+								message: '{{ ERRORMSG.email[3] }}'
+							}
+						}
+					},
+				 	message: { 
+						validators: {
+							notEmpty: {
+								message: '{{ ERRORMSG.message[1] }}'
+							}, 
+						}
+					},
+					 subject: { 
+						validators: {
+							notEmpty: {
+								message: '{{ ERRORMSG.subject[1] }}'
+							}, 
+						}
+					}, 
+					
+				}
+			})
+			.on('success.form.bv', function(e) {
+				
+				$("[name=btnSave]").prop('disabled', true).addClass("btn-primary-loading");
+				
+				// Prevent form submission
+				e.preventDefault(); 
+				// Get the form instance
+				var $form = $(e.target);
+	
+				// Get the BootstrapValidator instance
+				var bv = $form.data('bootstrapValidator');
+	
+				// Use Ajax to submit form data
+				$.post($form.attr('action'), $form.serialize(), function(result) {
+					$("[name=btnSave]").removeClass("btn-primary-loading");
+					
+					var error = "";
+					for (i=0;i<result.length;i++)
+						error = error + "<li>" + result[i].message + "</li>";
+						
+					if (error != "")
+						error = "<ul class=\"message-dialog-ul\">" + error + "</ul>";
+						
+					if (!result[0].valid){
+						$(".notification-msg").html(error).hide().fadeToggle("fast");
+						$(".notification-msg").removeClass("bg-green-avocado").addClass("bg-red-cardinal");
+						$form.data('bootstrapValidator').resetForm();
+                        scrollToTopForm($form);
+						grecaptcha.reset(); 
+					}else{
+						alert("{{ LANG.contactUsSuccessful }}");
+						location.href="/";
+					}
+					
+				}, 'json');
+			}); 
+{% endblock %} 
+{% block contenttitle %}               
+<div class="content-wrapper"> 
+<div style="clear:both; height: 2em"></div>
+    <div class=" title" >
+        <h1>{{ LANG.contactUs|upper }}</h1> 
+        <div class="line"></div>
+    </div>	 
+</div>	 
+{% endblock %} 
+{% block content %}
+<div class="content-wrapper">  
+<div class="contact-us">   
+ <div class="contact-us-table div-table">
+     <div class="div-table-row"> 
+        <div class="div-table-col-5  contact-us-company-address">
+        <div class="h1">{{ settings.companyName }}</div>
+        <div>{{ settings.companyAddress|raw }}</div>
+
+        <div class="div-table contact-channel" style="margin-top:1em;">
+        {% for item in settings.companyPhone %}   
+        <div class="div-table-row"> 
+        <div class="div-table-col-2" style="width:2em;"><i class="fa fa-phone"></i></div> 
+        <div class="div-table-col-2"><a href="tel:{{ item.value }}">{{ item.value }}</a></div>
+        </div>
+        {% endfor %} 
+        {% for item in settings.companyEmail %}   
+        <div class="div-table-row"> 
+        <div class="div-table-col-2"  style="width:2em;"><i class="fa fa-envelope"></i></div> 
+        <div class="div-table-col-2"><a href="mailto:{{ item.value }}">{{ item.value }}</a></div>
+        </div>
+        {% endfor %}  
+        {% for item in settings.companyMessenger %}   
+        <div class="div-table-row">  
+        <div class="div-table-col-2"  style="width:2em;">  
+            {% set HREF = '' %}
+            {% set FA_ICON = '' %}
+            {% if item.label|lower == "wa" or item.label|lower == "whatsapp" %}  
+                {% set FA_ICON = "fab fa-whatsapp" %} 
+                {% set HREF = "https://api.whatsapp.com/send?phone=" ~ item.value|wafilter %}
+            {% endif %}  
+            <i class="{{ FA_ICON }}"></i>
+        </div> 
+        <div class="div-table-col-2">{% if not HREF is empty %}<a href="{{ HREF }}">{% endif %}{{ item.value }}{% if not HREF is empty %}</a>{% endif %}</div>
+        </div>
+        {% endfor %}    
+        </div>   
+
+
+        <div class="medsos-panel" style="float:left">
+        {% if not settings.companyMedsos is empty %} <div style="margin: 2em 0 0.5em 0">Anda juga dapat mengikuti kami di</div> {% endif %}
+        <ul>   
+        {% for item in settings.companyMedsos %} 
+        {% if item.label|lower == "fb" or item.label|lower == "facebook" %}  
+            {% set FA_ICON = "fab fa-facebook-square" %}
+        {% elseif item.label|lower == "instagram" %}  
+            {% set FA_ICON = "fab fa-instagram" %}
+        {% elseif item.label|lower == "twitter" %}  
+            {% set FA_ICON = "fab fa-twitter" %}
+        {% elseif item.label|lower == "youtube" %}  
+            {% set FA_ICON = "fab fa-youtube" %}
+        {% elseif item.label|lower == "linkedin" %}  
+            {% set FA_ICON = "fab fa-linkedin" %} 
+        {% elseif item.label|lower == "whatsapp" or item.label|lower == "wa" %}  
+            {% set FA_ICON = "fab fa-whatsapp" %} 
+        {% elseif item.label|lower == "telegram" %}  
+            {% set FA_ICON = "fab fa-telegram" %} 
+        {% elseif item.label|lower == "line" %}  
+            {% set FA_ICON = "fab fa-line" %}  
+        {% endif %}  
+        <a href="{{ item.value }}" target="_blank"><li class="{{ FA_ICON }}"></li></a>
+        {% endfor %}  
+        <div style="clear:both"></div>
+        </ul>   
+        </div>  
+
+
+        </div> 
+        <div class="div-table-col-5 hide-mobile" style="width:1em"></div>
+        <div class="div-table-col-5">
+            <div class="form-panel">
+             <form id="form-contactus" method="post"  class="form-horizontal form-default prevent-form-submit" action="/ajax-contact-us.php">  
+                <div class="notification-msg"></div> 
+                <div style="clear:both; height:1em"></div>
+                <div class="form-group">
+                    <label class="col-lg-3 control-label" >{{ LANG.name }}</label>
+                    <div class="col-lg-9">
+                      {{ inputName|raw }}
+                    </div>
+                </div>
+
+                 <div class="form-group">
+                    <label class="col-lg-3 control-label">{{ LANG.email }}</label>
+                    <div class="col-lg-9">
+                      {{ inputEmail|raw }}
+                    </div>
+                </div>
+
+                 <div class="form-group">
+                    <label class="col-lg-3 control-label">{{ LANG.phone }}</label>
+                    <div class="col-lg-9">
+                      {{ inputPhone|raw }}
+                    </div>
+                </div>
+
+                 <div class="form-group">
+                    <label class="col-lg-3 control-label">{{ LANG.subject }}</label>
+                    <div class="col-lg-9">
+                      {{ inputSubject|raw }}
+                    </div>
+                </div>
+
+                 <div class="form-group">
+                    <label class="col-lg-3 control-label">{{ LANG.message }}</label>
+                    <div class="col-lg-9">
+                      {{ inputMessage|raw }}
+                    </div>
+                </div>
+
+                <div class="form-group"> 
+                    <label class="col-lg-3 control-label"></label>
+                    <div class="col-lg-9">
+                        <div class="g-recaptcha" data-sitekey="{{ settings.reCaptchaSiteKey }}"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-lg-3 control-label"></label>
+                    <div class="col-lg-9">
+                      {{ btnSubmit|raw }}
+                    </div>
+                </div>
+            </form>  
+            </div> 
+          </div>
+     </div>
+ </div>	 
+    </div>    
+</div>
+
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "template.html" %}
+{% import "twigMacro.html" as macro %}  
+{% block pagetitle %}{{ LANG.article}} | {{ parent() }}{% endblock %}
+{% block CSS %}
+<link rel="stylesheet" type="text/css" href="{{ TEMPLATE_CSS_PATH }}slick.css">
+<link rel="stylesheet" type="text/css" href="{{ TEMPLATE_CSS_PATH }}slick-theme.css">
+{% endblock %}
+
+{% block JS %}
+<!--
+<script type="text/javascript" src="{{ TEMPLATE_JS_PAGE_PATH }}articles.min.js"></script>  
+<script type="text/javascript" src="{{ TEMPLATE_JS_PATH }}slick.min.js"></script> 
+-->
+<script type="text/javascript">
+jQuery(document).ready(function(){   
+// var opt = new Array();   
+// var articles = new Articles(opt);
+// articles.loadOnReady();   
+});
+    
+</script> 
+{% endblock %}
+
+{% block content %}
+{% set bannerIndex = banner['articles'][0] %}
+<div class="banner banner-content" style="background-image:url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}banner/{{ bannerIndex.pkey }}/{{ bannerIndex.file }}&f=png&hash={{ getPHPThumbHash(bannerIndex.file) }}')">
+<div class="content-wrapper">
+<div class="div-table banner-text-panel">
+    <div class="div-table-row">
+        <div class="div-table-col" style="vertical-align: middle; height: 100%">
+			<div class="simple-parallax fade-up">{{ bannerIndex.trdesc|raw }}</div>
+        </div>
+    </div>
+</div>
+</div>    
+</div>   
+<div class="content-wrapper">    
+
+<div class="section-break-2"></div>
+<div class="page-path"><a href="/" title="{{ LANG.home }}"><i class="home fa-solid fa-house"></i></a> <span>{{ LANG.articles|raw }}</span></div>
+<div class="section-break-2"></div>
+
+	
+<ul class="article-list">
+    {% for data in rsArticles %}
+    <li>
+		<div class="div-table mobile-table">
+			<div class="div-table-row">
+				<div class="div-table-col image-col">
+					<img src="/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}article/{{ data.pkey }}/{{ data.image }}&hash={{ getPHPThumbHash(data.image) }}"> 
+				</div>
+				<div class="div-table-col">
+					<h2 class="title"><a href="/article-detail/{{ data.title|urlfilter }}/{{ data.pkey }}">{{ data.title }}</a></h2>
+					<div class="publishdate">{{ data.publishdate|date("d M Y") }}</div>
+					<div style="clear:both;height:.5em"></div>
+					<div class="shortdesc">{{ data.shortdesc|raw }} </div>
+					<div class="section-break-2"></div>
+					<a href="/article-detail/{{ data.title|urlfilter }}/{{ data.pkey }}" class="btn-link">{{ LANG.readMore }}</a>
+				</div>
+			</div>
+		</div>
+		 
+    </li>
+    {% endfor %}  
+</ul>   
+ 
+<div class="section-break-4"></div>
+{% set path = 'articles/' %}
+{% if not categoryPath is empty  %}
+{% set path = path ~ categoryPath[0]['name']|urlfilter ~ '/cat=' ~ categoryPath[0]['pkey']  %}
+{% endif %}
+    
+{{ macro.buildPageList(_context,path) }}
+	
+<div class="section-break-4"></div>
+</div>  
+{% endblock %}

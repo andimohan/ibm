@@ -1,0 +1,128 @@
+{% extends "template.html" %}
+{% block pagetitle %}{{ settings.companyName }} | {{ parent() }}{% endblock %}
+{% block pageclass %}index{% endblock %}
+ 
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{{ TEMPLATE_CSS_PATH }}slick.css">  
+<link rel="stylesheet" type="text/css" href="{{ TEMPLATE_CSS_PATH }}slick-theme.css">
+<link rel="stylesheet" type="text/css" href="{{ TEMPLATE_CSS_PATH }}ekko-lightbox.min.css">
+{% endblock %}  
+{% block bannerpanel %}  
+<div class="banner-panel">
+    <div class="loading-icon"><i class="fas fa-spinner fa-spin"></i></div>
+   
+    <ul class="featured-youtube-list">
+        {% for item in rsRandYoutube %}
+         <li>  
+             <a href="http://www.youtube.com/watch?v={{ item.youtubeid }}" data-toggle="lightbox" data-title="{{ item.title }}" data-gallery="youtubevideos">
+                    <img src="http://img.youtube.com/vi/{{ item.youtubeid }}/hqdefault.jpg" class="youtubePreview img-responsive">
+             </a>
+            <div class="title"> {{ item.title }} </div>
+         </li>  
+        {% endfor %}  
+    </ul>
+ 
+<div style="clear: both"></div>
+</div> 
+{% endblock %}  
+{% block content %}   
+ <div  itemscope itemtype="http://schema.org/offer" class="item-data-card"> 
+    <h2>
+        PRODUK PILIHAN
+        <div class="short-underline"></div>
+    </h2>
+    <ul >  
+        {% set imagesize = "contain" %}
+        {% if not settings.thumbnailImageSize is empty and settings.thumbnailImageSize == 2 %}
+        {% set imagesize = "cover" %}
+        {% endif %}
+
+        {% for item in rsItem %} 
+ 
+        {% if item.name is empty %}
+        {% set itemname = item.code  %}
+        {% set itemnamelink = item.code  %}
+        {% set hreftitle = item.code  %}
+        {% else %}
+        {% set itemname = item.name %}
+        {% set itemnamelink = item.linkname %}
+        {% set hreftitle = item.name  %}
+        {% endif %} 
+
+        <a href="/products-detail/{{ item.pkey }}/{{ itemnamelink|raw }}" title="{{ hreftitle }}">
+         <li>
+             <div class="div-table item-panel auto-height">
+                <div class="div-table-row">
+                    <div class="div-table-col item-image-col" style="background-size: {{ imagesize }}; background-image:url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}item/{{ item.pkey }}/{{ item.mainimage }}&w=500&h=500&hash={{ item.phpThumbHash }}')"> </div>
+                    <div class="div-table-col item-desc">
+                        <div itemprop="name" class="name">{{ item.name|raw }}</div>
+                        <div style="clear:both;"></div>
+                        <div itemprop="price"  class="price text-green-avocado"><span>{{ item.sellingprice|number_format }}</span> <span class="currency-after-price">IDR</span></div>
+                        <meta itemprop="priceCurrency" content="IDR" />
+                    </div>
+                </div>
+             </div>
+         </li>
+         </a>
+          
+         {% endfor %}   
+   		 <div style="clear:both;"></div>
+    </ul>  
+ </div>   
+<div style="clear: both; height: 3em"></div>
+<div class="brand-list" style="text-align: center; width: 100%;"> 
+    {% for item in rsBrand %}   
+     <a href="/products-search/brandkey={{ item.pkey }}" title="{{ item.name }}"> 
+         <span class="image-panel" style="background-image:url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}brand/{{ item.pkey }}/{{ item.file }}&f=png&w=200&h=200&hash={{ item.phpThumbHash }}')"></span>
+     </a> 
+     {% endfor %}   
+</div>   
+<div style="clear: both; height: 2em"></div>
+{% endblock %}
+{% block JS %} 
+<script type="text/javascript" src="{{ TEMPLATE_JS_PATH }}slick.min.js"></script>  
+<script type="text/javascript" src="{{ TEMPLATE_JS_PATH }}ekko-lightbox.min.js"></script>   
+{% endblock %}    
+
+{% block JSOnLoad %}
+{{ parent() }}
+
+$(document).on('click', '[data-toggle="lightbox"]', function(event) {
+    event.preventDefault(); 
+    $(this).ekkoLightbox(); 
+});
+
+    $('.featured-youtube-list').on('init', function () {
+        $(".banner-panel .loading-icon").hide(); 
+        $(".banner-panel .featured-youtube-list").addClass("fade-in-animation"); 
+    });
+
+  $('.featured-youtube-list').slick({
+          dots: false, 
+          autoplay:true,
+          arrows:true,   
+          infinite: true,
+          speed: 300,
+          slidesToShow: 3,
+          slidesToScroll: 3, 
+          responsive: [  
+            {
+              breakpoint: 900,
+              settings: {
+                slidesToShow: 2,
+                slidesToScroll: 2
+              }
+            },
+            {
+              breakpoint: 480,
+              settings: {
+                slidesToShow: 1,
+                slidesToScroll: 1
+              }
+            }
+
+          ]
+
+        }); 
+
+{% endblock %}

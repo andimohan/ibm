@@ -1,0 +1,39 @@
+{% extends "template.html" %}
+{% block JS %}
+<script type="text/javascript">
+
+    jQuery(document).ready(function () {
+        // setAutoComplete('filterForm', {objName:'employeeName', objValue :'hidEmployeeKey', url : 'ajax-employee.php?action=searchData' });  
+    });
+
+</script>
+{% endblock %}
+{% block filter %}
+<div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label">{{ LANG.code }}</label>
+        <div class="col-xs-12">
+            {{ inputCode|raw }}
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label">{{ LANG.category }}</label>
+        <div class="col-xs-12">
+            {{ inputCategory|raw }}
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label">{{ LANG.customer }}</label>
+        <div class="col-xs-12">
+            {{ inputCustomer|raw }}
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label">Status</label>
+        <div class="col-xs-12">
+            {{ inputSelStatus|raw }}
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,153 @@
+RewriteEngine On
+Options -Indexes
+ 
+## EXPIRES CACHING ##
+<IfModule mod_expires.c>
+ExpiresActive Off
+</IfModule>
+## EXPIRES CACHING ##
+
+######## COMPRESION ########
+<ifModule mod_gzip.c>
+mod_gzip_on Yes
+mod_gzip_dechunk Yes
+mod_gzip_item_include file .(html?|txt|css|js|php|pl)$
+mod_gzip_item_include handler ^cgi-script$
+mod_gzip_item_include mime ^text/.*
+mod_gzip_item_include mime ^application/x-javascript.*
+mod_gzip_item_exclude mime ^image/.*
+mod_gzip_item_exclude rspheader ^Content-Encoding:.*gzip.*
+</ifModule>
+
+<IfModule mod_deflate.c>
+  # Compress HTML, CSS, JavaScript, Text, XML and fonts
+  AddOutputFilterByType DEFLATE application/javascript
+  AddOutputFilterByType DEFLATE application/rss+xml
+  AddOutputFilterByType DEFLATE application/vnd.ms-fontobject
+  AddOutputFilterByType DEFLATE application/x-font
+  AddOutputFilterByType DEFLATE application/x-font-opentype
+  AddOutputFilterByType DEFLATE application/x-font-otf
+  AddOutputFilterByType DEFLATE application/x-font-truetype
+  AddOutputFilterByType DEFLATE application/x-font-ttf
+  AddOutputFilterByType DEFLATE application/x-javascript
+  AddOutputFilterByType DEFLATE application/xhtml+xml
+  AddOutputFilterByType DEFLATE application/xml
+  AddOutputFilterByType DEFLATE font/opentype
+  AddOutputFilterByType DEFLATE font/otf
+  AddOutputFilterByType DEFLATE font/ttf
+  AddOutputFilterByType DEFLATE image/svg+xml
+  AddOutputFilterByType DEFLATE image/x-icon
+  AddOutputFilterByType DEFLATE text/css
+  AddOutputFilterByType DEFLATE text/html
+  AddOutputFilterByType DEFLATE text/javascript
+  AddOutputFilterByType DEFLATE text/plain
+  AddOutputFilterByType DEFLATE text/xml
+
+  # Remove browser bugs (only needed for really old browsers)
+  BrowserMatch ^Mozilla/4 gzip-only-text/html
+  BrowserMatch ^Mozilla/4\.0[678] no-gzip
+  BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+  Header append Vary User-Agent
+</IfModule>
+
+######## COMPRESION ########
+
+RewriteBase /admin
+RewriteCond %{REMOTE_ADDR} !127.0.0.1
+RewriteCond %{HTTPS} !=on [OR] 
+RewriteCond %{HTTP_HOST} ^www\. [NC]
+RewriteCond %{HTTP_HOST} ^(?:www\.)?(.+)$ [NC]
+RewriteRule ^(.*) https://%1%{REQUEST_URI} [R=301,L]
+
+ErrorDocument 404 /error-page.php?id=404
+ErrorDocument 500 /error-page.php?id=500
+ErrorDocument 403 /error-page.php?id=403
+  
+RewriteRule ^(.*)/$ /$1 [L,R=301]  
+
+RewriteRule ^import/importItem$ /tools/import/importItem.php [NC,L] 
+RewriteRule ^import/importItemIn$ /tools/import/importItemIn.php [NC,L] 
+RewriteRule ^import/importItemOut$ /tools/import/importItemOut.php [NC,L] 
+RewriteRule ^import/importCustomer$ /tools/import/importCustomer.php [NC,L]
+RewriteRule ^import/importSupplier$ /tools/import/importSupplier.php [NC,L]
+RewriteRule ^import/importAP$ /tools/import/importAP.php [NC,L]
+RewriteRule ^import/importAR$ /tools/import/importAR.php [NC,L]
+RewriteRule ^import/importEmployee$ /tools/import/importEmployee.php [NC,L]
+RewriteRule ^import/importLocation$ /tools/import/importLocation.php [NC,L]
+RewriteRule ^import/importCar$ /tools/import/importcar.php [NC,L]
+RewriteRule ^import/importSerialNumber$ /tools/import/importserialnumber.php [NC,L]
+RewriteRule ^import/importFFPurchaseOrderExport$ /tools/import/importFFPurchaseOrderExport.php [NC,L]
+RewriteRule ^import/importFFPurchaseOrderImport$ /tools/import/importFFPurchaseOrderImport.php [NC,L]
+RewriteRule ^import/importFFJobOrderExport$ /tools/import/importFFJobOrderExport.php [NC,L]
+RewriteRule ^import/importServices$ /tools/import/importServices.php [NC,L]
+RewriteRule ^import/importSalesOrderSubscription$ /tools/import/importSalesOrderSubscription.php [NC,L]
+RewriteRule ^import/importCashBankIn$ /tools/import/importCashBankIn.php [NC,L]
+RewriteRule ^import/importCashOut$ /tools/import/importCashOut.php [NC,L]
+RewriteRule ^import/importCart$ /tools/import/importCar.php [NC,L]
+RewriteRule ^import/importConsignee$ /tools/import/importConsignee.php [NC,L]
+RewriteRule ^import/importBrand$ /tools/import/importBrand.php [NC,L]
+RewriteRule ^import/importItemCategory$ /tools/import/importItemCategory.php [NC,L]
+RewriteRule ^import/importAsset$ /tools/import/importAsset.php [NC,L]
+RewriteRule ^import/importCOA$ /tools/import/importCOA.php [NC,L]
+RewriteRule ^import/importBuildingUnit$ /tools/import/importBuildingUnit.php [NC,L]
+RewriteRule ^import/importSalesOrder$ /tools/import/importSalesOrder.php [NC,L]
+RewriteRule ^import/importARPayment$ /tools/import/importARPayment.php [NC,L]
+RewriteRule ^import/importPurchaseOrder$ /tools/import/importPurchaseOrder.php [NC,L]
+RewriteRule ^import/importItemAdjustment$ /tools/import/importItemAdjustment.php [NC,L]
+RewriteRule ^import/importContinent$ /tools/import/importContinent.php [NC,L]
+RewriteRule ^import/importCountry$ /tools/import/importCountry.php [NC,L]
+RewriteRule ^import/importCity$ /tools/import/importCity.php [NC,L]
+RewriteRule ^import/importPort$ /tools/import/importPort.php [NC,L]
+RewriteRule ^import/importVessel$ /tools/import/importVessel.php [NC,L]
+RewriteRule ^import/importCommodity$ /tools/import/importCommodity.php [NC,L]
+RewriteRule ^import/importItemUnits$ /tools/import/importItemUnits.php [NC,L]
+RewriteRule ^import/importGeneralJournal$ /tools/import/importGeneralJournal.php [NC,L]
+RewriteRule ^import/importCarServiceMaintenance$ /tools/import/importCarServiceMaintenance.php [NC,L]
+RewriteRule ^import/importCostRate$ /tools/import/importCostRate.php [NC,L]
+RewriteRule ^import/importPurchasePricing$ /tools/import/importPurchasePricing.php [NC,L]
+
+#PRAJA
+RewriteRule ^import/importTruckingServiceOrder$ /tools/import/importTruckingServiceOrder.php [NC,L]
+RewriteRule ^import/importTruckingServiceOrderAndCost$ /tools/import/importTruckingServiceOrderAndCost.php [NC,L]
+RewriteRule ^import/importTruckingServiceWorkOrder$ /tools/import/importTruckingServiceWorkOrder.php [NC,L]
+RewriteRule ^import/importCostRatePraja$ /tools/import/importCostRatePraja.php [NC,L]
+RewriteRule ^import/importItemReceiving$ /tools/import/importItemReceiving.php [NC,L]
+
+#MTI
+RewriteRule ^import/importJobOrderAndSPKMTI$ /tools/import/importJobOrderAndSPKMTI.php [NC,L]
+
+RewriteRule ^import/(.*)$ /tools/import/index.php?module=$1  [NC,L]
+ 
+RewriteRule ^dashboard/maps/(.*)$ /admin/dashboard/maps.php?$1 [NC,L]
+
+RewriteRule ^setting/([0-9]+)$ setting.php?categorykey=$1 [NC,L]   
+RewriteRule ^pointofsales$ pos/pointOfSales.php  [NC,L]     
+RewriteRule ^securityPrivilegesForm$ employeeForm.php?showPrivileges=1  [NC,L]
+RewriteRule ^securityPrivilegesList$ employeeList.php?showPrivileges=1  [NC,L]
+
+RewriteRule ^report/reportGeneralLedger/([0-9]+)/(.*)/(.*)$ report/reportGeneralLedger.php?coakey=$1&startDate=$2&endDate=$3  [NC,L]
+  
+RewriteRule ^print/airwayBill/(.*)$ print/airwayBill.php?id=$1 [NC,L]   
+RewriteRule ^print/marketplaceInvoice/(.*)$ print/marketplaceInvoice.php?id=$1 [NC,L]   
+    
+RewriteRule ^print/truckingServiceOrderCompleteFromWO/(.*)$ print/print.php?filename=truckingServiceOrderComplete&wokey=$1 [NC,L] 
+RewriteRule ^print/carQR/(.*)$ print/carQR.php?id=$1 [NC,L]   
+RewriteRule ^print/disposalWork/(.*)$ print/print.php?filename=disposalWorkOrder&wolistkey=$1 [NC,L]
+RewriteRule ^print/cashBankVoucherFromCashBankIn/(.*)$ print/print.php?filename=cashBankVoucher&cashbankinkey=$1 [NC,L] 
+RewriteRule ^print/cashBankVoucherFromCashBankOut/(.*)$ print/print.php?filename=cashBankVoucher&cashbankoutkey=$1 [NC,L] 
+RewriteRule ^print/cashBankVoucherFromBankIn/(.*)$ print/print.php?filename=cashBankVoucher&bankinkey=$1 [NC,L] 
+RewriteRule ^print/cashBankVoucherFromBankOut/(.*)$ print/print.php?filename=cashBankVoucher&bankoutkey=$1 [NC,L] 
+
+RewriteRule ^print/employeeCommissionFromAP/(.*)$ print/print.php?filename=employeeCommission&apkey=$1 [NC,L] 
+
+RewriteRule ^print/(.*)/([,0-9]*)/(.*)$ print/print.php?filename=$1&id=$2&$3 [NC,L]
+RewriteRule ^print/(.*)/([,0-9]*)$ print/print.php?filename=$1&id=$2 [NC,L]
+RewriteRule ^pdf/(.*)/([,0-9]*)/([0-9]*)/(.*)$ print/print.php?filename=$1&id=$2&userkey=$3&token=$4 [NC,L]
+
+RewriteRule ^mail-invoice/([0-9]*)$ mail-invoice.php?id=$1 [NC,L]
+RewriteRule ^downloadVatOut/([0-9]+)$ downloadVatOut.php?id=$1 [NC,L]
+
+#Removing file extensions
+RewriteCond %{REQUEST_FILENAME} !-d 
+RewriteCond %{REQUEST_FILENAME}\.php -f 
+RewriteRule ^(.*)$ $1.php

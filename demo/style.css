@@ -1,0 +1,64 @@
+/* 
+ * Always set the map height explicitly to define the size of the div element
+ * that contains the map. 
+ */
+#map {
+  height: 100%;
+}
+
+/* 
+ * Optional: Makes the sample page fill the window. 
+ */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.flex {display: flex; align-items:center}
+.flex [type="checkbox"] {margin-top:0 !important} 
+.flex > div {margin-right: 0.5em}
+.flex > div:last-child{margin-right: 0}
+.flex .consume {flex:1}  
+
+.flex.flex-start{align-items: flex-start !important}
+.flex.flex-center{align-items: center!important}
+.flex.flex-stretch{align-items: stretch !important}
+.flex.flex-space-between{justify-content: space-between}
+.flex.justify-flex-end{justify-content: flex-end !important}
+.flex.justify-flex-center{justify-content:center!important}
+ 
+.text-green-avocado  {color:#568203 !important;}
+.text-red-cardinal  {color:#C41E3A !important;}
+
+.gm-style-iw-chr button { width: 26px !important; height: 26px !important;}
+.gm-style-iw-chr span {margin: 0.2 !important}
+.gm-style-iw-d h1 {margin: 0; font-size:1.5em; min-width: 5em} 
+
+.information-table { font-size: 1em; } 
+
+
+#control-box {
+  position: absolute;
+  top: 10px;
+  right: 65px;
+  background: white;
+  padding: .3em;
+  border-radius: .5em;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  height: auto;
+  width: 230px;
+  z-index: 1000;
+}
+
+.sol-caret-container .sol-caret {
+    margin-top: 12px !important;
+}
+
+.ui-autocomplete {
+    position: absolute !important; /* Pastikan elemen muncul di posisi absolut */
+    z-index: 10000 !important; /* Pastikan lebih tinggi dari input box */
+    background: white; /* Pastikan latar belakang terlihat */
+    border: 1px solid #ccc; /* Tambahkan border agar lebih jelas */
+}

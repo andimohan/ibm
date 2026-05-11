@@ -1,0 +1,271 @@
+{% extends "template.html" %}
+
+{% block content %}
+
+<section class="banner-inside">
+  <img class="hero-img-inside"
+       src="{{ TEMPLATE_IMG_PATH }}hero-img.jpg"
+       alt="About Us" />
+
+  <div class="banner-overlay">
+    <div class="container">
+      <div class="row">
+        <div class="col-12 text-center text-white">
+          <h1 class="display-4 font-weight-bold">About Us</h1>
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center bg-transparent p-0">
+              <li class="breadcrumb-item">
+                <a href="#" class="text-white">Home</a>
+              </li>
+              <li class="breadcrumb-item active text-white-50" aria-current="page">
+                About Us
+              </li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+    {{ page['about-us'].detail|raw }}
+
+<section class="profitable-investments">
+  <div class="container">
+
+    <div class="section-header text-center">
+      <h2 class="font-weight-bold">Profitable Investments</h2>
+      <p>
+        Aenean massa. Cum sociis natoque penatibus et magnis dis parturient
+        montes, nascetur ridiculus mus.
+      </p>
+    </div>
+
+    <div class="row">
+      <div class="col-md-4">
+        <div class="investment-card">
+          <div class="card-img">
+            <img src="{{ TEMPLATE_IMG_PATH }}hero-img.jpg" alt="Investment Strategy">
+          </div>
+          <span class="card-number">01</span>
+          <h5>Investment Strategy</h5>
+          <p>
+            Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque
+            penatibus et magnis dis parturient montes.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="investment-card">
+          <div class="card-img">
+            <img src="{{ TEMPLATE_IMG_PATH }}hero-img.jpg" alt="Growing Investment">
+          </div>
+          <span class="card-number">02</span>
+          <h5>Growing Investments</h5>
+          <p>
+            Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque
+            penatibus et magnis dis parturient montes.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="investment-card">
+          <div class="card-img">
+            <img src="{{ TEMPLATE_IMG_PATH }}hero-img.jpg" alt="Global Investors">
+          </div>
+          <span class="card-number">03</span>
+          <h5>Global Investors</h5>
+          <p>
+            Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque
+            penatibus et magnis dis parturient montes.
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="professional-solutions">
+  <div class="container-fluid p-0">
+    <div class="row no-gutters">
+
+      <div class="col-lg-4">
+        <div class="solution-image">
+          <div class="image-overlay">
+            <a href="#" class="play-btn">
+              <i class="fas fa-play"></i>
+            </a>
+            <p class="mb-0">View Our Presentation Video</p>
+            <small class="font-italic">We Love Our Clients</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-8">
+        <div class="solution-content">
+          <h2 class="title font-weight-bold">Unlimited Business Ideas.</h2>
+          <p class="subtitle">
+            We work to make your business start effectively working for you
+          </p>
+          <div class="divider"></div>
+
+          <div class="row services-grid">
+            <div class="col-md-4 service-item">
+              <div class="icon-box">
+                <i class="fas fa-chart-line"></i>
+              </div>
+              <div class="text-content">
+                <h5>Index Fund</h5>
+                <p>
+                  Rules of construction that are adhered to regardless of market.
+                </p>
+              </div>
+            </div>
+
+            <div class="col-md-4 service-item">
+              <div class="icon-box">
+                <i class="fas fa-handshake"></i>
+              </div>
+              <div class="text-content">
+                <h5>Business Support</h5>
+                <p>
+                  Components to run the business operations towards customers.
+                </p>
+              </div>
+            </div>
+
+            <div class="col-md-4 service-item">
+              <div class="icon-box">
+                <i class="fas fa-clock"></i>
+              </div>
+              <div class="text-content">
+                <h5>Economic Trends</h5>
+                <p>
+                  The ultimate goal of economics is to improve living conditions.
+                </p>
+              </div>
+            </div>
+
+            <div class="col-md-4 service-item">
+              <div class="icon-box">
+                <i class="fas fa-lightbulb"></i>
+              </div>
+              <div class="text-content">
+                <h5>Financial Coaching</h5>
+                <p>
+                  Helping clients overcome their struggle to attain financial goals.
+                </p>
+              </div>
+            </div>
+
+            <div class="col-md-4 service-item">
+              <div class="icon-box">
+                <i class="fas fa-mobile-alt"></i>
+              </div>
+              <div class="text-content">
+                <h5>Management Consulting</h5>
+                <p>
+                  Analysis of existing organizational problems and improvement.
+                </p>
+              </div>
+            </div>
+
+            <div class="col-md-4 service-item">
+              <div class="icon-box">
+                <i class="fas fa-comments-dollar"></i>
+              </div>
+              <div class="text-content">
+                <h5>Finance Consulting</h5>
+                <p>
+                  Numerical assistance in sales and trading for various companies.
+                </p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="our-staff py-5 bg-grey">
+        <div class="container">
+            <div class="row justify-content-center text-center mb-5">
+                <div class="col-lg-8">
+                    <h2 class="font-weight-bold mb-3">Our Staff</h2>
+                    <p class="text-muted">We work to make your business look better and working for you. Meet the doctors and medical team from several countries.</p>
+                    <div class="divider mx-auto"></div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="staff-card text-center">
+                        <div class="image-wrapper mb-3">
+                            <img src="{{ TEMPLATE_IMG_PATH }}our-team.png" alt="Geryan Korona" class="img-fluid">
+                        </div>
+                        <h5 class="font-weight-bold mb-1">Geryan Korona</h5>
+                        <p class="text-muted small text-uppercase letter-spacing">Marketing & Advertising</p>
+                        <div class="short-divider mx-auto"></div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <div class="staff-card text-center">
+                        <div class="image-wrapper mb-3">
+                            <img src="{{ TEMPLATE_IMG_PATH }}our-team.png" alt="Michael King" class="img-fluid">
+                        </div>
+                        <h5 class="font-weight-bold mb-1">Michael King</h5>
+                        <p class="text-muted small text-uppercase letter-spacing">Finance & Economics</p>
+                        <div class="short-divider mx-auto"></div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <div class="staff-card text-center">
+                        <div class="image-wrapper mb-3">
+                            <img src="{{ TEMPLATE_IMG_PATH }}our-team.png" alt="Damon Hunter" class="img-fluid">
+                        </div>
+                        <h5 class="font-weight-bold mb-1">Damon Hunter</h5>
+                        <p class="text-muted small text-uppercase letter-spacing">Creative Director</p>
+                        <div class="short-divider mx-auto"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</section>
+
+    <section class="blog-posts py-5 bg-white">
+        <div class="container text-center">
+            <h2 class="section-title font-weight-bold">Our Blog Posts</h2>
+            <p class="section-subtitle mx-auto">Perspiciatis unde omnis iste natus sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore.</p>
+            <div class="title-divider mb-5"></div>
+            
+            <div class="row text-left">
+              {% for i in 1..3 %}
+                    <div class="col-md-4 mb-4">
+                      <div class="blog-card">
+                          <div class="blog-img" style="background-image: url('{{ TEMPLATE_IMG_PATH }}hero-img.jpg');">
+                              <span class="badge badge-success">BUSINESS</span>
+                          </div>
+                          <div class="blog-body p-4">
+                              <h5>Money Market Rates: Finding the Best Accounts in 2016</h5>
+                              <p class="post-meta">April 28, 2016 / 4 Comments</p>
+                              <p class="post-desc">Perspiciatis unde omnis iste natus sit voluptatem accusantium doloremque ...</p>
+                              <a href="#" class="read-more">Read More <span class="line"></span></a>
+                          </div>
+                      </div>
+                  </div>
+              {% endfor %}
+            </div>
+            <a href="#" class="btn btn-outline-dark btn-view-more mt-4">View More Posts</a>
+        </div>
+    </section>
+
+{% endblock %}

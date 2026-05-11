@@ -1,0 +1,141 @@
+{% extends "template.html" %}
+{% block pagetitle %}{{ parent() }}{% endblock %} 
+{% block CSS %}
+{% endblock %} 
+{% block JS %}
+<script type="text/javascript" src="{{ TEMPLATE_JS_PATH }}galleria-1.6.1.min.js"></script>  
+<script type="text/javascript" src="{{ TEMPLATE_JS_PATH }}slick.min.js"></script>
+<script type="text/javascript" src="{{ TEMPLATE_JS_PAGE_PATH }}index.min.js"></script>
+<script type="text/javascript" >
+    
+function updateMarker(){
+     var city = '{{ rsCity|json_encode|raw }}';
+    city = $.parseJSON(city);
+    
+    var adj = 0;
+
+    // cari perbandingan L dan W dalam %
+    var defW = 1000;
+    var defH = 370;
+    
+    var mapW = $('.map-indo').width();
+    var mapH = $('.map-indo').height();
+    
+    var scaleW = mapW/defW;
+    var scaleH = mapH/defH;
+    
+    $(".marker").remove();
+    $.each( city, function( key, value ) {
+        
+         adj = (value.categorykey == 8011) ? -15 : -6;
+         var pos = value.maplocation;
+         
+         var pos = pos.split(','); 
+         var posX = (parseFloat(pos[0].trim()) + adj) * scaleW;
+         var posY = (parseFloat(pos[1].trim()) + adj) * scaleH;
+        
+         var templateName= (value.categorykey == 8011) ? 'icon-warehouse-template' : 'marker-template';
+             
+         var newMarker = $('.'+templateName).clone().appendTo(".index-delivery-map");
+         newMarker.removeClass(templateName).addClass("marker");
+         newMarker.css({top: (posY)+"px", left: (posX)+"px", position:'absolute', zIndex:999}).show(); 
+         newMarker.attr("rel-name",value.name );
+          
+    });
+}
+    
+jQuery(document).ready(function(){   
+ 
+	var opt = new Array();    
+	var errMsg = new Array();  
+	var lang = new Array();     
+
+	errMsg['email'] = {{ ERRORMSG.email|json_encode()|raw }}; 
+	lang['registrationSuccessful'] = "{{ LANG.registrationSuccessful|raw }}";
+
+	opt['errMsg'] = errMsg;
+	opt['lang'] = lang;
+ 
+    var index = new Index(opt); 
+	index.loadOnReady(); 
+    
+    updateMarker();
+    
+    $(window).resize(function(){
+      updateMarker();
+    });
+
+})
+</script>
+{% endblock %}
+{% block content %}
+<ul class="hero slick-list" >    
+{% for data in banner['slide show'] %}   
+    <li class="slick-slide">  
+        {% if data.file|ext == 'mp4' %}
+            <video class="banner" {% if data.isloop == 1 %}loop{% endif %} id="vid" src="{{ DEFAULT_URL_UPLOAD_PATH }}banner/{{ data.pkey }}/{{ data.file }}" autoplay muted style="object-fit: cover;"></video>
+        {% else %}
+           <div class="banner img-bg" style="width:100%; background-image: url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}banner/{{ data.pkey }}/{{  data.file }}&hash={{  getPHPThumbHash(data.file) }}'); ">
+               <div class="gradient-overlay" ></div>
+               <div class="banner-desc" style="position: absolute; z-index: 1000" >{{ data.trdesc|raw|nl2br }}</div>
+            </div> 
+        {% endif %}       
+    </li>
+{% endfor %}  
+</ul>
+<h2>{{ LANG.ourCollaboration }}</h2>    
+<div class="partners-slide">
+    <div class="loading-slide"></div>
+    <ul class="slides" >    
+    {% for data in featuredPartners %}   
+    <li>   
+    <div class="content-panel">
+     <div class="img-bg" style="background-image: url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}partners/{{ data.pkey }}/{{  data.file }}&f=png&far=C&&hash={{  getPHPThumbHash(data.file) }}'); "></div> 
+    </div>        
+    </li>
+    {% endfor %}  
+    </ul> 
+</div>
+
+<div class="content-wrapper" style="background-image: url('{{ TEMPLATE_IMG_PATH }}bg-01.png'); background-position: top center; background-size:contain; background-repeat: no-repeat">
+<div class="section-break-8"></div>
+<div class="who-we-are">
+    {{ page['index-who-we-are'].detail|raw }}
+</div> 
+<div class="section-break-6"></div>
+<div class="video-services">
+    {{ page['index-video-services'].detail|raw }}
+</div> 
+<div class="section-break-8"></div>
+
+<h2>{{ LANG.ourSolution }}</h2>    
+<div class="solution"> 
+       {{ page['index-solution'].detail|raw }} 
+</div>      
+<div class="section-break-8"></div>
+<h2>{{ LANG.deliveringAcrossArchipelago }}</h2>    
+<div class="delivering">
+    <div class="display:none" style="position: absolute; max-width: 100%; height: 45em; z-index: -1; background-image: url('{{ TEMPLATE_IMG_PATH }}bg-02.png'); background-position: top center; background-size:contain; background-repeat: no-repeat"></div>
+    <div class="description">{{ page['index-delivering'].detail|raw }}</div>
+    <div class="section-break-2"></div>  
+    <div class="index-delivery-map" style="width: 1000px; max-width: 96%"><img class="map-indo" src="{{ TEMPLATE_IMG_PATH }}map.png"></div>
+    <div class="marker-template" style="display: none; border:1px solid #333; height: 10px; width: 10px; background-color: #f00; border-radius: 50em;"></div>
+    <div class="icon-warehouse icon-warehouse-template" style="display: none;"></div>
+</div>     
+    
+<div class="section-break-8"></div>    
+<div class="partnership">
+<div class="panel">
+    <div class="flex">
+        <div class="img-partnership" >
+            <img  src="{{ TEMPLATE_IMG_PATH }}partnership.png">
+        </div>
+        <div>
+          {{ page['index-partnership'].detail|raw }} 
+        </div>
+    </div>
+</div>        
+</div>    
+<div class="section-break-8"></div>
+
+{% endblock %}

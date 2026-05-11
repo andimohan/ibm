@@ -1,0 +1,164 @@
+{% extends "profile-template.html" %}
+{% block pagetitle %}{{ LANG.address }} | {{ parent() }}{% endblock %}
+{% block JS %}
+<script type="text/javascript" src="{{ TEMPLATE_JS_PAGE_PATH }}shipping-address.min.js"></script> 
+<script type="text/javascript" src="{{ TEMPLATE_JS_PAGE_PATH }}map.min.js"></script> 
+<script type="text/javascript">
+  jQuery(document).ready(function () {
+
+     var opt = new Array();
+     var errMsg = new Array();
+     var lang = new Array();
+
+     errMsg['name'] = {{ ERRORMSG.name|json_encode()|raw }}; 
+     errMsg['address'] = {{ ERRORMSG.address|json_encode()|raw }}; 
+     errMsg['zipcode'] = {{ ERRORMSG.zipcode|json_encode()|raw }}; 
+   
+     lang['confirmDeleteAddress'] = "{{ LANG.confirmDeleteAddress|raw }}"; 
+     lang['dataHasBeenSuccessfullyUpdated'] = "{{ LANG.dataHasBeenSuccessfullyUpdated|raw }}"; 
+     lang['pinLocation'] = "{{ LANG.pinLocation|raw }}";
+
+     opt['errMsg'] = errMsg;
+     opt['lang'] = lang;
+
+     shippingAddress = new ShippingAddress(opt);
+     shippingAddress.loadOnReady();
+
+  });
+</script>
+
+<script>
+    (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
+      key: "AIzaSyBvlAM0nh362E5zDapnu6gf0lKeUE7INaE",
+    });
+</script>
+{% endblock %}
+{% block profilecontent %}
+<!--
+
+<div class="flex" style="justify-self: end; margin: 1em 0;">
+ <a id="popup-multiaddress" class="popup-button"> <div class="btn-add-shipping"><i class="fa-solid fa-plus"></i> {{ LANG.add }}</div></a>
+</div>
+-->
+ 
+  <div class="address-panel">  
+    <div class="flex" style="gap: 0.5em;">
+      <i class="fa-regular fa-location-dot"></i>
+      <div class="text-header">
+        {{ LANG.savedAddress }}
+      </div>
+    </div>
+  <div class="section-break-1"></div>
+  <div class="new-address-panel"> 
+     <form method="post" class="form-horizontal form-default prevent-form-submit form-multiaddress"  action="/ajax-member.php">
+       
+       {{ inputHidActionNewAddress|raw }}
+       <div class="input-show">
+            <div class="form-group">  
+              <div class="col-lg-12 control-label"> {{ LANG.label }}</div>
+              <div class="col-lg-12"> {{ inputName|raw }}</div> 
+            </div> 
+            <div class="form-group">  
+              <div class="col-lg-12 control-label"> {{ LANG.recipientName }}</div>
+              <div class="col-lg-12"> {{ inputPIC|raw }}</div> 
+            </div>  
+            <div class="form-group">  
+              <div class="col-lg-12 control-label"> {{ LANG.phone }}</div>
+              <div class="col-lg-12"> {{ inputPhone|raw }}</div> 
+            </div> 
+
+            <div class="form-group">  
+              <div class="col-lg-12 control-label"> {{ LANG.address }}</div>
+              <div class="col-lg-12"> {{ inputAddress|raw }}</div>
+            </div>
+            <div class="form-group">  
+              <div class="col-lg-12 control-label"> {{ LANG.note }}</div>
+              <div class="col-lg-12"> {{ inputDesc|raw }}</div>
+            </div>
+            <div class="form-group">  
+              <div class="col-lg-12 control-label"> {{ LANG.zipcode }}</div>
+              <div class="col-lg-12"> {{ inputZipCode|raw }}</div>
+            </div> 
+            <div class="form-group">  
+              <div class="col-lg-12 control-label">{{ LANG.location }}</div>
+                <div class="col-lg-12 map-address-panel" style="margin-bottom: 1em;">                
+                      <input class="form-control input-map-address" type="text" id="address-geocoding-add" placeholder="Contoh: Monas, Jakarta" value="">
+                      {{ hidLatLngAdd|raw }}
+                      <div class="btn btn-primary" style="margin: .5em 0;" onclick="geocodeAddress('', 'add')">{{ LANG.search }}</div>
+                      <div class="maps">
+                        <div id="add" style="width: 100%; height: 400px; margin-top: 0.5em;"></div>
+                      </div>
+                </div> 
+            </div> 
+          </div>
+      <div class="flex justify-content-end">
+        <div class="label-show">{{ btnAddNewAdress|raw }}</div>
+        <div class="input-show">{{ btnSubmit|raw }}</div>
+        <div class="input-show">{{ btnCancel|raw }}</div>
+      </div>
+    </form>   
+  </div>
+    
+    {% for item in rsShippingAddress %} 
+    <form method="post" class="form-horizontal form-default prevent-form-submit form-multiaddress"  action="/ajax-member.php">
+      {{ inputHidAction|raw }}
+      <div class="address-item">
+        <div class="btn-edit-panel flex justify-content-end">
+          <div class="icon-button btn-edit label-show"><i class="fa-solid fa-pen"></i> {{ LANG.edit }}</div>
+          <div class="icon-button btn-delete label-show mnv-delete"><i class="far fa-trash-alt"></i></div>
+          <div class="icon-button btn-save input-show">{{ btnSubmit|raw }}</div>
+          <div class="icon-button btn-cancel input-show text-red-cardinal"><i class="fa-solid fa-xmark"></i> {{ LANG.cancel }}</div>
+        </div>
+        <div class="label-text label-show">
+          <div class="shipping-name"> {{ item.name }}</div>
+          <div class="shipping-pic"> {{ item.pic }}</div>
+          <div class="shipping-phone"> {{ item.phone }}</div>
+          <div class="shipping-address">{{ item.address|nl2br }}</div>
+          <div class="shipping-zipcode"  >{{ item.zipcode }}</div>
+          <div class="shipping-latlng" style="display: none;"  >{{ item.latlng }}</div>
+        </div>   
+        <div class="input-text input-show">
+            <div class="form-group">  
+              <div class="col-lg-12 control-label"> {{ LANG.label }}</div>
+              <div class="col-lg-12"> {{ item.inputName|raw }}{{ item.hidDetailKey|raw }}</div> 
+            </div> 
+          
+            <div class="form-group">  
+              <div class="col-lg-12 control-label"> {{ LANG.recipientName }}</div>
+              <div class="col-lg-12"> {{ item.inputPIC|raw }}</div> 
+            </div>  
+            <div class="form-group">  
+              <div class="col-lg-12 control-label"> {{ LANG.phone }}</div>
+              <div class="col-lg-12"> {{ item.inputPhone|raw }}</div> 
+            </div> 
+
+            <div class="form-group">  
+              <div class="col-lg-12 control-label"> {{ LANG.address }}</div>
+              <div class="col-lg-12"> {{ item.inputAddress|raw }}</div>
+            </div>
+            <div class="form-group">  
+              <div class="col-lg-12 control-label"> {{ LANG.note }}</div>
+              <div class="col-lg-12"> {{ item.inputDesc|raw }}</div>
+            </div>
+            <div class="form-group">  
+              <div class="col-lg-12 control-label"> {{ LANG.zipcode }}</div>
+              <div class="col-lg-12"> {{ item.inputZipCode|raw }}</div>
+            </div>
+            <div class="form-group">  
+              <div class="col-lg-12 control-label">{{ LANG.location }}</div>
+                <div class="col-lg-12 map-address-panel" style="margin-bottom: 1em;">                
+                    <input class="form-control input-map-address" style="margin-right: 1em;" type="text" id="address-geocoding-edit-{{ loop.index }}" placeholder="Contoh: Monas, Jakarta" value="">
+                    <input name="hidLatLngEdit[]" class="form-control" data-map="edit-{{ loop.index }}" value="" type="hidden">
+                    <div class="btn btn-primary" style="margin: .5em 0;" onclick="geocodeAddress('', 'edit-{{ loop.index }}')">{{ LANG.search }}</div>
+                    <div class="maps">
+                      <div id="edit-{{ loop.index }}" style="width: 100%; height: 400px;"></div>
+                    </div>
+                </div> 
+            </div>  
+        </div>
+        </div>
+    </form>
+    {% endfor %}
+  </div>
+
+{% endblock %}

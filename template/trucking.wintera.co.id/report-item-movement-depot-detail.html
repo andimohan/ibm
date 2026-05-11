@@ -1,0 +1,22 @@
+{% extends "template.html" %} 
+{% block pagetitle %}{{ title }} | {{ parent() }}{% endblock %}
+{% block contenttitle %}  
+<div class="title">
+<h1>{{ title|upper }}</h1>
+<div class="line"></div>
+</div> 
+{% endblock %}
+{% block content %}  
+{{ movementkey }}
+
+<div class="div-table"> 
+<div class="div-table-row">
+<div class="div-table-col-3">
+test
+</div>
+<div class="div-table-col-3">
+434
+</div>
+</div>
+</div>
+{% endblock %}

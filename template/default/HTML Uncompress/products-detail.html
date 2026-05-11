@@ -1,0 +1,217 @@
+{% extends "template.html" %}
+{% set item = rsItem[0] %}   
+{% block JS %}    
+<script  type="text/javascript"> 
+		
+function notifyme(itemkey){ 
+	$.ajax({
+		type: "POST",
+		url: "/ajax-emailblast.php",
+		data: "itemKey="+itemkey,
+		success: function(result){   
+			alert("{{ LANG.notificationSuccessMessage }}");
+		}	
+	});  
+}
+
+</script>
+{% endblock %}
+
+{% block JSOnLoad %}
+{{ parent() }} 
+Galleria.run('#galleria', { 
+		imageCrop: false
+	});
+   
+	$(".item-variant-link .panel-data").click(function (){ 
+		$(".item-variant-link .panel-data").removeClass("selected");
+		$(this).addClass("selected");	
+		$(".price .value").html($(this).attr("relprice"));
+		$("[name='hiditemkey[]']").val($(this).attr("relpkey"));
+	});
+	
+	$(".item-variant-link:first .panel-data").click(); 
+	
+	$('#order-form')
+				.bootstrapValidator({ 
+					feedbackIcons: {
+						valid: 'glyphicon glyphicon-ok',
+						invalid: 'glyphicon glyphicon-remove',
+						validating: 'glyphicon glyphicon-refresh'
+				},
+				fields: {
+					orderQty: {
+						validators: { 
+							greaterThan: {
+								value: 0,
+								inclusive: false,
+								separator: ',', 
+								message: '{{ ERRORMSG.qty[1] }}'
+							}
+						}
+					},
+				
+				}
+			})
+			.on('success.form.bv', function(e) {
+				// Prevent form submission
+				e.preventDefault(); 
+				// Get the form instance
+				var $form = $(e.target);
+	
+				// Get the BootstrapValidator instance
+				var bv = $form.data('bootstrapValidator');
+	
+				// Use Ajax to submit form data
+				$.post($form.attr('action'), $form.serialize(), function(result) {
+					// alert("Your message has been sent and we will be in touch with you as soon as possible.");
+					 updateCartStatus();
+					 location.href="/cart";
+				}, 'json');
+			});
+	
+	$(".button-notify").click(function() {   
+		{% if loginName is empty %}	
+			alert('{{ LANG.loginRequired }}');	
+		{% else %}
+			notifyme('{{ rsItem[0].pkey }}');
+		{% endif %} 
+		
+	});  
+	
+{% endblock %}    
+
+{% block pagetitle %}{%if rsItem[0].name is empty %}{{ rsItem[0].code|raw }}{%else %}{{ rsItem[0].name|raw }}{% endif %} | {{ parent() }}{% endblock %}  
+{% block headerMenu %}  
+  {{ macro.buildProductCategoriesSubmenu(_context) }} 
+{% endblock %} 
+
+{% block contenttitle %} 
+    <div class=" title" >
+        <h1>{%if rsItem[0].name is empty %}{{ rsItem[0].code|raw }}{%else %}{{ rsItem[0].name|raw }}{% endif %}</h1>
+         <tag> 
+            {% for parent in categoryPath|reverse %}  
+                <a href="/products/{{ parent.pkey|e }}/{{ parent.name|urlfilter|raw }}">{{ parent.name|raw }}</a> 
+                {% if loop.index != loop.length %}/{% endif %}
+            {% endfor %} 
+         </tag>
+    </div>	 
+{% endblock %}
+{% block content %}  
+ 
+	<div class="div-table item-detail" style="width:100%;">
+          <div class="div-table-caption">
+                <div class="fb-plugin" style="padding-left:0.5em">
+                 {% if not settings.FBLikeScript is empty %}
+                    {{ settings.FBLikeScript|replace({'{{ PAGE_LINK }}': settings.sitesName ~ REQUEST_URI})|raw }}
+                 {% endif %}     
+                 </div>
+            </div>
+        
+        <div class="div-table-row item-detail-row"> 
+             <div class="div-table-col-5  item-detail-col" >
+                <div id="galleria">
+                        {% for itemImage in rsItemImage %}  
+                              <img src="/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}item/{{ item.pkey }}/{{ itemImage.file }}&hash={{ itemImage.phpThumbHash }}"> 
+                        {% endfor %} 
+                </div> 
+            </div> 
+             <div class="div-table-col-5 item-detail-col" style="width:23em; vertical-align:top;">
+                  <form name="order-form" id="order-form" class="form-horizontal  prevent-form-submit" action="/ajax-cart.php" method="post">
+                    {{ inputHidItemkey|raw }}
+                    {{ inputHidAction|raw }} 
+             			
+                    {% if rsVariant|length > 0 %}
+						<ul class="item-variant">
+                          {% for variant in rsVariant %} 
+							<li  {% if variant.qtyonhand > 0 %}class="item-variant-link user-select-none"{% endif %}><div class="panel-data" relpkey="{{ variant.pkey }}" relprice="{{ variant.sellingprice|number_format }}">{{ variant.codevariant }}</div></li>                         
+                          {% endfor %}
+                        </ul>	    
+                        <div style="clear:both; height:1em;"></div>   	             
+                    {% endif %}
+                     
+                    <div class="price"><span class="value">{{ item.sellingprice|number_format }}</span> <span style="font-size:0.6em">IDR</span></div>
+                    
+                    <div style="clear:both; height:1em"></div>
+                  
+                     <div class="div-table" style="width:100%;"> 
+                            <div class="div-table-row form-group">
+                                <div class="div-table-col-5" >
+                                  	   <strong>{{ LANG.code }}</strong>  
+                                </div>
+                                <div class="div-table-col-5">
+                                     {{ item.code|e }} 
+                                </div> 
+                              </div>
+                          
+                         	  <div class="div-table-row form-group">
+                                <div class="div-table-col-5" >
+                                  	   <strong>{{ LANG.brand }}</strong>  
+                                </div>
+                                <div class="div-table-col-5">
+                                     {{ item.brandname|e }} 
+                                </div> 
+                              </div>
+                              <div class="div-table-row form-group">
+                                <div class="div-table-col-5" >
+                                   <strong>{{ LANG.availability }}</strong>
+                                </div>
+                                <div class="div-table-col-5"> 
+                                    {% if item.qtyonhand == 0 %}
+                                        <span class="text-red-cardinal">{{ LANG.outOfStock }}</span>
+                                    {% elseif item.qtyonhand <= settings.lowStockThreshold %}
+                                        <span class="text-yellow-mikado">{{ LANG.lowStock }}</span> 
+                                    {% else %}
+                                        <span class="text-green-avocado">{{ LANG.inStock }}</span> 
+                                    {% endif %}
+                                  </div> 
+                              </div> 
+                          
+                         {% if item.qtyonhand != 0 %}
+                             <div class="div-table-row form-group"> 
+                                <div class="div-table-col-5" style="vertical-align:middle;" >
+                                    <label class="col-lg-2 control-label" style="text-align:left; padding:0; margin:0"><strong>{{ LANG.qty }}</strong></label> 
+                                </div>
+                                <div class="div-table-col-5">
+                                    <div class="col-lg-10" style="padding:0">  {{ inputQty|raw }} </div>
+                                </div> 
+                              </div>  
+                        {% endif %} 
+                      
+                             
+                      </div>
+             
+                        <div style="clear:both; height:1em"></div>
+                        
+                        {% if item.qtyonhand == 0 %}
+                          <div class="button-notify user-select-none" title="{{ LANG.notifyMe }}">{{ LANG.notifyMe }}</div>
+                        {% else %}
+                      	  {{ btnSubmit|raw }}
+                        {% endif %} 
+                        
+                       
+             </form>   
+
+            </div>
+        </div> 
+    </div> 
+    
+ <div style="clear:both;"></div> 
+  <div class="item-description"> 
+    <div class="content-title" >
+        <div class=" title" >
+            <h2>{{ LANG.productDescription }}</h2> 
+        </div>	   
+    </div>
+      
+    {% if rsItemDescription|length > 0 %}
+    <ul >
+         {% for itemDescription in rsItemDescription %} 
+            <li><div class="title">{{ itemDescription.label }}</div><div class="value">{{ itemDescription.value|raw }}</div></li> 
+         {% endfor %} 
+    </ul>
+    {% else %}
+    	<div>{{ LANG.noDescriptionAvailable }}</div>
+     {% endif %}
+	</div> 
+{% endblock %} 

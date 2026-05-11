@@ -1,0 +1,113 @@
+{% macro getMedsosIcon(variables,label) %}    
+    {% if label|lower == "fb" or label|lower == "facebook" %}  
+        {% set FA_ICON = "fab fa-facebook-square" %}
+    {% elseif label|lower == "instagram" %}  
+        {% set FA_ICON = "fab fa-instagram" %}
+    {% elseif label|lower == "twitter" %}  
+        {% set FA_ICON = "fab fa-twitter" %}
+    {% elseif label|lower == "youtube" %}  
+        {% set FA_ICON = "fab fa-youtube" %}
+    {% elseif label|lower == "linkedin" %}  
+        {% set FA_ICON = "fab fa-linkedin-in" %}
+    {% elseif label|lower == "tiktok" %}  
+        {% set FA_ICON = "fa-brands fa-tiktok" %} 
+    {% endif %}  
+    {{ FA_ICON }}
+{% endmacro %}
+
+{% macro getMarketplaceIcon(variables,label) %}    
+    {% set imgPath = variables.TEMPLATE_IMG_PATH %}
+    {% if label|lower == "tokopedia" %}  
+        {% set FA_ICON = "tokopedia.png" %}
+    {% elseif label|lower == "shopee" %}  
+        {% set FA_ICON = "shopee.png" %}
+    {% elseif label|lower == "blibli" %}  
+        {% set FA_ICON = "blibli.png" %} 
+    {% elseif label|lower == "tiktok" %}  
+        {% set FA_ICON = "tiktok.png" %} 
+    {% endif %}  
+    <img src="{{ imgPath }}{{ FA_ICON }}" > 
+{% endmacro %}
+
+{% macro buildPagePath(variables,overwritePath = '',className='') %}    
+<div class="page-path {% if not className is empty %}{{ className }}{% endif %} " >
+	<div class="content-wrapper">
+		<div class="flex">
+		<div><a href="/"><i class="fas fa-home"></i></a></div>
+		<div><i class="fas fa-chevron-right"></i></div>
+		<div><a href="{{ variables.REQUEST_URI }}">
+			{% if  overwritePath is empty %}
+				{{ variables.PAGE_NAME }}
+			{% else %}
+			 	{{ overwritePath }}
+			{% endif %} 
+			</a></div>
+		</div>
+	</div>
+</div>
+{% endmacro %} 
+
+{% macro buildPageList(variables,pagePath,pageOpt) %}    
+    {% set totalPages = variables.totalPages %}  
+    {% set pageIndex = variables.pageIndex %}   
+    {% set pageUrlParam = variables.pageUrlParam %}  
+	{% set pageVar = 'page' %}
+
+	{% if not pageOpt is empty %}
+		{% set totalPages = pageOpt.totalPages %} 
+		{% set pageIndex = pageOpt.pageIndex %} 
+		{% set pageVar = pageOpt.pageVar %} 
+	{% endif %}
+
+    {% if totalPages > 0 %}  
+       <div class="page-list-margin"></div> 
+        <ul class="prev-next-page">
+        {% if pageIndex == 0 %}
+        {% set class, url = 'inactive-prev-next-page','replaceurl' %}
+        {% else %}
+        {% set class, url = '', '<a href="/' ~ pagePath ~ '/0" title="' ~ LANG.firstPage ~ '">replaceurl</a>' %}
+        {% endif %}
+        {{ url|replace({'replaceurl':'<li class="' ~ class ~ '">First</li>'})|raw }}
+        {% if pageIndex > 0 %}
+        {% set class, url = '','<a href="/' ~ pagePath ~ '/' ~  (pageIndex-1) ~ '" title="' ~ LANG.previousPage ~ '">replaceurl</a>' %}
+        {% else %}
+        {% set class, url = 'inactive-prev-next-page', 'replaceurl' %}
+        {% endif %}
+        {{ url|replace({'replaceurl':'<li class="' ~ class ~ '">Prev</li>'})|raw }}
+        {% if pageIndex < (totalPages-1) %}
+        {% set class, url = '','<a href="/' ~ pagePath ~ '/' ~  (pageIndex+1) ~ '" title="' ~ LANG.nextPage ~ '">replaceurl</a>' %}
+        {% else %}
+        {% set class, url = 'inactive-prev-next-page', 'replaceurl' %}
+        {% endif %}
+        {{ url|replace({'replaceurl':'<li class="' ~ class ~ '">Next</li>'})|raw }}
+        {% if pageIndex == (totalPages-1) %}
+        {% set class, url = 'inactive-prev-next-page', 'replaceurl' %}
+        {% else %}
+        {% set class, url = '','<a href="/' ~ pagePath ~ '/' ~  (totalPages-1) ~ '" title="' ~ LANG.lastPage ~ '">replaceurl</a>' %}
+        {% endif %}
+        {{ url|replace({'replaceurl':'<li class="' ~ class ~ '">Last</li>'})|raw }}
+        </ul>
+        <ul class="page">
+        {% set visiblePages = 5 %}
+        {% set showOthers = 1 %}
+        {% for i in 0..totalPages-1 %}
+        {% if i == 0 or i == totalPages -1 or (i > pageIndex - visiblePages and i < pageIndex + visiblePages) %}
+        {% set showOthers = 1 %}
+        {% if pageIndex == i %}
+        {% set class, url = 'page-active', 'replaceurl' %}
+        {% else %}
+        {% set class, url = '','<a href="/' ~ pagePath ~ '&'~ pageVar ~'=' ~ i  ~ pageUrlParam ~ '" title="' ~ LANG.page ~ ' ' ~  (i + 1) ~ '">replaceurl</a>' %}
+        {% endif %}
+        {{ url|replace({'replaceurl':'<li class="' ~ class ~ '">' ~ (i+1) ~ '</li>'})|raw }}
+        {% else %}
+        {% if showOthers == 1%}
+        <li class="ellipsis">&middot;&middot;&middot;</li>
+        {% set showOthers = 0 %}
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+        </ul>
+        <div class="page-list-margin"></div>  
+     {% endif %}        
+                   
+{% endmacro %} 

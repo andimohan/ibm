@@ -1,0 +1,162 @@
+{% extends "template.html" %}
+{% import "twigMacro.html" as macro %}  
+{% block pagetitle %}{{ parent() }}{% endblock %} 
+{% block CSS %} 
+<link rel="stylesheet" type="text/css" href="{{ TEMPLATE_CSS_PATH }}tooltipster.bundle.min.css" />
+{% endblock %} 
+{% block JS %}
+<script type="text/javascript" src="{{ TEMPLATE_JS_PATH }}tooltipster.bundle.min.js"></script>
+<script type="text/javascript" src="{{ TEMPLATE_JS_PAGE_PATH }}products.js"></script>
+<script>
+    jQuery(document).ready(function(){   
+     
+     var opt = new Array();    
+     var errMsg = new Array();  
+     var lang = new Array();   
+     
+    errMsg['email'] = {{ ERRORMSG.email|json_encode()|raw }}; 
+    lang['registrationSuccessful'] = "{{ LANG.registrationSuccessful|raw }}";
+    
+    
+     opt['errMsg'] = errMsg;
+     opt['lang'] = lang; 
+    
+     var products = new Products(opt); 
+     products.loadOnReady(); 
+
+    })
+</script>
+{% endblock %}
+
+{% block content %}
+
+<div class="section-break-4"></div>
+<div class="content-wrapper">
+    <div class="flex justify-content-center tagline-image-panel">
+        <div class="tagline-text">
+            <div class="tagline">
+                <h1 class="font-title italic">Tagline tagline tagline</h1>
+                <h1 class="font-title italic">Tagline tagline tagline</h1>
+                <h1 class="font-title italic">Tagline tagline tagline</h1>
+                <div class="sub-tagline">
+                    <div><h4>Tagline Tagline Tagline</h4></div>
+                    <div><h4>Tagline Tagline Tagline</h4></div>
+                    <div><h4>Tagline Tagline Tagline</h4></div>
+                </div>
+            </div>
+        </div>
+        <div class="tagline-image text-center">
+            <img src="{{ TEMPLATE_IMG_PATH }}hero-image-product.png" alt="img" class="image-tagline">
+        </div>
+    </div>
+</div>
+<div class="section-break-4"></div>
+<div class="filter-wrapper">
+    <div class="flex filter-hide hide-mobile">
+        <div class="flex filter-hide-panel">
+            <img src="{{ TEMPLATE_IMG_PATH }}filter.svg" alt="">
+            <h2 class="font-libre-baskerville text-blue-sbox text-filter">{{ LANG.hideFilters }}</h2>
+            <div class="text-center">
+                <i class="fas fa-chevron-up text-blue-sbox"></i>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-break-4"></div>  
+<div class="flex align-items-start mobile-flex-column">
+    <div class="aside-panel hide-mobile">
+        <div>
+            <h2 class="text-category">{{ LANG.category }}</h2>
+            <!-- <ul class="category-tree list-none">
+                {% for parentData in compiledItemCategory[0].childnode %}
+                    <li class="category-item">
+                        <label class="flex category-label">
+                            <div class="checkbox-wrapper">
+                                <input 
+                                    type="checkbox" 
+                                    class="checkbox" 
+                                    data-category-id="{{ parentData.pkey }}" 
+                                    data-category-name="{{ parentData.name }}">
+                                <div class="checkbox-custom"></div>
+                            </div>
+                            <span class="category-text">{{ parentData.name|raw }}</span>
+                        </label>
+                    </li>
+                {% endfor %}
+            </ul> -->
+            <!-- <ul class="category-tree list-none">
+                {% for parentData in rsItemCategory %}
+                    <li class="category-item">
+                        <label class="flex category-label">
+                            <div class="checkbox-wrapper">
+                                <input 
+                                    type="checkbox" 
+                                    class="checkbox" 
+                                    data-category-id="{{ parentData.pkey }}" 
+                                    data-category-name="{{ parentData.name }}">
+                                <div class="checkbox-custom"></div>
+                            </div>
+                            <span class="category-text">{{ parentData.name|raw }}</span>
+                        </label>
+                    </li>
+                {% endfor %}
+            </ul> -->
+            <ul id="categoryTree" class="category-tree list-none">
+                <a href="/products" class="category-text">{{ LANG.allCategory }}</a>
+                {% for parentData in rsItemCategory %}
+                <a href="/products/{{ parentData.name|urlfilter }}/cat={{ parentData.pkey }}">
+                        <li class="category-item {% if parentData.parentkey != 0 %}child{% endif %}"
+                        data-category-id="{{ parentData.pkey }}"
+                        data-parent-id="{{ parentData.parentkey }}">
+                        <span class="category-text">{{ parentData.name|raw }}</span>
+                    </li>
+                </a>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="consume mobile-products">
+        <!-- <div class="section-break-2"></div>   -->
+
+        <!-- {% set path = 'products/' %} 
+        <div class="page-list flex">
+            <div class="hide-mobile">{{ rsItem|length }} {{ LANG.productsShown|lower }}</div>
+            <div class="hide-mobile">|</div>
+            <div>{{ LANG.page }}:</div>
+            <div>{{ macro.buildPageList(_context,path) }}</div>
+        </div>  -->
+        <!-- <div class="section-break-2"></div>   -->
+        <!-- PRODUCT START --> 
+        <ul class="item-card-list"> 
+            
+            {% for data in rsItem %}
+                {% set favClass = (data.pkey in arrFavKey) ? 'text-red-cardinal' : ''  %}
+                <li class="item-card">
+                    <div class="item-card-panel">
+                        <div class="image-panel">
+                            <div class="tag">Popular</div>
+                            <div class="like"><i class="btn-fav far fa-heart fa-lg {{ favClass }} " relkey="{{ data.pkey }}"></i></div> 
+                            <a href="/products-detail/{{ data.name|urlfilter|raw }}/{{ data.pkey }}">
+                                <div class="skeleton-img"></div>
+                                <img src="/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}item/{{ data.pkey }}/{{ data.mainimage }}&f=png&far=C&&hash={{  getPHPThumbHash(data.mainimage) }}" alt="image" class="img-product hidden" onload="this.previousElementSibling.style.display='none'; this.classList.remove('hidden');">
+                            </a>
+                        </div>
+                        <div class="price-panel ">
+                            <div class="item-name auto-height" ><a href="/products-detail/{{ data.name|urlfilter|raw }}/{{ data.pkey }}" class="name font-libre-baskerville">{{ data.name|raw }}</a></div>
+                            <!-- <div class="item-name">{{ data.categoryname }}</div> -->
+                            <div class="price-subpanel">
+                                <div class="price">Rp {{ data.sellingprice|number_format }}</div>
+                            </div>
+                        </div>                        
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+        <!-- PRODUCT END -->
+        <div class="section-break-2"></div> 
+     
+    </div>
+</div>
+
+
+{% endblock %}

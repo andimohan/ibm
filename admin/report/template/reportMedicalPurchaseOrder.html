@@ -1,0 +1,54 @@
+{% extends "template.html" %}
+{% block JS %}
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+
+
+    });
+</script>
+{% endblock %}
+{% block filter %}
+<div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label">Kode</label>
+        <div class="col-xs-12"> {{ inputCode|raw }} </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label">JO Kode</label>
+        <div class="col-xs-12"> {{ inputJOCode|raw }} </div>
+    </div>
+    <div class="form-group  mnv-date-range">
+        <label class="col-xs-12 control-label" >Periode</label>
+        <div class="col-xs-6" style="padding-right:5px;"> {{ inputStartDate|raw }} </div>
+        <div class="col-xs-6" style="padding-left:5px;"> {{ inputEndDate|raw }} </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label">Jenis Guarantee Letter</label>
+        <div class="col-xs-12"> {{ inputSelGuaranteeType|raw }} </div>
+    </div>
+    <div class="form-group  mnv-date-range">
+        <label class="col-xs-12 control-label">Nama Tertanggung</label>
+        <div class="col-xs-12"> {{ inputInsuredName|raw }} </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label">Pemasok</label>
+        <div class="col-xs-12"> {{ inputSelSupplier|raw }} </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label">Perusahaan Asuransi</label>
+        <div class="col-xs-12"> {{ inputselInsuranceCompany|raw }} </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label">Status</label>
+        <div class="col-xs-12">
+            {{ inputSelStatus|raw }}
+        </div>
+    </div>
+    <div class="form-group" style="margin-bottom:0">
+        <label class="col-xs-12 control-label" >{{ LANG.others }}</label> 
+    </div>
+    <div class="form-group">  
+        <div class="col-xs-12"> {{ inputIsDetail|raw }} <span style="margin-left: 5px">{{ LANG.showDetail }}</span></div>
+    </div> 
+</div>
+{% endblock %}

@@ -1,0 +1,242 @@
+RewriteEngine On 
+Options -Indexes
+
+## EXPIRES CACHING ##
+<IfModule mod_expires.c> 
+ExpiresActive On
+
+# Add correct content-type for fonts
+AddType application/vnd.ms-fontobject .eot
+AddType font/ttf .ttf
+AddType font/otf .otf
+AddType font/woff .woff
+AddType font/woff2 .woff2
+AddType image/svg+xml .svg
+
+ExpiresByType image/jpg "access plus 1 month"
+ExpiresByType image/jpeg "access plus 1 month"
+ExpiresByType image/gif "access plus 1 month"
+ExpiresByType image/png "access plus 1 month"
+ExpiresByType image/svg+xml "access plus 1 month"
+ExpiresByType text/css "access plus 1 month" 
+ExpiresByType text/javascript "access plus 1 month"
+ExpiresByType text/x-javascript "access plus 1 month"
+ExpiresByType application/javascript "access plus 1 month"  
+ExpiresByType application/x-javascript "access plus 1 month"
+ExpiresByType image/x-icon "access plus 1 year" 
+
+ExpiresByType application/vnd.ms-fontobject "access plus 1 year"
+ExpiresByType font/ttf "access plus 1 year"
+ExpiresByType font/otf "access plus 1 year"
+ExpiresByType font/woff "access plus 1 year"
+ExpiresByType font/woff2 "access plus 1 year"
+ExpiresByType image/svg+xml "access plus 1 year"
+
+<FilesMatch "\.(js|css|xml|gz)$">
+    Header append Vary: Accept-Encoding
+</FilesMatch>
+  
+</IfModule>
+
+<filesMatch ".(ico|pdf|flv|jpg|jpeg|png|gif|js|css|swf)$">
+ Header set Cache-Control "max-age=2628000, public"
+</filesMatch>
+ 
+RewriteRule (^|/).git(/|$) - [F]
+
+## EXPIRES CACHING ## 
+
+######## COMPRESION ########
+<ifModule mod_gzip.c>
+mod_gzip_on Yes
+mod_gzip_dechunk Yes
+mod_gzip_item_include file .(html?|txt|css|js|php|pl)$
+mod_gzip_item_include handler ^cgi-script$
+mod_gzip_item_include mime ^text/.*
+mod_gzip_item_include mime ^application/x-javascript.*
+mod_gzip_item_exclude mime ^image/.*
+mod_gzip_item_exclude rspheader ^Content-Encoding:.*gzip.*
+</ifModule>
+
+<IfModule mod_deflate.c>
+  # Compress HTML, CSS, JavaScript, Text, XML and fonts
+  AddOutputFilterByType DEFLATE application/javascript
+  AddOutputFilterByType DEFLATE application/rss+xml
+  AddOutputFilterByType DEFLATE application/vnd.ms-fontobject
+  AddOutputFilterByType DEFLATE application/x-font
+  AddOutputFilterByType DEFLATE application/x-font-opentype
+  AddOutputFilterByType DEFLATE application/x-font-otf
+  AddOutputFilterByType DEFLATE application/x-font-truetype
+  AddOutputFilterByType DEFLATE application/x-font-ttf
+  AddOutputFilterByType DEFLATE application/x-javascript
+  AddOutputFilterByType DEFLATE application/xhtml+xml
+  AddOutputFilterByType DEFLATE application/xml
+  AddOutputFilterByType DEFLATE font/opentype
+  AddOutputFilterByType DEFLATE font/otf
+  AddOutputFilterByType DEFLATE font/ttf
+  AddOutputFilterByType DEFLATE image/svg+xml
+  AddOutputFilterByType DEFLATE image/x-icon
+  AddOutputFilterByType DEFLATE text/css
+  AddOutputFilterByType DEFLATE text/html
+  AddOutputFilterByType DEFLATE text/javascript
+  AddOutputFilterByType DEFLATE text/plain
+  AddOutputFilterByType DEFLATE text/xml 
+
+  # Remove browser bugs (only needed for really old browsers)
+  BrowserMatch ^Mozilla/4 gzip-only-text/html
+  BrowserMatch ^Mozilla/4\.0[678] no-gzip
+  BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+  
+  #katanya model lama, masaalh utk google bot
+  #Header append Vary User-Agent
+  Header append Vary Accept-Encoding
+  
+</IfModule>
+
+######## COMPRESION ########
+
+ 
+RewriteBase /
+RewriteCond %{REMOTE_ADDR} !127.0.0.1
+RewriteCond %{HTTPS} !=on [OR] 
+RewriteCond %{HTTP_HOST} ^www\. [NC]
+RewriteCond %{HTTP_HOST} ^(?:www\.)?(.+)$ [NC]
+RewriteRule ^(.*) https://%1%{REQUEST_URI} [R=301,L]
+   
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)/$ /$1 [L,R=301]
+
+ErrorDocument 404 /error-page.php?id=404
+ErrorDocument 500 /error-page.php?id=500
+ErrorDocument 403 /error-page.php?id=403
+  
+RewriteRule ^under-maintenance$ under-maintenance.php [NC,L]
+
+RewriteRule ^j=(.*)$ index.php?referral=$1  [NC,L] 
+
+RewriteRule ^list$ list.php  [NC,L]   
+RewriteRule ^product-quick-view/(.*)/(.*)$ product-quick-view.php?id=$1 [NC,L]    
+ 
+RewriteRule ^products/(.*)/(.*)$ products.php?$2 [NC,L] 
+RewriteRule ^products/(.*)$ products.php?$1 [NC,L] 
+RewriteRule ^products-detail/(.*)/(.*)$ products-detail.php?id=$2 [NC,L]    
+
+RewriteRule ^product-categories/(.*)/(.*)$ product-categories.php?id=$2 [NC,L] 
+RewriteRule ^product-categories/(.*)$ product-categories.php?$1 [NC,L] 
+
+RewriteRule ^careers/(.*)$ careers.php?$1 [NC,L] 
+RewriteRule ^career-detail/(.*)/([0-9]+)$ career-detail.php?id=$2 [NC,L]    
+RewriteRule ^recruitment/(.*)/([0-9]+)$ recruitment.php?jobkey=$2 [NC,L]    
+
+RewriteRule ^download-list/(.*)$ download-list.php?$1 [NC,L] 
+
+RewriteRule ^gallery/(.*)/([0-9]+)$ gallery.php?$1 [NC,L] 
+RewriteRule ^gallery-detail/(.*)/([0-9]+)$ gallery-detail.php?id=$2 [NC,L]        
+
+RewriteRule ^gallery-hr/(.*)/([0-9]+)$ gallery-hr.php?catkey=$2 [NC,L] 
+RewriteRule ^gallery-hr-detail/(.*)/([0-9]+)$ gallery-hr-detail.php?id=$2 [NC,L]        
+
+RewriteRule ^activation/([0-9]+)/(.*)$ activation.php?pkey=$1&activationhashkey=$2 [NC,L] 
+RewriteRule ^account-recovery/([0-9]+)/(.*)$ account-recovery.php?pkey=$1&activationhashkey=$2 [NC,L]   
+RewriteRule ^invoice/([0-9]+)/(.*)/([0-9]+)$ invoice.php?invoicekey=$1&token=$2&forEmail=$3 [NC,L]   
+RewriteRule ^invoice/([0-9]+)/(.*)$ invoice.php?invoicekey=$1&token=$2 [NC,L]    
+RewriteRule ^news/(.*)/(.*)$ news.php?$2 [NC,L] 
+RewriteRule ^news/(.*)$ news.php?$1 [NC,L] 
+RewriteRule ^news-detail/(.*)/([0-9]+)$ news-detail.php?id=$2 [NC,L]
+
+RewriteRule ^investor-news/(.*)/(.*)$ investor-news.php?$2 [NC,L] 
+RewriteRule ^investor-news/(.*)$ investor-news.php?$1 [NC,L] 
+RewriteRule ^investor-news-detail/(.*)/([0-9]+)$ investor-news-detail.php?id=$2 [NC,L]
+
+
+RewriteRule ^articles/(.*)/(.*)$ articles.php?$2 [NC,L] 
+RewriteRule ^articles/(.*)$ articles.php?$1 [NC,L] 
+RewriteRule ^article-detail/(.*)/([0-9]+)$ article-detail.php?id=$2 [NC,L]   
+ 
+RewriteRule ^events/(.*)/(.*)$ events.php?$2 [NC,L]
+RewriteRule ^events/(.*)$ events.php?$1 [NC,L]
+RewriteRule ^event-detail/(.*)/([0-9]+)$ event-detail.php?id=$2 [NC,L]   
+
+RewriteRule ^services/(.*)/(.*)$ services.php?$2 [NC,L] 
+RewriteRule ^services/(.*)$ services.php?$1 [NC,L] 
+RewriteRule ^service-detail/(.*)/([0-9]+)$ service-detail.php?id=$2 [NC,L]    
+
+RewriteRule ^service-category/([0-9]+)/(.*)$ service-category.php?cat=$1&$2 [NC,L]  
+RewriteRule ^download/(.*)$ download.php?$1 [NC,L]
+RewriteRule ^report-item-movement-depot/detail/([0-9]+)$ report-item-movement-depot-detail.php?id=$1 [NC,L]
+RewriteRule ^lazada-update-auth/(.*)$ lazada-update-auth.php?code=$1 [NC,L]
+RewriteRule ^lazada-callback/(.*)$ lazada-callback.php?domain=$1 [QSA] 
+RewriteRule ^payment-process/(.*)/([0-9]+)$ payment-process.php?action=$1&id=$2 [NC,L]  
+RewriteRule ^course/([0-9]+)/(.*)$ course.php?cat=$1 [NC,L]  
+RewriteRule ^help/([0-9]+)/(.*)$ help.php?page=$1 [NC,L]    
+RewriteRule ^quiz-detail/([0-9]+)/(.*)$ quiz-detail.php?id=$1 [NC,L]
+RewriteRule ^simulator/(.*)/([0-9]+)$ simulator.php?id=$2 [NC,L]   
+RewriteRule ^transaction-history/(.*)$ transaction-history.php?$1 [NC,L]
+RewriteRule ^transaction-history-detail/([0-9]+)$  transaction-history-detail.php?id=$1 [NC,L]    
+
+RewriteRule ^print/(.*)/[0-9,]$ print.php?filename=$1&id=$2 [NC,L]
+
+RewriteRule ^popup-voucher-tnc/([0-9]+)$ popup-voucher-tnc.php?id=$1 [NC,L]
+
+#RewriteRule ^registration/(.*)$ registration.php?ref=$1 [NC,L] 
+RewriteRule ^registration/(.*)$ registration.php?$1 [NC,L]  
+RewriteRule ^member-directory/(.*)$ member-directory.php?$1 [NC,L] 
+
+RewriteRule ^find-meeting/(.*)/(.*)$ find-meeting.php?online=$1&$2 [NC,L]   
+RewriteRule ^find-meeting/(.*)$ find-meeting.php?online=$1 [NC,L]   
+RewriteRule ^join-meeting/([0-9]+)$ join-meeting.php?id=$1 [NC,L]    
+RewriteRule ^host-meeting/(.*)$ host-meeting.php?$1 [NC,L]    
+RewriteRule ^one-meeting/(.*)$ one-meeting.php?$1 [NC,L]   
+RewriteRule ^give-opportunity/(.*)$ give-opportunity.php?$1 [NC,L]   
+RewriteRule ^referral/(.*)$ referral.php?$1 [NC,L]    
+RewriteRule ^testimonial/(.*)$ testimonial.php?$1 [NC,L]    
+
+RewriteRule ^invoice-list/(.*)$ invoice-list.php?$1 [NC,L]    
+
+RewriteRule ^payment/(.*)/(.*)/(.*)$ payment.php?module=$1&code=$2&checksum=$3 [NC,L]
+
+RewriteRule ^management-profile/(.*)/(.*)$ management-profile.php?id=$2 [NC,L] 
+RewriteRule ^achievement-detail/(.*)/(.*)$ achievement-detail.php?id=$2 [NC,L] 
+
+RewriteRule ^brand-detail/(.*)/(.*)$ brand-detail.php?id=$2 [NC,L]   
+RewriteRule ^subsidiaries-detail/(.*)/(.*)$ subsidiaries-detail.php?id=$2 [NC,L]   
+
+RewriteRule ^stores/(.*)$ stores.php?$1 [NC,L]   
+RewriteRule ^csr/(.*)/(.*)$ csr.php?$2 [NC,L]   
+RewriteRule ^csr-detail/(.*)/([0-9]+)$ csr-detail.php?id=$2 [NC,L]
+
+RewriteRule ^good-corporate-government/(.*)/(.*)$ good-corporate-government.php?$2 [NC,L]   
+RewriteRule ^gcg-management-profile/(.*)/(.*)$ gcg-management-profile.php?$2 [NC,L] 
+
+RewriteRule ^job-order-list/(.*)$ job-order-list.php?$1 [NC,L]    
+RewriteRule ^invoice-trucking-list/(.*)$ invoice-trucking-list.php?$1 [NC,L]    
+RewriteRule ^ar-outstanding-list/(.*)$ ar-outstanding-list.php?$1 [NC,L]    
+RewriteRule ^ar-payment-list/(.*)$ ar-payment-list.php?$1 [NC,L]     
+RewriteRule ^prepaid-tax23-list/(.*)$ prepaid-tax23-list.php?$1 [NC,L]    
+RewriteRule ^ap-outstanding-list/(.*)$ ap-outstanding-list.php?$1 [NC,L]    
+RewriteRule ^ap-payment-list/(.*)$ ap-payment-list.php?$1 [NC,L]
+RewriteRule ^work-order-map/([0-9]+)$ work-order-map.php?wokey=$1 [NC,L]
+RewriteRule ^payment-success/([0-9]+)/(.*)$  payment-success.php?id=$1&token=$2 [NC,L]
+RewriteRule ^vso/(.*)$  validate.php?module=salesorder&token=$1 [NC,L]
+RewriteRule ^customer-issue/([0-9]+)$ customer-issue.php?id=$1 [NC,L]
+
+RewriteRule ^faq-detail/(.*)/([0-9]+)$ faq-detail.php?id=$2 [NC,L]
+
+#robots
+# If NOT the main domain → force robots-deny.txt
+RewriteCond %{HTTP_HOST} !^wintera\.co\.id$ [NC]
+RewriteRule ^robots\.txt$ robots/robots-deny.txt [L]
+
+# Main domain → allow default robots.txt
+RewriteRule ^robots\.txt$ robots/robots.txt [L]
+
+
+#PENTING UTK CKFINDER
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d    
+RewriteRule ^(.*)\.html$ page.php?page=$1 [L,QSA]
+
+#Removing file extensions
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^(.*)$ $1.php

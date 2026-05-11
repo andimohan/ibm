@@ -1,0 +1,91 @@
+{% extends "template.html" %} 
+{% block JS %}
+<script type="text/javascript">
+
+	jQuery(document).ready(function(){ 
+          
+        $( "[name=trStartDate], [name=trEndDate]" ).change(function() { 
+            var trStartDate = Date.parse(convertDateToStandartFormat($("[name=trStartDate]").val()));
+            var trEndDate = Date.parse(convertDateToStandartFormat($("[name=trEndDate]").val()));
+               
+            if (trStartDate > trEndDate) 
+                $("[name=trEndDate]").val($("[name=trStartDate]").val()); 
+            
+		});
+		
+
+		// bisa pake tp salah pengaplikasian, "detail" bisa tdk dicentang jg, meskipun grouping tdk dicentang
+//        $( "[name=dummyisShowDetail], [name=dummyisGrouping]" ).click(function() {
+//		 
+//			var checked = $(this).is(':checked');  
+//			var selectedName = $(this).attr("name");
+//			  
+//			$(".choose-one-opt").not($(this)).each(function() {
+//				   
+//				$(this).prop("checked",!checked); 
+//				  
+//			  $(this).val((!checked) ? 1 : 0 )	
+//			  $(this).next().val( (!checked) ? 1 : 0 );
+//			}); 
+//		});
+        
+		$( "[name=dummyisGrouping]" ).click(function() {
+		 
+			var checked = $(this).is(':checked'); 
+			if(checked) return;
+			
+			$( "[name=dummyisShowDetail]" ).prop("checked",false);  
+			$( "[name=isShowDetail]" ).val(0);  
+		});
+		
+         
+	});
+
+</script>
+{% endblock %}
+{% block filter %} 
+ <div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Kode</label>
+        <div class="col-xs-12"> {{ inputSalesCode|raw }} </div>
+    </div> 
+	<div class="form-group mnv-date-range">
+        <label class="col-xs-12 control-label" >{{ LANG.period }}</label> 
+        <div class="col-xs-12" style="margin-bottom: 0.2em"> {{ inputSelDateType|raw }} </div>
+        <div class="col-xs-6" style="padding-right:5px;"> {{ inputStartDate|raw }} </div>
+        <div class="col-xs-6" style="padding-left:5px;"> {{ inputEndDate|raw }} </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Business Location</label>
+        <div class="col-xs-12"> {{ inputSelWarehouse|raw }}</div>
+    </div>
+      <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.supplier }}</label>
+        <div class="col-xs-12"> {{ inputSelSupplier|raw }}</div>
+    </div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.containerType }}</label>
+        <div class="col-xs-12"> {{ inputSelContainer|raw }}</div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.service }}</label>
+        <div class="col-xs-12"> {{ inputSelService|raw }}</div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.currency }}</label>
+        <div class="col-xs-12"> {{ inputSelCurrency|raw }}</div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Status</label>
+        <div class="col-xs-12"> {{ inputSelStatus|raw }} </div> 
+    </div> 
+	     <div class="form-group" style="margin-bottom:0">
+        <label class="col-xs-12 control-label" >{{ LANG.others }}</label> 
+    </div>   
+    <div class="form-group">  
+        <div class="col-xs-12">{{ inputIsShowDetail|raw }}<span style="margin-left: 5px">Detail</span></div>
+        <div class="col-xs-12">{{ inputIsGrouping|raw }}<span style="margin-left: 5px">Group</span></div>
+    </div>   
+     
+ </div>	 
+{% endblock %}

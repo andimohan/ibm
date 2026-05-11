@@ -1,0 +1,43 @@
+{% extends "template.html" %}
+{% block JS %}
+
+<script type="text/javascript">
+ 
+	jQuery(document).ready(function(){   
+     //setAutoComplete('filterForm', {objName:'supplierName', objValue :'hidSupplierKey', url : 'ajax-supplier.php?action=searchData' });
+    })
+    
+</script>
+{% endblock %}
+{% block filter %}
+ <div >  
+     
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Kode</label>
+        <div class="col-xs-12"> {{ inputCode|raw }} </div>
+    </div> 
+    {% if PLAN_TYPE.categorykey == 2 or  PLAN_TYPE.categorykey == 5 %}
+     <div class="form-group">
+        <label class="col-xs-12 control-label" >Kode Ref</label>
+        <div class="col-xs-12"> {{ inputRefCode|raw }} </div>
+    </div> 
+    {% endif %}
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Periode</label>
+        <div class="col-xs-6" style="padding-right:5px;"> {{ inputStartDate|raw }} </div>
+        <div class="col-xs-6" style="padding-left:5px;"> {{ inputEndDate|raw }} </div>
+    </div>  
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Pemasok</label>
+         <div class="col-xs-12"> {{ inputSelSupplier|raw }} </div>
+    </div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Gudang</label>
+        <div class="col-xs-12"> {{ inputSelWarehouse|raw }} </div>
+    </div> 
+	 <div class="form-group">
+        <label class="col-xs-12 control-label" >Status</label>
+        <div class="col-xs-12"> {{ inputSelStatus|raw }}  </div>
+    </div>
+ </div>	 
+{% endblock %}

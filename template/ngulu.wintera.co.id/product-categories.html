@@ -1,0 +1,41 @@
+{% extends "template.html" %}
+{% set itemCategory = itemCategory[0] %}
+{% set categoryPath = categoryPath[0] %} 
+{% set ACTIVE_MENU = ACTIVE_MENU|merge(['/brands']) %}
+
+{% block pagetitle %}{% if itemCategory.name is empty %}{{ LANG.ourProducts }}{% else %}{{ itemCategory.name }}{% endif %}{% endblock %} 
+{% block JS %}
+<script type="text/javascript" src="{{ TEMPLATE_JS_PAGE_PATH }}product-categories.min.js"></script>
+<script type="text/javascript" >
+jQuery(document).ready(function(){   
+ var opt = new Array();     
+ var productCategories = new ProductCategories(opt);
+ productCategories.loadOnReady();
+})
+</script>
+{% endblock %}   
+{% block content %} 
+<div class="page-title" style="text-align: center">
+    <div style="text-align: left; display: inline-block">
+        <h3>{{ LANG.products }}</h3>
+        <h1>{% if itemCategory.name is empty %}{{ LANG.products }}{% else %}{{ itemCategory.name }}{% endif %}.</h1>
+    </div>
+</div>
+<div class="hero flex align-items-stretch">  
+    {% for data in childCategory %} 
+        <div class="consume img-bg" style="background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0,0, 0, 0.5)), url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}item-category/{{ data.pkey }}/{{  data.file }}&hash={{  getPHPThumbHash(data.file) }}'); " >
+            <div class="categories-desc-panel"> 
+                <h2>{{ data.name }}.</h2>
+                <div class="auto-height">{{ data.shortdescription|nl2br }}</div>
+                <div style="clear: both; height: 2em"></div>
+                {% if categoryPath.level >= 1 %}
+                    {% set link = '/products/autocat=1&cat=' ~ data.pkey %}
+                {% else %} 
+                    {% set link = '/product-categories/' ~ data.name|urlfilter ~ '/' ~  data.pkey %}
+                {% endif %}  
+                <div class="btn-01"><a href="{{ link }}">{{ LANG.readMore }} <i class="fas fa-arrow-right"></i></a></div>
+            </div>
+        </div>
+    {% endfor %} 
+</div>
+{% endblock %}

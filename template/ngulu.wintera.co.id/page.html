@@ -1,0 +1,18 @@
+{% extends "template.html" %}
+{% block pagetitle %}{{ title }}{% endblock %}  
+
+{% block CSSInline %}
+  <style>
+       .menu-bar {background: rgb(21,5,79); background: linear-gradient(153deg, rgba(21,5,79,1) 27%, rgba(61,7,99,1) 77%); }
+  </style>  
+{% endblock %}    
+
+{% block content %}
+<!--<div style="height:80px"></div>-->
+<!--<div class="content-wrapper">-->
+
+<div class="free-page">
+{{ content|raw }}
+</div>
+<!--</div>-->
+{% endblock %}

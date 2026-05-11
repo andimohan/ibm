@@ -1,0 +1,69 @@
+{% extends "template.html" %}
+{% block JS %}
+<script type="text/javascript"> 
+	jQuery(document).ready(function(){ 
+        $("#car").hide();
+        $('[name=selType]').change(function() { 
+            var selType = $("[name=selType]").val();
+            $(".showVehicle").hide();
+            $("#show"+selType).show();
+        }); 
+    }); 
+</script>
+{% endblock %}
+{% block filter %}
+ <div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Kode</label>
+        <div class="col-xs-12"> {{ inputCode|raw }} </div>
+    </div>
+     
+    <div class="form-group  mnv-date-range">
+        <label class="col-xs-12 control-label" >Periode</label>
+        <div class="col-xs-6" style="padding-right:5px;"> {{ inputStartDate|raw }} </div>
+        <div class="col-xs-6" style="padding-left:5px;"> {{ inputEndDate|raw }} </div>
+    </div>
+     <div class="form-group">
+        <label class="col-xs-12 control-label" >Teknisi</label>
+        <div class="col-xs-12"> {{ inputSelTechnician|raw }} </div> 
+    </div>
+          <div class="form-group">
+        <label class="col-xs-12 control-label" >Supplier</label>
+        <div class="col-xs-12"> {{ inputSelSupplier|raw }} </div> 
+    </div>
+     <div class="form-group" id="selection">
+        <label class="col-xs-12 control-label" >Jenis</label>
+        <div class="col-xs-12" > {{ inputSelType|raw }} </div> 
+    </div>
+     <div class="showVehicle form-group" id="show2" style="display: none">
+        <label class="col-xs-12 control-label" >No Chasis</label>
+        <div class="col-xs-12"> {{ inputSelChassis|raw }} </div> 
+    </div>
+     <div class="showVehicle form-group" id="show1">
+        <label class="col-xs-12 control-label" >No Polisi</label>
+        <div class="col-xs-12"> {{ inputSelCar|raw }} </div> 
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.warehouse }}</label>
+        <div class="col-xs-12"> {{ inputSelWarehouse|raw }}</div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.itemCategory }}</label>
+        <div class="col-xs-12"> {{ inputSelItemCategory|raw }}</div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.item }}</label>
+        <div class="col-xs-12"> {{ inputSelItem|raw }}</div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Status</label>
+        <div class="col-xs-12"> {{ inputSelStatus|raw }} </div> 
+    </div>  
+     <div class="form-group" style="margin-bottom:0">
+        <label class="col-xs-12 control-label" >{{ LANG.others }}</label> 
+    </div>   
+     <div class="form-group">  
+        <div class="col-xs-12"> {{ inputIsGrouping|raw }} <span style="margin-left: 5px">Grouping</span></div>
+    </div> 
+ </div>	 
+{% endblock %}

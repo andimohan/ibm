@@ -1,0 +1,63 @@
+{% extends "template.html" %}
+{% block pagetitle %}{{ LANG.AIAnalysis }} | {{ parent() }}{% endblock %} 
+
+{% block JS %} 
+<script>
+let progress = 0;
+const bar = document.querySelector('.ai-progress-bar');
+
+const fakeProgress = setInterval(() => {
+    if (progress < 90) {
+        progress += Math.random() * 5;
+        bar.style.width = progress + '%';
+    }
+}, 400);
+
+
+$.ajax({
+    url: "/ajax-ai.php",
+    type: "POST",
+    data: {
+        domain: $("[name='domain']").val(),
+        fileData: $("[name='fileData']").val(),
+        data:  $("[name='data']").val()
+    },
+    success: function (response) {
+        clearInterval(fakeProgress);
+        bar.style.width = "100%";
+        $(".ai-progress-wrapper").remove();
+        
+        setTimeout(() => {
+            $(".ai-response").html(response);
+        }, 300);
+    },
+    error: function () {
+        clearInterval(fakeProgress);
+        $(".ai-response").html("<b>Terjadi kesalahan.</b>");
+    }
+});
+</script>
+
+{% endblock %}
+{% block content %}
+<div class="content-wrapper">
+<div style="clear: both; height: 4em"></div>
+{{ inputHidFileData|raw }}{{ inputHidDomain|raw }}{{ inputHidData|raw }}
+    
+<div class="ai-progress-wrapper">
+    <div class="ai-progress-bar"></div>
+</div>
+
+    
+<div class="ai-response">
+<span class="loading-icon fas fa-spinner fa-spin"></span> Mohon menunggu, AI nya sedang berpikir keras ...
+</div>
+<div style="clear: both; height: 2em"></div>
+
+<div style="font-size:0.9em; color:#666;" >
+<i>Disclaimer: Halaman analisa ini dihasilkan dengan bantuan kecerdasan buatan (Artificial Intelligence/AI) berdasarkan data dan informasi yang tersedia pada saat pembuatan. Meskipun telah diupayakan untuk menyajikan analisa yang akurat dan relevan, hasil yang ditampilkan tidak menjamin ketepatan, kelengkapan, maupun kesesuaian untuk tujuan tertentu. Pengguna diharapkan melakukan verifikasi tambahan dan menggunakan pertimbangan profesional sebelum mengambil keputusan berdasarkan informasi pada halaman ini.</i>
+</div>
+
+<div style="clear: both; height: 4em"></div>
+</div>
+{% endblock %}

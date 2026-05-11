@@ -1,0 +1,145 @@
+{% extends "template.html" %}
+{% block pagetitle %}{{ parent() }}{% endblock %} 
+{% block CSS %}
+<!--<link rel="stylesheet" type="text/css" href="{{ TEMPLATE_CSS_PATH }}slick-all.css">-->
+{% endblock %} 
+{% block JS %}
+<script type="text/javascript" src="{{ TEMPLATE_JS_PATH }}galleria-1.6.1.min.js"></script>  
+<script type="text/javascript" src="{{ TEMPLATE_JS_PATH }}slick.min.js"></script>
+<script type="text/javascript" src="{{ TEMPLATE_JS_PAGE_PATH }}index.min.js"></script>
+<script type="text/javascript" >
+jQuery(document).ready(function(){   
+ 
+	var opt = new Array();    
+	var errMsg = new Array();  
+	var lang = new Array();     
+
+	errMsg['email'] = {{ ERRORMSG.email|json_encode()|raw }}; 
+	lang['registrationSuccessful'] = "{{ LANG.registrationSuccessful|raw }}";
+
+	opt['errMsg'] = errMsg;
+	opt['lang'] = lang;
+ 
+    var index = new Index(opt); 
+	index.loadOnReady(); 
+
+})
+</script>
+{% endblock %}
+{% block content %}
+<ul class="hero slick-list" >    
+{% for data in banner['slide show'] %}   
+    <li class="slick-slide">  
+        {% if data.file|ext == 'mp4' %}
+            <video class="banner" {% if data.isloop == 1 %}loop{% endif %} id="vid" src="{{ DEFAULT_URL_UPLOAD_PATH }}banner/{{ data.pkey }}/{{ data.file }}" autoplay muted style="object-fit: cover;"></video>
+        {% else %}
+           <div class="banner img-bg" style="width:100%; background-image: url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}banner/{{ data.pkey }}/{{  data.file }}&hash={{  getPHPThumbHash(data.file) }}'); ">
+				<div class="banner-desc" >{{ data.trdesc|raw|nl2br }}</div>
+		   </div> 
+        {% endif %}       
+    </li>
+{% endfor %}  
+</ul>
+
+<div class="content-wrapper">
+    
+<div class="section-break-6"></div>
+	
+<div class="who-we-are">
+    {{ page['index-who-we-are'].detail|raw }}
+</div> 
+<div class="section-break-4"></div>
+<div class="company-point flex flex-mobile"> 
+		{{ page['company-point'].detail|raw }}
+</div>	
+	
+<div class="section-break-8"></div>
+	
+<ul class="product-list">  
+{% for data in rsFeaturedItem %}  
+	  <li>
+		
+		<div class="content-panel">
+			<div class="img-panel img-bg" style="background-image: url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}item/{{ data.pkey }}/{{  data.mainimage }}&hash={{  getPHPThumbHash(data.mainimage) }}'"></div>
+			<div class="item-name"><a href="/">{{ data.name }}</a></div> 
+			<div class="item-desc auto-height">{{ data.shortdescription }}</div> 
+			<div style="clear: both; height: 2em"></div>
+			<a href="/products-detail/{{ data.name|urlfilter }}/{{ data.pkey }}" class="btn-link">{{ LANG.detailProduct }}</a>
+		</div>        
+	</li> 
+{% endfor %}  
+</ul> 
+
+<div class="section-break-4"></div>
+<div style="width: 40%; border-top:1px solid #999; margin: auto"></div>	
+<div class="section-break-4"></div>
+	
+<h2 style="text-align: center">{% if not rsNextEvents is empty %}{{ LANG.upcomingEvent }}{% else %}{{ LANG.latestEvent }}{% endif %}</h2>
+<div class="section-break-2"></div>
+<div class="event-list div-table mobile-table">  
+{% for data in featuredEvents %}     
+		<div class="div-table-row">
+			<div class="img-col div-table-col-5">
+				<a href="/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}event/{{ data.pkey }}/{{  data.image }}&hash={{  getPHPThumbHash(data.image) }}" target="_blank"><img src="/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}event/{{ data.pkey }}/{{  data.image }}&hash={{  getPHPThumbHash(data.image) }}"></a> 
+			</div> 
+			<div class="div-table-col-5"> 
+				<h3><div class="title"><a href="/event-detail/{{ data.title|urlfilter }}/{{ data.pkey }}">{{ data.title }}</a></div></h3>
+				<div class="auto-height item-desc">{{ data.detail|raw }}</div>   
+			</div>
+		</div> 
+{% endfor %}  
+</div> 
+	
+<div class="section-break-8"></div>
+</div>    
+
+
+<div class="article-section">
+	
+	<div class="content-wrapper">
+		<div class="article-list div-table mobile-table">  
+		{% for data in rsLatestFeaturedArticles %}     
+				<div class="div-table-row">
+					<div class="div-table-col-5"> 
+						<h2><div class="title"><a href="/">{{ data.title }}</a></div> </h2> 
+						<div class="auto-height item-desc">{{ data.shortdesc|raw|nl2br }}</div>  
+						<div style="clear: both; height: 2em"></div>
+						<a href="/article-detail/{{ data.title|urlfilter }}/{{ data.pkey }}" class="btn-link">{{ LANG.readMore }}</a>
+					</div>
+					<div class="div-table-col-5">
+						<div class="img-panel img-bg" style="background-image: url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}article/{{ data.pkey }}/{{  data.image }}&hash={{  getPHPThumbHash(data.image) }}'"></div>
+					</div> 
+				</div> 
+		{% endfor %}  
+		</div>
+	</div>
+
+</div>	
+
+
+<div class="content-wrapper">
+<div class="section-break-4"></div>
+<div class="company-production flex flex-mobile"> 
+	<div class="img-panel"><img src="/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}page/{{ page['index-production'].pkey }}/{{  page['index-production'].file }}&hash={{  getPHPThumbHash(page['index-production'].file) }}"></div>
+	<div class="consume">{{ page['index-production'].detail|raw }}</div> 
+</div>	
+<div class="section-break-4"></div>
+</div>
+	  
+<div class="newsletter"> 
+ 	<div class="content-wrapper">
+		{{ LANG.popupSignup|raw }}
+		<div class="section-break-2"></div>
+		<form id="form-subscription" method="post"  class="form-horizontal form-default prevent-form-submit" action="/ajax-newsletter.php">  
+			 {{ inputHidActionNewsletter|raw }}
+			<div class="notification-msg"></div>  
+			<div class="form-group"> 
+				<div class="col-sm-10" style="padding-right: 0; padding-left: 0; padding-bottom: 1em"> 
+					  {{ inputSubscribeNewsletterPlaceholder|raw }}  
+				</div> 
+				<div class="col-sm-2" style="padding-right: 0 ">{{ btnSubmitSubscribeNewsletter|raw }}</div>
+			</div> 
+		 </form>
+	</div>
+</div>
+{% endblock %}

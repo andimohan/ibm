@@ -1,0 +1,47 @@
+{% extends "template-html.html" %}
+{% block JS %}  
+<script type="text/javascript"> 
+        
+    function expandLevel(obj){  	 
+            var liObj = obj.closest("tr");
+            var id = liObj.attr("relId");   
+
+             if (liObj.hasClass("expand")){
+                $( "." + id).removeClass("expand").hide();
+                liObj.removeClass("expand");
+             }else{
+                $( "[relParentId="+id+"]").show();
+                liObj.addClass("expand");
+             }
+        } 
+    
+</script>
+{% endblock %} 
+
+{% block filter %}  
+ <div>  
+     <div class="form-group">
+        <label class="col-xs-12 control-label" >Periode</label>
+        <div class="col-xs-12"> 
+            <div>{{ inputEndDate|raw }} </div> 
+        </div>
+    </div>  
+	 
+	 <div class="form-group" style="margin-bottom:0">
+        <label class="col-xs-12 control-label" >{{ LANG.others }}</label> 
+    </div>   
+     <div class="form-group">  
+        <div class="col-xs-12">
+            {{ inputIsHideEmptyAmount|raw }} <span style="margin-left: 5px">{{ LANG.hideEmptyAmount }}</span><br> 
+         </div>
+    </div>  
+	 
+	 
+	 
+</div>	 
+{% endblock %} 
+{% block reportContent %} 
+<table class="html-report main-table">    
+    <tbody></tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "template.html" %}  
+{% block filter %}
+{{ inputHidItemKey|raw }}
+ <div>  
+     <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.warehouse }}</label>
+        <div class="col-xs-12"> {{ inputSelWarehouse|raw }}</div>
+    </div>
+    <!--<div class="form-group">
+        <label class="col-xs-12 control-label" >Kode</label>
+        <div class="col-xs-12">
+            {{ inputCarCode|raw }}
+        </div>
+    </div>-->
+	<div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.carRegistrationNumber }}</label>
+        <div class="col-xs-12">
+            {{ inputCarNumber|raw }}
+        </div>
+    </div> 
+     <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.WOCode }}</label>
+        <div class="col-xs-12">
+            {{ inputWOCode|raw }}
+        </div>
+    </div> 
+      <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.category }}</label>
+        <div class="col-xs-12">
+            {{ inputSelCategory|raw }}
+        </div>
+    </div> 
+      <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.supplier }}</label>
+        <div class="col-xs-12">
+            {{ inputSelSupplier|raw }}
+        </div>
+    </div>   
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.status }}</label>
+        <div class="col-xs-12">
+            {{ inputSelStatus|raw }}
+        </div>
+    </div>   
+     
+      <div class="form-group" style="margin-bottom:0">
+        <label class="col-xs-12 control-label" >{{ LANG.others }}</label> 
+    </div>   
+     <div class="form-group">  
+        <div class="col-xs-12"> {{ inputIsAvailable|raw }} <span style="margin-left: 5px">{{ LANG.availableOnly }}</span></div>
+    </div> 
+    
+ </div>
+{% endblock %}
+

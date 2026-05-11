@@ -1,0 +1,73 @@
+{% extends "template.html" %}
+{% block pagetitle %}{{ LANG.carStatusReport }}{% endblock %}
+{% block reporttitle %}{{ LANG.carStatusReport }}{% endblock %}
+{% block JS %}
+<script type="text/javascript"> 
+jQuery(document).ready(function(){ 
+         
+    //setAutoComplete('filterForm', {objName:'carNumber', objValue :'hidCarKey', url : 'ajax-car.php?action=searchData' });
+    //setAutoComplete('filterForm', {objName:'driverName', objValue :'hidSalesKey', url : 'ajax-employee.php?action=searchData&isdriver=1' });
+        
+        
+    $( "[name=trStartDate], [name=trEndDate]" ).change(function() { 
+        var trStartDate = Date.parse(convertDateToStandartFormat($("[name=trStartDate]").val()));
+        var trEndDate = Date.parse(convertDateToStandartFormat($("[name=trEndDate]").val()));
+               
+        if (trStartDate > trEndDate) 
+            $("[name=trEndDate]").val($("[name=trStartDate]").val()); 
+            
+    });
+        
+         
+});
+</script>
+{% endblock %}
+{% block filter %}
+{{ inputHidDriverKey|raw }}
+{{ inputHidCarKey|raw }}
+ <div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >No Polisi</label>
+        <div class="col-xs-12">
+            {{ inputCarNumber|raw }}
+        </div>
+    </div>
+	<div class="form-group">
+        <label class="col-xs-12 control-label" >Kode Spk</label>
+        <div class="col-xs-12">
+            {{ inputWorkOrderCode|raw }}
+        </div>
+    </div> 
+     <div class="form-group">
+        <label class="col-xs-12 control-label" >Supir</label>
+        <div class="col-xs-12">
+            {{ inputDriverName|raw }}
+        </div>
+    </div>
+     <div class="form-group">
+        <label class="col-xs-12 control-label" >Tgl. SPK</label>
+        <div class="col-xs-6" style="padding-right:5px;"> {{ inputStartDateTime|raw }} </div>
+        <div class="col-xs-6" style="padding-left:5px;"> {{ inputEndDateTime|raw }} </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Status</label>
+        <div class="col-xs-12">
+            {{ inputSelStatus|raw }}
+        </div>
+    </div>   
+    
+ </div>	 
+{% endblock %} 
+{% block reportContent %}
+<table class="main-table" style="width:1000px">
+    <tr class="table-header"> 
+        <td style="width:40px; text-align:right;">No. </td> 
+        <td style="width:100px;" class="sortable" relcol="policenumber">No. Polisi</td> 
+        <td class="sortable" relcol="code">No. SPK</td>  
+		<td style="width:120px; text-align:center; " class="sortable" relcol="trdate" >Tgl. Transaksi</td>
+        <td style="width:250px;" class="sortable" relcol="drivername">Supir</td> 
+        <td style="width:70px" class="sortable" relcol="statusname"  >Status</td> 
+	</tr>  
+</table>
+{% endblock %}
+

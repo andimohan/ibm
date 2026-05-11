@@ -1,0 +1,52 @@
+{% extends "template.html" %} 
+{% block JS %} 
+<script type="text/javascript">
+ 
+	jQuery(document).ready(function(){   
+        // setAutoComplete('filterForm', {objName:'costName', objValue :'hidCostKey', url : 'ajax-item.php?action=searchData&itemtype=2&serviceCost=1&moduleCost=trucking&addOutsource=1' }); 
+ 	});
+
+</script>
+{% endblock %}
+{% block filter %}  
+ <div >   
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.code }}</label>
+        <div class="col-xs-12"> {{ inputCode|raw }} </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.period }}</label>
+        <label class="col-xs-12 control-label" style="margin-bottom:0.5em">{{ inputTransactionType|raw }}</label>  
+        <div class="col-xs-6" style="padding-right:5px;"> {{ inputStartDate|raw }} </div>
+        <div class="col-xs-6" style="padding-left:5px;"> {{ inputEndDate|raw }} </div>
+    </div>   
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.warehouse }}</label>
+        <div class="col-xs-12"> {{ inputSelWarehouse|raw }} </div> 
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.category }}</label>
+        <div class="col-xs-12"> {{ inputSelCategory|raw }} </div> 
+    </div>
+     <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.refCode }}</label>
+        <div class="col-xs-12"> {{ inputRefCode|raw }} </div>
+    </div>  
+     <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.si }}</label>
+        <div class="col-xs-12"> {{ inputDONumber|raw }} </div>
+    </div>  
+    <!-- <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.cost }}</label>
+        <div class="col-xs-12"> {{ inputCostName|raw }} </div>
+    </div>   -->
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.cost }}</label>
+        <div class="col-xs-12"> {{ inputSelCost|raw }} </div>
+    </div>  
+     <div class="form-group">  
+        <label class="col-xs-12 control-label" >{{ LANG.othersOption }}</label>
+        <div class="col-xs-12"> {{ inputIsGrouping|raw }} <span style="margin-left: 5px">{{ LANG.group }}</span></div> 
+    </div>   
+ </div>  
+{% endblock %}

@@ -1,0 +1,177 @@
+{% extends "template.html" %}
+{% block pagetitle %}{{ LANG.events}} | {{ parent() }}{% endblock %}
+
+{% block JSOnLoad %}   
+ {{ parent() }}
+ 
+ $('.upcoming-events').slick({
+  dots: false,
+  autoplay:true,
+  autoplaySpeed:1500,
+  infinite: true,
+  speed: 300,
+  slidesToShow: 2,
+  slidesToScroll: 2,
+  nextArrow: '<i class="fas fa-chevron-right next-arrow"></i>',
+  prevArrow: '<i class="fas fa-chevron-left prev-arrow"></i>',
+  responsive: [ 
+    {
+      breakpoint: 800,
+      settings: {
+        slidesToShow: 1,
+        slidesToScroll: 1
+      }
+    }
+    ]
+});
+ 
+ 
+{% endblock %} 
+
+{% block contenttitle %}
+<div class="content-wrapper"> 
+<div style="clear:both; height: 2em"></div>
+    <div class=" title" > 
+             <h1>{{ LANG.events|upper }}</h1>  
+        <div class="line"></div>
+    </div>	 
+</div>	  
+{% endblock %}
+{% block content %}
+<div class="content-wrapper">  
+<div style="height:2em;"></div>  
+{% if not upcomingEvents is empty %}  
+<div class="upcoming-events">
+{% for event in upcomingEvents %}  
+    <div class="event-list">
+        <div class="image-panel" style="background-image:url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}event/{{ event.pkey }}/{{ event.file }}&w=500&h=500&f=png&hash={{ event.phpThumbHash }}')"></div>
+         <div class="title auto-height">
+            <div class="date">{{ event.eventdatefrom|date('d F Y')  }}</div>
+             <div style="clear:both;"></div> 
+             <a href="/event-detail/{{ event.pkey }}/{{ event.title|urlfilter }}"> {{ event.title|raw }}</a>
+             {% if not event.url is empty %}
+             <div style="clear:both; height:1em"></div>
+             <a href="{{ event.url }}" target="_blank" class="btn-register"><div class="btn btn-primary btn-princeton-orange">{{ LANG.register }}</div></a>
+             <div style="clear:both; height:0.5em"></div>
+             {% endif %}
+        </div>
+    </div>
+{% endfor %}  
+</div>   
+<div class="section-break"></div> 
+<div class="section-title">PAST EVENTS</div>  
+<div style="height:2em;"></div> 
+{% endif %}
+    
+{% if totalPages > 0 %}
+<ul class="prev-next-page">
+{% if pageIndex == 0 %}
+{% set class, url = 'inactive-prev-next-page','replaceurl' %}
+{% else %}
+{% set class, url = '', '<a href="/events/page=0" title="' ~ LANG.firstPage ~ '">replaceurl</a>' %}
+{% endif %}
+{{ url|replace({'replaceurl':'<li class="' ~ class ~ '">First</li>'})|raw }}
+{% if pageIndex > 0 %}
+{% set class, url = '','<a href="/events/page=' ~  (pageIndex-1) ~ '" t title="' ~ LANG.previousPage ~ '">replaceurl</a>' %}
+{% else %}
+{% set class, url = 'inactive-prev-next-page', 'replaceurl' %}
+{% endif %}
+{{ url|replace({'replaceurl':'<li class="' ~ class ~ '">Prev</li>'})|raw }}
+{% if pageIndex < (totalPages-1) %}
+{% set class, url = '','<a href="/events/page=' ~  (pageIndex+1) ~ '" title="' ~ LANG.nextPage ~ '">replaceurl</a>' %}
+{% else %}
+{% set class, url = 'inactive-prev-next-page', 'replaceurl' %}
+{% endif %}
+{{ url|replace({'replaceurl':'<li class="' ~ class ~ '">Next</li>'})|raw }}
+{% if pageIndex == (totalPages-1) %}
+{% set class, url = 'inactive-prev-next-page', 'replaceurl' %}
+{% else %}
+{% set class, url = '','<a href="/events/page=' ~  (totalPages-1) ~ '" title="' ~ LANG.lastPage ~ '">replaceurl</a>' %}
+{% endif %}
+{{ url|replace({'replaceurl':'<li class="' ~ class ~ '">Last</li>'})|raw }}
+</ul>
+<ul class="page">
+{% set visiblePages = 5 %}
+{% set showOthers = 1 %}
+{% for i in 0..totalPages-1 %}
+{% if i == 0 or i == totalPages -1 or (i > pageIndex - visiblePages and i < pageIndex + visiblePages) %}
+{% set showOthers = 1 %}
+{% if pageIndex == i %}
+{% set class, url = 'page-active', 'replaceurl' %}
+{% else %}
+{% set class, url = '','<a href="/events/page=' ~  i ~ '" title="' ~ LANG.page ~ ' ' ~  (i + 1) ~ '">replaceurl</a>' %}
+{% endif %}
+{{ url|replace({'replaceurl':'<li class="' ~ class ~ '">' ~ (i+1) ~ '</li>'})|raw }}
+{% else %}
+{% if showOthers == 1%}
+<li class="ellipsis">&middot;&middot;&middot;</li>
+{% set showOthers = 0 %}
+{% endif %}
+{% endif %}
+{% endfor %}
+</ul>
+{% endif %}
+<div class="div-table events" style="margin: 2em 0"> 
+{% for data in rsEvents %}
+<div class="div-table-row events-row">
+<div class="div-table-col-5" >
+    <a href="/event-detail/{{ data.pkey }}/{{ data.title|urlfilter }}" title="{{ data.title }}">{{ data.title|upper|raw }}</a>
+    <div style="clear:both;"></div> 
+    <div class="date">{{ data.eventdatefrom|date('d F Y') }}</div>
+    <div style="clear:both;"></div>
+    <div class="description">{{ data.shortdesc|replace({"\n":"<br>"})|raw }}</div>
+</div> 
+</div>
+{% endfor %} 
+</div> 
+<div style="clear:both;height:1em"></div>
+{% if totalPages > 0 %}
+<ul class="prev-next-page">
+{% if pageIndex == 0 %}
+{% set class, url = 'inactive-prev-next-page','replaceurl' %}
+{% else %}
+{% set class, url = '', '<a href="/events/page=0" title="' ~ LANG.firstPage ~ '">replaceurl</a>' %}
+{% endif %}
+{{ url|replace({'replaceurl':'<li class="' ~ class ~ '">First</li>'})|raw }}
+{% if pageIndex > 0 %}
+{% set class, url = '','<a href="/events/page=' ~  (pageIndex-1) ~ '" t title="' ~ LANG.previousPage ~ '">replaceurl</a>' %}
+{% else %}
+{% set class, url = 'inactive-prev-next-page', 'replaceurl' %}
+{% endif %}
+{{ url|replace({'replaceurl':'<li class="' ~ class ~ '">Prev</li>'})|raw }}
+{% if pageIndex < (totalPages-1) %}
+{% set class, url = '','<a href="/events/page=' ~  (pageIndex+1) ~ '" title="' ~ LANG.nextPage ~ '">replaceurl</a>' %}
+{% else %}
+{% set class, url = 'inactive-prev-next-page', 'replaceurl' %}
+{% endif %}
+{{ url|replace({'replaceurl':'<li class="' ~ class ~ '">Next</li>'})|raw }}
+{% if pageIndex == (totalPages-1) %}
+{% set class, url = 'inactive-prev-next-page', 'replaceurl' %}
+{% else %}
+{% set class, url = '','<a href="/events/page=' ~  (totalPages-1) ~ '" title="' ~ LANG.lastPage ~ '">replaceurl</a>' %}
+{% endif %}
+{{ url|replace({'replaceurl':'<li class="' ~ class ~ '">Last</li>'})|raw }}
+</ul>
+<ul class="page">
+{% set visiblePages = 5 %}
+{% set showOthers = 1 %}
+{% for i in 0..totalPages-1 %}
+{% if i == 0 or i == totalPages -1 or (i > pageIndex - visiblePages and i < pageIndex + visiblePages) %}
+{% set showOthers = 1 %}
+{% if pageIndex == i %}
+{% set class, url = 'page-active', 'replaceurl' %}
+{% else %}
+{% set class, url = '','<a href="/events/page=' ~  i ~ '" title="' ~ LANG.page ~ ' ' ~  (i + 1) ~ '">replaceurl</a>' %}
+{% endif %}
+{{ url|replace({'replaceurl':'<li class="' ~ class ~ '">' ~ (i+1) ~ '</li>'})|raw }}
+{% else %}
+{% if showOthers == 1%}
+<li class="ellipsis">&middot;&middot;&middot;</li>
+{% set showOthers = 0 %}
+{% endif %}
+{% endif %}
+{% endfor %}
+</ul>
+{% endif %}
+</div>
+{% endblock %}

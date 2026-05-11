@@ -1,0 +1,13 @@
+{% extends "template.html" %}
+{% block pagetitle %}{{ rsArticle[0].title|raw }} | {{ parent() }}{% endblock %}
+{% block contenttitle %}
+<div class="title">
+<h1>{{ rsArticle[0].title|raw }}</h1>
+</div>
+{% endblock %}
+{% block content %}
+<div class="news-detail">
+<div class="publishdate">{{ rsArticle[0].publishdate|date("d M Y") }}</div>
+<div class="detail">{{ rsArticle[0].detail|raw }}</div>
+</div>
+{% endblock %}

@@ -1,0 +1,171 @@
+{% extends "template.html" %}
+{% set ACTIVE_MENU = ['/services.php'] %}  
+{% block pagetitle %}Jasa SEO Profesional untuk Website Bisnis | {{ parent() }}{% endblock %}
+{% block meta %}
+<meta name="title" content="Jasa SEO Profesional untuk Website Bisnis | Wintera">
+<meta name="description"  content="Jasa SEO profesional dari Wintera untuk meningkatkan peringkat Google, traffic organik, dan konversi bisnis. Strategi SEO aman & berkelanjutan.">
+<meta name="keywords" content="jasa SEO profesional, jasa SEO website, jasa SEO bisnis, jasa SEO Indonesia, SEO website perusahaan, jasa optimasi website Google, SEO untuk UMKM dan perusahaan, konsultan SEO profesional, jasa SEO aman sesuai Google">
+<meta name="author" content="{{ settings.companyName }}"> 
+<meta property=og:url content="{{ CANONICAL }}" />
+<meta property=og:site_name content="{{ settings.companyName }}" /> 
+<meta property="og:type" content="{{ META_TYPE }}" />
+<meta property="og:title" content="Jasa SEO Profesional untuk Website Bisnis | Wintera" />
+<meta property="og:description" content="Jasa SEO profesional dari Wintera untuk meningkatkan peringkat Google, traffic organik, dan konversi bisnis. Strategi SEO aman & berkelanjutan." /> 
+<meta property="og:image" content="{{ META_IMAGE }}" /> 
+<meta property="fb:app_id" content="{{ settings.FBAppID }}" /> 
+{% endblock %} 
+{% block JSOnLoad %}
+    $('#form-seo').on('submit', function (e) {
+        e.preventDefault(); // stop default submit first
+
+        const payload = {
+            action: 'seoAnalyze',
+            data: $('input[name="url"]').val()
+        };
+
+        // put JSON into hidden input
+        $('input[name="data"]').val(JSON.stringify(payload));
+
+        // submit form normally (after preparing data)
+        this.submit();
+    });
+
+    // optional: keep button click working explicitly
+    $('input[name="btn-check-url"]').on('click', function () {
+        $('#form-seo').trigger('submit');
+    });
+{% endblock %}
+{% block headerBannerContent %}   
+<div class="service-banner banner-header-panel"> 
+<div class="content-wrapper">
+        <div class="flex  flex-start">
+            <div class="content-desc consume"> 
+                <h1 class="flex flex-center">
+                     <div class="icon-image" style="background-image:url('{{ TEMPLATE_IMG_PATH }}icon-webdev-white.png')"></div>
+                     <div style="margin-left:.3em">SEO Services</div> 
+                </h1>
+                <h2>Jasa SEO Profesional untuk Website Bisnis | Wintera</h2>
+                <div class="tag-line">
+                     Di era digital saat ini, memiliki website saja tidak cukup. Website bisnis harus muncul di halaman pertama Google agar mudah ditemukan oleh calon pelanggan. Wintera hadir sebagai penyedia jasa SEO profesional yang membantu bisnis Anda meningkatkan visibilitas, traffic organik, dan konversi secara berkelanjutan.
+                </div>
+                <!-- <div class="advantage-panel">
+                    <ul class="advantage-list">
+                        <li>Design website yang dibuat khusus untuk Anda</li>
+                        <li>Website responsif dan <i>SEO friendly</i></li>
+                        <li>Dilengkapi dengan <i>Content Management System</i></li>
+                    </ul>
+                </div> -->
+                
+                 <div class="btn-panel" style="margin-top:1em">
+                    <ul class="content-list">
+                        <li ><a class="button btn-white" href="/">{{ LANG.contactUs }}</a></li>
+                    </ul>
+                </div>
+
+            </div>
+            <div class="content-image">
+                <img src="{{ TEMPLATE_IMG_PATH }}webdev-banner.png"> 
+            </div>
+        </div>
+    </div>
+    </div> 
+{% endblock %}
+
+{% block content %} 
+
+<div class="website">
+<div  id="services" >
+<div class="content-wrapper"> 
+        <div>
+        <div style="clear:both; height: 4em"></div>
+        <div style="background: linear-gradient(290deg, #420d7c 0%, #5f259f 50%, #8e44ad 100%);  color: #fff; font-size:1.5em; padding: 2em; margin:auto; border-radius : 0.5em; width: 90%; max-width: 40em">
+            <h3 style="text-align:center;">Analisa Website Anda Gratis.<br>Temukan Cara Tingkatkan Trafik!</h3>
+            <div style="clear:both; height: 2em"></div>
+            <form id="form-seo" action="/ai-analyze" method="POST" > 
+                <div class="flex" style="gap:.5em">
+                <input type="hidden" name="data">
+                <input type="hidden" name="domain" value="https://wintera.co.id">
+                <input type="text" name="url" class="form-control" placeholder="https://">
+                <input type="button" name="btn-check-url" value="Cek sekarang !" class="btn btn-white ">
+                </div>
+            </form> 
+        </div>
+        </div>
+
+                
+        <div style="clear: both; height:5em;"></div>
+        
+                <div class="feature flex">
+                    <div class="img-panel">
+                     <img src="{{ TEMPLATE_IMG_PATH }}design-tailored.png">
+                    </div>
+                    <div class="consume">
+                        <h2>Mengapa SEO Penting untuk Bisnis Anda?</h2>
+                        <div class="desc">
+                            SEO (Search Engine Optimization) memungkinkan website Anda:
+                        </div>
+                        <div class="advantage-panel">
+                        <ul class="advantage-list">
+                            <li>Muncul di hasil pencarian Google tanpa biaya iklan</li>
+                            <li>Mendapatkan traffic berkualitas yang siap membeli</li>
+                            <li>Meningkatkan brand awareness dan kredibilitas</li>
+                            <li>Menghasilkan leads jangka panjang dengan biaya lebih efisien</li>
+                        </ul>  
+                        </div>  
+                    </div>
+                </div>
+                
+                  <div class="feature flex">
+                    <div class="consume">
+                        <h2>Mengapa Memilih Jasa SEO Wintera?</h2>
+                        <div class="advantage-panel">
+                    <ul class="advantage-list">
+                        <li>Strategi SEO berbasis data & bisnis</li>
+                        <li>Tim berpengalaman di berbagai industri</li>
+                        <li>Proses transparan & laporan berkala</li>
+                        <li>Fokus pada traffic berkualitas & konversi</li>
+                        <li>SEO aman sesuai guideline Google</li>
+                        <li>Cocok untuk UMKM hingga perusahaan besar</li>
+                    </ul>  
+                    </div>  
+                    </div>   
+                    <div class="img-panel">
+                     <img src="{{ TEMPLATE_IMG_PATH }}compro.png">
+                    </div>
+                </div>
+                
+                <div class="feature flex">
+                    <div class="img-panel">
+                     <img src="{{ TEMPLATE_IMG_PATH }}responsive.png">
+                    </div>
+                    <div class="consume">
+                        <h2>SEO untuk Pertumbuhan Jangka Panjang</h2>
+                        <div class="desc">
+                           Berbeda dengan iklan berbayar, SEO memberikan hasil yang berkelanjutan. Dengan strategi yang tepat, website Anda akan terus mendapatkan traffic meskipun tanpa biaya iklan harian. <span class="brand-color">Wintera</span> siap menjadi partner digital jangka panjang untuk pertumbuhan bisnis Anda.
+                        </div>  
+                    </div>  
+                </div>
+                
+                  <div class="feature flex">
+                    <div class="consume">
+                        <h2><i>Konsultasi SEO Gratis</i></h2>
+                        <div class="desc">
+                            Ingin tahu potensi SEO website Anda? 
+                            Hubungi tim Wintera sekarang dan dapatkan konsultasi SEO gratis untuk menentukan strategi terbaik sesuai kebutuhan bisnis Anda.
+                        </div>  
+                    </div>   
+                    <div class="img-panel">
+                     <img src="{{ TEMPLATE_IMG_PATH }}cms.png">
+                    </div>
+                    <div class="btn-panel" style="">
+                        <ul class="content-list">
+                            <li ><a class="button btn-white" href="/">{{ LANG.contactUs }}</a></li>
+                        </ul>
+                    </div>
+                </div>
+    </div>
+    </div>
+</div>
+ <div style="clear: both; height:5em;"></div>
+    
+{% endblock %}

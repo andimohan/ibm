@@ -1,0 +1,110 @@
+{% extends "about-us.html" %}
+{% set rsEvent = rsEvent[0] %}
+
+{% if rsEvent.categorykey == 8001 %}
+    {% set isEvent = true %}
+{% else %} 
+    {% set isEvent = false %}
+{% endif %} 
+
+{% block pagetitle %}{{ LANG.eventsAndPromotions|raw }}{% endblock %} 
+{% block CSS %}
+<!--<link rel="stylesheet" type="text/css" href="{{ TEMPLATE_CSS_PATH }}slick-all.css">-->
+{% endblock %} 
+{% block JS %}  
+<!--<script type="text/javascript" src="{{ TEMPLATE_JS_PATH }}slick.min.js"></script>-->
+<script type="text/javascript">
+jQuery(document).ready(function(){   
+  
+    var slider =  $('.event-img-list').slick({
+			  dots: true,
+              lazyLoad: 'ondemand',
+			  autoplay:true,
+			  autoplaySpeed:3000,
+			  infinite: true, 
+			  slidesToShow: 1,
+			  slidesToScroll: 1,
+		}); 
+        
+}); 
+</script> 
+{% endblock %}   
+{% block subcontentTitlePanel %}    
+<div class="main-table-panel flex align-items-start">
+    <div class="side-menu-panel hide-mobile">
+        <a href="/events"><i class="fas fa-arrow-left" style="font-size: 3em; position: absolute; right: 1em; top : 1.7em"></i></a> 
+    </div>
+    <div class="content-panel consume">
+    <div style="clear: both; height: 2em"></div>
+    <div class="page-path"><span class="text-gold"><a href="/events">{{ LANG.eventsAndPromotions|raw }}</a> /</span> {{ rsEvent.title|raw }}</div>
+    <h2 class="page-title" style="margin-top:.5em">{% block subcontentTitle %}{{ rsEvent.title|raw }}{% endblock %}.</h2></div>
+</div>  
+{% endblock %}
+
+{% block subcontent %}    
+<div class="main-table-panel flex" style="align-items: stretch;">
+    <div class="side-menu-panel hide-mobile" style="position: relative; top:0 ">
+          <div class="img-desc">{{ rsEvent.shortdesc|nl2br }}</div>
+    </div>
+    <div class="content-panel consume"> 
+        <ul class="main-slide-img event-img-list">    
+         {% for img in rsItemImage %} 
+            <li class="slick-slide" >  
+                <div class="banner img-bg" style="width:100%; background-image: url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}event/{{ rsEvent.pkey }}/{{ img.file }}&hash={{  getPHPThumbHash(img.file) }}'); "></div>      
+            </li>
+         {% endfor %}  
+        </ul>
+    </div>
+</div>
+<div class="hor-bar-5"></div> 
+<div class="main-table-panel flex align-items-start">
+    <div class="side-menu-panel with-pills hide-mobile"> 
+       <ul>
+           {% if isEvent %} 
+                <li class="selected side-menu-item" rel="event-details">{{ LANG.eventDetails|raw }}</li>
+           {% else %}
+                <li class="selected side-menu-item" rel="mechanism">{{ LANG.promotionMechanism|raw }}</li>
+                <li class="side-menu-item" rel="terms-and-conditions">{{ LANG.termsAndConditions|raw }}</li> 
+           {% endif %}
+        </ul>
+    </div>
+    <div class="content-panel consume"> 
+        
+        {% if isEvent %} 
+            <h2 class="event-details">{{ LANG.eventDetails|raw }}</h2> 
+            {{ rsEvent.detail|raw }} 
+        {% else %}
+            <h2 class="mechanism">{{ LANG.promotionMechanism|raw }}</h2> 
+            {{ rsEvent.mechanismdetail|raw }} 
+
+            <div class="section-break-4"></div>
+
+            <h2 class="terms-and-conditions">{{ LANG.termsAndConditions|raw }}</h2> 
+            {{ rsEvent.termsandconditionsdetail|raw }}
+        {% endif %}
+    </div>
+</div>  
+
+<div class="hor-bar-5"></div>
+        
+<div class="main-table-panel flex align-items-start">
+    <div class="side-menu-panel with-pills hide-mobile"> 
+        <h2>{{ isEvent ? LANG.exploreOtherEvents : LANG.exploreOtherPromotions}}</h2>    
+    </div>
+    <div class="content-panel consume"> 
+        <ul class="ul-list event-list">
+               {% for data in rsOtherEvents %}  
+                <li class="col-3-panel">
+                    <div class="content-panel">
+                    <div class="img-panel img-bg" style="background-image: url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}event/{{ data.pkey }}/{{ data.image }}&f=png&far=C&hash={{  getPHPThumbHash(data.image) }}');">&nbsp;</div>
+                    <div class="auto-height title">
+                        <a href="/event-detail/{{ data.title|urlfilter }}/{{ data.pkey }}" title="{{ data.title }}"> {{ data.title|raw }}</a>
+                    </div>
+                    <div class="tag">{{ data.eventdatefrom|date("d M y") }}</div>
+                    </div>
+                </li>
+                {% endfor %}   
+        </ul>
+    </div>
+</div> 
+{% endblock %}

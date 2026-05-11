@@ -1,0 +1,47 @@
+{% extends "template.html" %} 
+{% block JS %}
+
+<script type="text/javascript">
+    
+    function updateCustomer(obj){ 
+           var templateKey = $("[name=hidTemplateCustomerKey]").val();
+           $.ajax({
+                type: "GET",
+                url:  "../ajax-template-customer.php", 
+                data: "action=getDetailById&pkey=" + templateKey,  
+            }).done(function( data ) {  
+                 data = JSON.parse(data) ;   
+
+                 $("[name='selCustomer[]']:checked").click(); 
+                 for(i=0;i<data.length;i++) 
+                     $("[name='selCustomer[]'][value="+data[i].customerkey+"]:not(:checked)").click();
+
+            }); 
+     } 
+    
+	jQuery(document).ready(function(){    
+        
+    })
+
+</script>
+{% endblock %}
+{% block filter %}
+ <div >   
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.customer }}</label>
+		<div class="col-xs-12" style="margin-bottom: 0.2em"> {{ inputTemplateCustomer|raw }} </div>
+        <div class="col-xs-12"> {{ inputSelCustomer|raw }} </div>
+    </div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.warehouse }}</label>
+        <div class="col-xs-12"> {{ inputSelWarehouse|raw }} </div>
+    </div>   
+    <div class="form-group" style="margin-bottom:0">
+        <label class="col-xs-12 control-label" >{{ LANG.others }}</label> 
+    </div>   
+     <div class="form-group">  
+        <div class="col-xs-12"> {{ inputIsShowDetail|raw }} <span style="margin-left: 5px">{{ LANG.showDetail }}</span></div>
+<!--        <div class="col-xs-12"> {{ inputSplitReimburse|raw }} <span style="margin-left: 5px">{{ LANG.splitReimburse }}</span></div> -->
+    </div> 
+ </div>	 
+{% endblock %}

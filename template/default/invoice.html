@@ -1,0 +1,15 @@
+{% extends "template.html" %}
+{% block pagetitle %}{{ LANG.invoice|raw }} | {{ parent() }}{% endblock %}
+{% block contenttitle %}
+<div class="title">
+<h1>{{ LANG.invoice }}</h1>
+</div>
+{% endblock %}
+{% block content %}
+<div id="invoice">
+<div style="clear:both;height:1em"></div>
+{{ invoice|raw }}
+<div style="clear:both;height:5em"></div>
+{{ footerInvoice|raw }}
+</div>
+{% endblock %}

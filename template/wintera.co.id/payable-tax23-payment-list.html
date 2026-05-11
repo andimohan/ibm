@@ -1,0 +1,131 @@
+{% extends "template-portal.html" %} 
+{% import "twigMacro.html" as macro %}  
+{% block pagetitle %}{{ LANG.withholdingCodeArt23 }} | {{ parent() }}{% endblock %}  
+{% block contenttitle %} {{ LANG.withholdingCodeArt23|upper }}{% endblock %}
+{% set pageFileName = 'ap-payment-list' %}
+{% block filteritem %}
+	<div class="filter-item">
+	<div class="label">{{ LANG.date }}</div>
+	<div class="flex mnv-date-range">
+		<div class="chk-panel">{{ inputChkDatePeriod|raw }}</div>
+		<div class="date-panel consume" style="{% if useDatePeriodFilter == 0 %}display: none{% endif %}">{{ inputDatePeriodFrom|raw }}</div>
+		<div class="all-period-label" rel="{% if useDatePeriodFilter == 0 %} - {% else %}{{ LANG.allPeriod }}{% endif %}">{% if useDatePeriodFilter == 1 %} - {% else %}{{ LANG.allPeriod }}{% endif %}</div>
+		<div class="date-panel consume" style="{% if useDatePeriodFilter == 0 %}display: none{% endif %}">{{ inputDatePeriodTo|raw }}</div>
+	</div> 
+	</div> 
+{% endblock %}
+{% block listcontent %} 
+<div class="table-and-card ">
+<div class="div-table table-list hide-mobile" style="width:100%">
+	<div class="div-table-row">
+		<div class="div-table-col-3 col-header" style="width:3em; text-align: right">{{ LANG.number }}</div>
+		<div class="div-table-col-3 col-header" style="width:11em;">{{ LANG.code }}</div>
+		<div class="div-table-col-3 col-header" style="width:8em; text-align: center" >{{ LANG.date }}</div>
+		<div class="div-table-col-3 col-header" style="width:4em; text-align: center"  >{{ LANG.curr }}</div>
+		<div class="div-table-col-3 col-header" style="width:10em; text-align: right"  >{{ LANG.payingOffAmount }}</div> 
+		<div class="div-table-col-3 col-header"  style="width:5em; "></div>
+		<div class="div-table-col-3 col-header" ></div>
+	</div>
+</div>	
+<div class="div-table transaction-table-with-detail" style="width:100%">
+{% for item in rsAPPayment %} 
+<div class="div-table-row">
+<div class="div-table-col">
+<div class="div-table table-list hide-mobile" style="width:100%" style="table-layout: fixed;">
+	<div class="div-table-row" attr-index="{{ item.pkey }}">
+		<div class="div-table-col-3" style="width:3em; text-align:right;">{{ loop.index }}.</div>
+		<div class="div-table-col-3" style="width:11em;"><div class="show-detail-link">{{ item.code }}</div></div>
+		<div class="div-table-col-3" style="width:8em; text-align: center">{{ item.trdate|date("d M Y") }}</div>
+		<div class="div-table-col-3" style="width:4em; text-align: center">{{ item.currencyname }}</div>
+		<div class="div-table-col-3" style="width:10em; text-align: right">{{ item.totalpaid|number_format }}</div> 
+		<div class="div-table-col-3" style="width:5em; text-align: center">{% if not item.file is empty %}<a href="{{ item.file[0].url }}" target="_blank"><i class="fas fa-download"></i></a>{% endif %}</div>  
+		<div class="div-table-col-3"></div>  
+	</div>
+</div>
+<div class="div-table detail-row hide-mobile" style="width:100%" attr-detail="{{ item.pkey }}">
+	<div class="div-table-row">
+		<div class="div-table-col-3" style="width:3em;"></div>
+		<div class="div-table-col-3">  
+			<div class="div-table table-row-detail">
+				<div class="div-table-caption">{{ LANG.paymentInformation }}</div>
+				<div class="div-table-row" >
+					<div class="div-table-col col-header"  style="width: 11em">{{ LANG.apCode }}</div>
+					<div class="div-table-col col-header"  style="width: 11em">{{ LANG.invoiceCode }}</div> 
+					<div class="div-table-col col-header" style="width: 10em; text-align: right">{{ LANG.payingOffAmount }}</div>
+				</div>
+				{% for apRow in item.apDetail %} 
+					<div class="div-table-row">
+						<div class="div-table-col" >{{ apRow.apcode }}</div>
+						<div class="div-table-col" >{{ apRow.refinvoicecode }}</div> 
+						<div class="div-table-col" style="text-align: right">{{ apRow.amount|number_format }}</div>
+					</div>
+				{% endfor %}
+			</div> 
+		</div> 
+	</div>
+</div>
+</div>	
+</div>	
+{% endfor %}
+</div>
+ 
+{% for item in rsAPPayment %} 
+<div class="card-row flex flex-start card-mobile column">   
+		<div class="consume">
+			<h2>{{ item.code }}</h2> 
+			<div class="data-row  flex">
+				<div class="label">{{ LANG.date }}</div>
+				<div class="consume" >{{ item.trdate|date("d M Y") }}</div> 
+			</div>
+			<div class="data-row  flex">
+				<div class="label">{{ LANG.currency }}</div>
+				<div class="consume" >{{ item.currencyname }}</div> 
+			</div>
+			<div class="data-row  flex">
+				<div class="label">{{ LANG.payingOffAmount }}</div>
+				<div class="consume" >{{ item.totalpaid|number_format }}</div> 
+			</div> 
+			<div class="data-row flex">
+				<div class="label">{{ LANG.status }}</div>
+				<div  class="consume" >{{ item.statusname }}</div> 
+			</div>	
+			<div class="data-row flex">
+				<div class="label">{{ LANG.witholdingReceipt }}</div>
+				<div  class="consume">{% if not item.file is empty %}<a href="/download-file?module=tax23-payable-receipt&pkey={{ item.pkey }}" target="_blank">{{ LANG.downloadDocument }}</a>{% else %}-{% endif %}</div> 
+			</div>  
+		</div> 
+		<div class="consume detail-information">
+			
+				<div class="expand-group">
+				<div  class="label user-select-none expand-link">{{ LANG.paymentInformation }}<i class="fas fa-caret-down expand-icon"></i><i class="fas fa-caret-up expand-icon" style="display:none"></i></div>
+				<div class="expand-detail">
+				<div style="clear:both; height: .5em"></div>
+				{% if item.apDetail is empty %} 
+						- 
+				{% else %}
+					<div class="div-table mobile-table">
+						<div class="div-table-row col-header-row">
+							<div class="div-table-col col-header" style="width: 11em">{{ LANG.apCode }}</div>
+							<div class="div-table-col col-header" style="width: 11em">{{ LANG.invoiceCode }}</div> 
+							<div class="div-table-col col-header" style="width: 10em; text-align: right">{{ LANG.payingOffAmount }}</div>
+						</div>
+					{% for apRow in item.apDetail %} 
+						<div class="div-table-row">
+							<div class="div-table-col"><div class="row-header">{{ LANG.apCode }}</div>{{ apRow.apcode }}</div>
+							<div class="div-table-col"><div class="row-header">{{ LANG.invoiceCode }}</div>{{ apRow.refinvoicecode }}</div> 
+							<div class="div-table-col" style="text-align: right"><div class="row-header">{{ LANG.payingOffAmount }}</div>{{ apRow.amount|number_format }}</div>
+						</div>
+					{% endfor %}
+					</div>
+				{% endif %}
+		</div>
+		</div>
+		</div>
+</div>     
+{% endfor %}
+</div>
+
+{% if rsAPPayment is empty %}
+	<div style="text-align: center; padding-top:1em">{{ LANG.noDataFound }}</div>
+{% endif %}
+{% endblock %}

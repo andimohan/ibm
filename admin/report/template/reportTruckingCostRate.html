@@ -1,0 +1,50 @@
+{% extends "template.html" %} 
+{% block JS %}
+<script type="text/javascript">
+
+	jQuery(document).ready(function(){ 
+         
+//        setAutoComplete('filterForm', {objName:'customerName', objValue :'hidCustomerKey', url : 'ajax-customer.php?action=searchData' });
+        
+        $( "[name=trStartDate], [name=trEndDate]" ).change(function() { 
+            var trStartDate = Date.parse(convertDateToStandartFormat($("[name=trStartDate]").val()));
+            var trEndDate = Date.parse(convertDateToStandartFormat($("[name=trEndDate]").val()));
+               
+            if (trStartDate > trEndDate) 
+                $("[name=trEndDate]").val($("[name=trStartDate]").val()); 
+            
+		});
+        
+         
+	});
+
+</script>
+{% endblock %}
+{% block filter %} 
+ <div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Kode</label>
+        <div class="col-xs-12"> {{ inputCostRateCode|raw }} </div>
+    </div> 
+     <div class="form-group">
+        <label class="col-xs-12 control-label" >Lokasi</label>
+        <div class="col-xs-12"> {{ inputSelLocation|raw }} </div>
+    </div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Business Location</label>
+        <div class="col-xs-12"> {{ inputSelWarehouse|raw }}</div>
+    </div>
+<!--
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Pelanggan</label>
+        <div class="col-xs-12"> {{ inputCustomerName|raw }} </div> 
+    </div>
+-->
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Status</label>
+        <div class="col-xs-12"> {{ inputSelStatus|raw }} </div> 
+    </div> 
+     
+     
+ </div>	 
+{% endblock %}

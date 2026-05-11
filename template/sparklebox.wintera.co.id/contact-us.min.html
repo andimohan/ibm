@@ -1,0 +1,18 @@
+{% extends "template.html" %} {% import "twigMacro.html" as macro %} {% block pagetitle %}{{ LANG.contactUs }}{% endblock %} {% block JS %}<script type="text/javascript" src="{{ TEMPLATE_JS_PAGE_PATH }}contact-us.min.js"></script><script type="text/javascript">jQuery(document).ready(function(){   
+  var opt = new Array();    
+ var errMsg = new Array();  
+ var lang = new Array();     
+
+ errMsg['name'] = {{ ERRORMSG.name|json_encode()|raw }}; 
+ errMsg['phone'] = {{ ERRORMSG.phone|json_encode()|raw }}; 
+ errMsg['email'] = {{ ERRORMSG.email|json_encode()|raw }}; 
+ errMsg['subject'] = {{ ERRORMSG.subject|json_encode()|raw }}; 
+ errMsg['message'] = {{ ERRORMSG.message|json_encode()|raw }}; 
+ lang['contactUsSuccessful'] = "{{ LANG.contactUsSuccessful|raw }}";
+
+ opt['errMsg'] = errMsg;
+ opt['lang'] = lang;
+
+ var contactUs = new ContactUs(opt);
+ contactUs.loadOnReady(); 
+});</script><script type="text/javascript" src="https://www.google.com/recaptcha/api.js"></script>{% endblock %} {% block content %}<!--{{ macro.buildPagePath(_context,'','no-banner') }}--><div class="bg-white contact-us"><div class="section-break-4"></div><div class="content-wrapper"><div class="flex align-items-start contactus-panel"><div class="image-contactus-panel img-bg" style="background-image:url('{{ TEMPLATE_IMG_PATH }}image-contact-us.png');height:43em;max-height:45em"></div><div class="form-contactus-panel"><div class="form-contactus"><h1 class="font-bold font-title title-contactus">{{ LANG.needHelp }}</h1><div class="section-break-2"></div><div><div class="flex"><div class="form-input"><label for="inputName">{{ LANG.name }}</label> {{ inputName|raw }}</div><div class="form-input"><label for="inputEmail">{{ LANG.email }}</label> {{ inputEmail|raw }}</div></div><div class="section-break-2"></div><div class="form-input"><label for="inputEmail">{{ LANG.phone }}</label> {{ inputPhone|raw }}</div><div class="section-break-2"></div><div><label for="inputEmail">{{ LANG.message }}</label> {{ inputMessage|raw }}</div><div class="section-break-2"></div><div class="form-input">{{ btnSubmit|raw }}</div></div></div></div></div></div></div><div class="section-break-6"></div>{% endblock %}

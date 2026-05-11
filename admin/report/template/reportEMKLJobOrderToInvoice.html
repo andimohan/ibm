@@ -1,0 +1,50 @@
+{% extends "template.html" %}
+{% block JS %}
+
+<script type="text/javascript"> 
+
+</script>
+{% endblock %}
+{% block filter %}
+ <div>  
+     
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.code }}</label>
+        <div class="col-xs-12"> {{ inputCode|raw }} </div>
+    </div> 
+	<div class="form-group mnv-date-range">
+        <label class="col-xs-12 control-label" >{{ LANG.period }}</label> 
+        <div class="col-xs-12" style="margin-bottom: 0.2em"> {{ inputSelDateType|raw }} </div>
+        <div class="col-xs-6" style="padding-right:5px;"> {{ inputStartDate|raw }} </div>
+        <div class="col-xs-6" style="padding-left:5px;"> {{ inputEndDate|raw }} </div>
+    </div>
+      <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.invoiceDate }}</label>
+        <div class="col-xs-12"> {{ inputSelInvoiceDateType|raw }}</div>
+    </div>  
+     
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.warehouse }}</label>
+        <div class="col-xs-12"> {{ inputSelWarehouse|raw }}</div>
+    </div> 
+     <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.containerType }}</label>
+        <div class="col-xs-12"> {{ inputSelContainer|raw }}</div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.shipper }}</label>
+        <div class="col-xs-12"> {{ inputSelCustomer|raw }} </div>
+    </div>   
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.deadline }}</label>
+        <div class="col-xs-12"> {{ inputDeadline|raw }} </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.status }}</label>
+        <div class="col-xs-12">
+            {{ inputSelStatus|raw }}
+        </div>
+    </div>   
+    
+ </div>
+{% endblock %}

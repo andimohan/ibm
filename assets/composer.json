@@ -1,0 +1,19 @@
+{
+    "require": {
+        "google/apiclient": "^2.0",
+        "phpoffice/phpspreadsheet": "^1.6",
+        "sonata-project/google-authenticator": "^2.2",
+        "tecnickcom/tc-lib-barcode": "^1.15",
+        "facebook/graph-sdk": "^5.7",
+        "twig/twig":"^3.0",
+        "google/cloud-translate": "^1.12",
+        "guzzlehttp/guzzle": "^7.4",
+        "http-interop/http-factory-guzzle": "^1.2",
+        "aws/aws-sdk-php": "^3.257"
+    },
+    "autoload": {
+        "files": [
+            "vendor/phpThumb/phpThumb.config.php"
+        ]
+    }
+}

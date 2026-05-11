@@ -1,0 +1,52 @@
+{% extends "template.html" %}
+{% block JS %}     
+
+{% endblock %} 
+
+{% block content %}
+
+<div class="content-wrapper">
+  <div class="validate-page">
+  <div class="content-panel">
+    {% if arrResult['valid'] %}
+    {% set data =  arrResult['data'][0] %}
+     <div class="icon-result"><i class="fa-solid fa-circle-check text-green-avocado"></i></div>
+      <div style="clear:both"></div>
+      <div class="div-table">
+        <div class="div-table-row">
+          <div class="div-table-col-5 row-header">{{ LANG.transactionCode }}</div>
+          <div class="div-table-col-5">{{ data.code }}</div>
+        </div> 
+        <div class="div-table-row">
+          <div class="div-table-col-5 row-header">{{ LANG.transactionDate }}</div>
+          <div class="div-table-col-5">{{ data.trdate|format_date }}</div>
+        </div> 
+        <div class="div-table-row">
+          <div class="div-table-col-5 row-header">{{ LANG.customer }}</div>
+          <div class="div-table-col-5">{{ data.customername }}</div>
+        </div> 
+        <div class="div-table-row">
+          <div class="div-table-col-5 row-header">{{ LANG.detail }}</div>
+          <div class="div-table-col-5">
+             {% set detail =  arrResult['data'][0]['detail'] %}
+               <div class="div-table">
+               {% for detailRow in detail %} 
+                 <div class="div-table-row">
+                  <div class="div-table-col-3">{{ detailRow.qty|number_format }}</div>
+                  <div class="div-table-col-3">{{ detailRow.unitname }}</div>
+                  <div class="div-table-col-3">{{ detailRow.itemname }}  {% if detailRow.trdesc is not empty %}<br>{{ detailRow.trdesc }}{% endif %}</div> 
+                 </div>
+               {% endfor %}
+              </div>
+          </div>
+        </div>  
+      </div>
+    {% else %}
+      <div class="icon-result"><i class="fa-solid fa-circle-xmark  text-red-cardinal"></i></div>
+      <div>{{ LANG.noDataFound }}</div>
+    {% endif %}
+  </div> 
+  </div>
+</div>
+
+{% endblock %}

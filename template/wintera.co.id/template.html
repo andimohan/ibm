@@ -1,0 +1,465 @@
+<!doctype html>
+{% set TEMPLATE_JS_PAGE_PATH = TEMPLATE_JS_PAGE_PATH ~ 'formJS-1.5/' %}
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head> 
+<!--google tag-->
+{{ settings.googleAnalyticsHead|raw }}
+<meta name="google-site-verification" content="KlPoDGH1a5s2mAnngeHAdUe-TOYlPnAIOzUDLQtIVuM" />
+
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1164964102465605');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1164964102465605&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+{% block meta %}
+<meta name="title" content="{{ META_TITLE|raw }}">
+<meta name="description"  content="{{ META_DESCRIPTION|raw }}">
+<meta name="keywords" content="{{ META_KEYWORDS }}">
+<meta name="author" content="{{ settings.companyName }}"> 
+<meta property=og:url content="{{ CANONICAL }}" />
+<meta property=og:site_name content="{{ settings.companyName }}" /> 
+<meta property="og:type" content="{{ META_TYPE }}" />
+<meta property="og:title" content="{{ META_TITLE|raw }}" />
+<meta property="og:description" content="{{ META_DESCRIPTION|raw }}" /> 
+
+<meta property="og:image" content="https://wintera.co.id/template/wintera.co.id/img/ico/logo-wintera.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/png">
+
+<meta property="fb:app_id" content="{{ settings.FBAppID }}" /> 
+{% endblock %} 
+    
+<link rel=apple-touch-icon sizes=180x180 href="{{ TEMPLATE_IMG_PATH }}ico/apple-touch-icon.png">
+<link rel=icon type=image/png sizes=32x32 href="{{ TEMPLATE_IMG_PATH }}ico/favicon-32x32.png">
+<link rel=icon type=image/png sizes=16x16 href="{{ TEMPLATE_IMG_PATH }}ico/favicon-16x16.png">
+<link rel=icon type=image/png sizes=256x256 href="{{ TEMPLATE_IMG_PATH }}ico/android-chrome-256x256.png">
+    
+<!--<link rel=icon type=image/png  href="https://wintera.co.id/template/wintera.co.id/img/ico/logo-wintera.png">-->
+    
+<link rel="canonical" href="{{ CANONICAL }}" />
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "PT Winn Teknologi Nusantara",
+  "legalName": "PT Winn Teknologi Nusantara",
+  "url": "https://wintera.co.id",
+  "logo": "https://wintera.co.id/template/wintera.co.id/img/ico/wintera-512.jpeg",
+  "sameAs": [
+    "https://www.instagram.com/wintera.co.id/"
+  ]
+}
+</script>    
+<!-- password perlu jquery -->	
+<script type="text/javascript" src="{{ TEMPLATE_JS_PATH }}jquery-3.3.1.min.js"></script>  
+     
+{% set categoryKey = 0 %} 
+{% if not categoryPath is empty %}
+    {% set categoryName = categoryPath[0].name %}
+    {% set categoryKey = categoryPath[0].pkey %}
+{% endif %} 
+ 
+<!--{% block structureData %}{{ STRUCTURE_DATA|raw }}{% endblock %}-->
+{% if not settings.FBPluginScript is empty %} 
+     {{ settings.FBPluginScript|replace({'{{ FB_APP_ID }}': settings.FBAppID })|raw }}
+{% endif %}     
+
+{% import "twigMacro.html" as macro %}  
+    
+{{ settings.googleSiteVerification|raw }}
+
+<title>{% block pagetitle %}Wintera{% endblock %}</title>  
+ 
+</head>
+
+<body>  
+<form name="parameter-form" class="prevent-form-submit" method="post">
+{{ hidLayout|raw }} 
+{{ hidTotalItemPerPage|raw }}
+</form> 
+<div class="floating-wa-panel">
+<a href="https://wa.me/{{ whatsapp[0].value|wafilter }}?text=Halo%20Wintera,%20saya%20ingin%20konsultasi%20tentang%20layanan%20digital%20Anda." target="_blank"><div class="floating-wa-button"><i class="fab fa-whatsapp"></i></div></a>
+</div>
+
+<div class="header"> 
+    <div class="content-wrapper">
+        <div class="menu">
+            <div><a href="/">
+                <div class="flex">
+                    <div class="logo" style="background-image:url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}setting/companyLogo/{{ settings.companyLogo }}&f=png&hash={{ getPHPThumbHash(settings.companyLogo) }}')"></div>
+                    <div style="margin-left: 0.5em"><img alt="{{ settings.companyName|raw  }}" src="{{ TEMPLATE_IMG_PATH }}logo-text.png" width="119"></div>    
+                </div>
+                </a></div>
+                <a href="#side-menu" id="btn-side-menu"><div class="burger" ><span></span><span></span><span></span><span></span></div> </a>
+                <div class="flex menu-list user-select-none">
+                    <div name="/index.php" class="home-menu-item"><a href="/" title="{{ LANG.home }}">{{ LANG.home }}</a></div>
+                    <div name="/services.php" class="subproduct">
+                        <a href="#" title="{{ LANG.products }}">{{ LANG.products }}</a>  
+                        <div class="submenu">
+                            <div class="submenu-panel">
+                            <ul>
+                                <li>
+                                    <a href="/transportation-management-system.html">
+                                        <div class="div-table submenu-table">
+                                            <div class="div-table-row"> 
+                                                <div class="div-table-col panel-col">
+                                                    <div class="title">Transportation Management System</div>
+                                                    <div class="subtitle">Pantau biaya dan omset unit kendaraan Anda dalam satu platform</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/freight-forwarding-system.html">
+                                        <div class="div-table submenu-table">
+                                            <div class="div-table-row"> 
+                                                <div class="div-table-col panel-col">
+                                                    <div class="title">Freight Forwarding System</div>
+                                                    <div class="subtitle">Pantau  pembelian, penjualan dan kasbon Anda dalam satu platform</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li> 
+                                
+                                <li>
+                                    <a href="/winstock.html">
+                                    <div class="div-table submenu-table">
+                                        <div class="div-table-row"> 
+                                            <div class="div-table-col panel-col">
+                                                <div class="title">WinStock</div>
+                                                <div class="subtitle">Terintegrasi dengan website dan penjualan ⁣toko secara sekaligus</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/website-development.html">
+                                    <div class="div-table submenu-table">
+                                          <div class="div-table-row"> 
+                                            <div class="div-table-col panel-col">
+                                                <div class="title">Website Development</div>
+                                                <div class="subtitle">Memberikan layanan dari perancangan website hingga pengembangan akhir</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/seo.html">
+                                    <div class="div-table submenu-table">
+                                          <div class="div-table-row"> 
+                                            <div class="div-table-col panel-col">
+                                                <div class="title">SEO</div>
+                                                <div class="subtitle">Menyediakan layanan SEO end-to-end yang disesuaikan dengan kebutuhan bisnis Anda</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </a>
+                                </li>
+                            </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div name="/about-us.php"><a href="/about-us" title="{{ LANG.aboutus }}">{{ LANG.aboutus }}</a> </div>
+                    <div name="/articles.php"><a href="/articles" title="{{ LANG.articles }}">{{ LANG.articles }}</a> </div> 
+                    <div name="/contact-us.php"><a href="/contact-us" title="{{ LANG.contactUs }}">{{ LANG.contactUs }}</a> </div>
+ 					<div name="/customer-portal.php" class="customer-portal"><a href="/customer-portal" title="{{ LANG.portalCustomer }}">{{ LANG.portalCustomer }}</a></div>     
+                </div>
+                 
+        </div>
+
+    </div> 
+</div>  
+    
+<div style="clear:both"></div>    
+<div id="{{ PAGE_ID }}"> 
+<div class="min-page-height">
+<div class="banner-header center-mobile">
+
+<!--    filter:url('#round');-->
+<div style="  z-index: -1; position: absolute; left:-1%; top: -2.5em; width: 102%; height: 105%;">
+    <div  style="background-color: #420D7C; height: 100%; width: 100%;  transform: skewY(0.001deg); clip-path: polygon(0% 0%, 100% 0%, 99% 90%, 1% 100%);"></div>
+</div>
+
+<!--
+<svg style="visibility: hidden; position: absolute;" width="0" height="0" xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <defs>
+        <filter id="round">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="25" result="blur" />    
+            <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="goo" />
+            <feComposite in="SourceGraphic" in2="goo" operator="atop"/>
+        </filter>
+    </defs>
+</svg>
+-->
+{% block headerBannerContent %}{% endblock %}
+</div>
+{% block content %}{% endblock %}
+</div>
+</div>  
+    
+{% block subscribepanel %}
+    <div class="subscribe" >
+    <div style="clear: both; height: 4em"></div>
+
+    <div class="content-wrapper">
+
+        <div class="flex">
+            <div class="consume">
+                <div class="title" style="text-transform: uppercase;font-size: 1.3em;margin: 0;padding-bottom: 1em;">INTEGRASIKAN BISNIS ANDA</div>
+                <div style="font-size: 3em">SEKARANG JUGA!</div>
+                <div style="clear: both; height: 3em"></div>
+                 <div class="btn-panel" >
+                    <ul class="content-list"> 
+                        <li ><a class="button btn-white" href="/contact-us">{{ LANG.registration}}</a></li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div style="clear: both; height: 5em"></div>
+
+
+</div>
+{% endblock %}      
+<div class="footer">
+    <div class="content-wrapper">
+     
+		<div class="flex flex-start" >
+            <div>
+                <div class="title" style="">{{ settings.companyName|raw|upper  }}</div>
+			    <div class="company-address">{{ settings.companyAddress|raw }}</div>
+                <div style="clear: both; height: 1em"></div>
+                  <ul>
+                         {% for item in settings.companyEmail %}
+                        <li><a href="mailto:{{ item.value }}" title="{{ item.value }}">{{ item.value }}</a></li>  
+                      {% endfor %}  
+                      {% for item in settings.companyPhone %}
+                        <li>{{ item.value }}</li>  
+                      {% endfor %}  
+                  </ul>    
+                 <div class="medsos-panel">
+                      
+                     {% for item in settings.companyMedsos %} 
+                        {% if item.label|lower == "fb" or item.label|lower == "facebook" %}  
+                            {% set FA_ICON = "fab fa-facebook-square" %}
+                        {% elseif item.label|lower == "instagram" %}  
+                            {% set FA_ICON = "fab fa-instagram" %}
+                        {% elseif item.label|lower == "twitter" %}  
+                            {% set FA_ICON = "fab fa-twitter" %}
+                        {% elseif item.label|lower == "youtube" %}  
+                            {% set FA_ICON = "fab fa-youtube" %}
+                        {% elseif item.label|lower == "linkedin" %}  
+                            {% set FA_ICON = "fab fa-linkedin-in" %}
+                        {% endif %}  
+                        <div><a href="{{ item.value }}" title="{{ LANG.linkto }} {{ item.label }}" target="_blank"><i class="{{ FA_ICON }}"></i></a> </div>
+                      {% endfor %}
+                 </div> 
+            </div> 
+            <div class="footer-menu">
+                <div class="title">{{ LANG.products|upper }}</div>
+                <ul>
+                    <li><a href="/transportation-management-system.html" title="Transportation Management System">Transportation Management System</a></li>  
+                    <li><a href="/freight-forwarding-system.html" title="Freight Forwarding System">Freight Forwarding System</a></li>  
+                    <li><a href="/winstock.html" title="">WinStock</a></li> 
+                    <li><a href="/website-development.html" title="">Website Development</a></li> 
+                    <li><a href="/seo.html" title="">SEO</a></li> 
+                 </ul>    
+            </div> 
+		</div> 
+        <div style="clear: both; height:2em;"></div>
+       <div class="flex flex-start"  style="width:100%; font-size: 0.9em; flex-direction: initial !important">
+            <div><a href="/help" target="_blank" title="{{ LANG.help }}">{{ LANG.help }}</a></div>
+            <div>|</div>
+            <div><a href="/faq"  title="{{ LANG.faq }}">{{ LANG.faq }}</a></div>
+            <div>|</div>
+            <div><a href="/articles" title="{{ LANG.articles }}">{{ LANG.articles }}</a></div>
+            <div>|</div>
+            <div><a href="/contact-us"  title="{{ LANG.articles }}">{{ LANG.contactUs }}</a></div>
+        </div>
+
+    </div>
+</div>
+            
+    
+<nav id="side-menu" class="hide">  
+     
+    <!--side menu-->
+    <ul class="side-menu">     
+        <li name="/index.php" ><a href="/" title="{{ LANG.home }}">{{ LANG.home }}</a></li>
+        <li name="/services.php" class="mm-fullsubopen">
+              <span>{{ LANG.products }}</span> 
+             <ul>
+                <li name="tms"><a href="/transportation-management-system.html" title="Transportation Management System">Transportation Management System</a></li> 
+                <li name="tms"><a href="/freight-forwarding-system.html" title="Freight Forwarding System">Freight Forwarding System</a></li> 
+                <li name="winstock"><a href="/winstock.html" title="WinStock/Omnichannel">WinStock/Omnichannel</a></li> 
+				<li name="webdev"><a href="/website-development.html" title="">Website Development</a></li> 
+             </ul>  
+        
+        </li>
+        <li name="/about-us.php"><a href="/about-us" title="{{ LANG.aboutus }}">{{ LANG.aboutus }}</a></li>
+        <li name="/articles.php"><a href="/articles" title="{{ LANG.articles }}">{{ LANG.articles }}</a></li>
+        <li name="/contact-us.php"><a href="/contact-us" title="{{ LANG.contactUs }}">{{ LANG.contactUs }}</a></li>
+		
+		{% if loginName is empty%}
+  			<li name="/customer-portal.php"><a href="/customer-portal" title="{{ LANG.portalCustomer }}">{{ LANG.portalCustomer }}</a></li>
+		{% else %}
+			<li name="/customer-portal.php" class="mm-fullsubopen">
+				 <span>{{ LANG.portalCustomer }}</span> 
+				 <ul> 
+					 {% for menuItem in  portalMenu %}
+							<li name="{{ menuItem.url }}"><a href="{{ menuItem.url }}" title="{{ menuItem.title }}">{{ menuItem.title }}</a></li>
+					{% endfor %}  
+				 </ul>     
+			</li>
+		{% endif %}
+		
+    </ul>  
+     
+</nav> 
+<!-- set constant first -->
+    
+<link rel="stylesheet" type="text/css" href="{{ TEMPLATE_CSS_PATH }}bootstrap.min.css"> 
+<link rel="stylesheet" type="text/css" href="{{ TEMPLATE_CSS_PATH }}mmenu.min.css">
+
+{% block CSS %}{% endblock %}      
+<!-- harus sebelum webstyle agar bisa dioverwrite -->
+<link rel="stylesheet" type="text/css" href="{{ TEMPLATE_CSS_PATH }}webStyle.1.34.min.css">
+<!--<link rel="stylesheet" type="text/css" href="{{ TEMPLATE_CSS_PATH }}all-1.0.css">-->
+{% block CSSInline %}{% endblock %}    
+    
+    
+
+<script type="text/javascript" src="{{ TEMPLATE_JS_PATH }}jquery-ui.min.js"></script>   
+<script type="text/javascript" src="{{ TEMPLATE_JS_PATH }}mmenu.min.js"></script>   
+<script type="text/javascript" src="{{ TEMPLATE_JS_PATH }}bootstrap.min.js"></script>   
+<script type="text/javascript">
+// onload CSS
+function loadCSS(a,d,f,g){var b=window.document.createElement("link");var c=d||window.document.getElementsByTagName("script")[0];var e=window.document.styleSheets;b.rel="stylesheet";b.href=a;b.media="only x";if(g){b.onload=g}c.parentNode.insertBefore(b,c);b.onloadcssdefined=function(h){var k;for(var j=0;j<e.length;j++){if(e[j].href&&e[j].href===b.href){k=true}}if(k){h()}else{setTimeout(function(){b.onloadcssdefined(h)})}};b.onloadcssdefined(function(){b.media=f||"all"});return b};
+
+loadCSS( "{{ TEMPLATE_CSS_PATH }}jquery-font-awesome.min.css" );   
+</script> 
+    
+    
+<script type="text/javascript">
+    
+var $phpConfig = new Array();
+$phpConfig['uploadTempDocShort']  = "{{ UPLOAD_TEMP_DOC_SHORT }}";
+$phpConfig['uploadTempURL']  = "{{ UPLOAD_TEMP_URL }}";
+const  PHP_CONFIG = $phpConfig; 
+</script>    
+<script type="text/javascript" src="{{ TEMPLATE_JS_PATH }}critical-js-1.1.min.js"></script>
+{% block JS %}{% endblock %}
+    
+<script type="text/javascript"> 
+ 
+    document.addEventListener(
+            "DOMContentLoaded", () => {
+                
+                const menu = new Mmenu( "#side-menu" , {
+                   "offCanvas": {
+                      "position": "right"
+                   },
+                    "hooks" : {  "open:before": ( panel ) => {  document.querySelector(".burger").classList.toggle('open');  document.querySelector("#side-menu").classList.remove('hide'); },
+                                 "close:before": ( panel ) => { document.querySelector(".burger").classList.toggle('open');  },
+//                               document.querySelector("#side-menu").classList.add("show");
+//                                "close:after": ( panel ) => {document.querySelector("#side-menu").classList.remove("show");  }
+                            }
+                });
+ 
+                  const api = menu.API;
+                  api.open();
+                  api.close(); // buat benerin bugs utk positif fixed di body (wa floating button) 
+				
+                // or like this
+//                const api = menu.API;
+//                api.bind( "open:before",  ( panel ) => { document.querySelector(".burger").classList.toggle('open'); } ); 
+//                api.bind( "close:before",  ( panel ) => {  document.querySelector(".burger").classList.toggle('open'); } ); 
+ 
+            }
+        );
+    
+
+    
+    var cssLoaded = false;
+    
+    var dfLoadStatus = 0;
+    var dfLoadFiles = [ 
+      /*["{{ TEMPLATE_JS_PATH }}bootstrap.min.js"], */ // dipindahkan,  bermasalah sejak pake index.js
+      ["{{ TEMPLATE_JS_PATH }}jquery.formatCurrency-1.4.0.min.js"], 
+      {% block dfLoadFiles %}{% endblock %} // ntah knp gk bisa ditaro di bwh template.min
+      [ 
+       "{{ TEMPLATE_JS_PATH }}jquery.easing.1.3.min.js",  
+       "{{ TEMPLATE_JS_PATH }}template-1.9.min.js"
+      ]
+     ];
+      
+    function downloadJSAtOnload() {
+        
+        //load css first
+        if (!cssLoaded){ 
+            cssLoaded = true;
+        }
+        
+        if (!dfLoadFiles.length) return;
+
+        var dfGroup = dfLoadFiles.shift();
+        dfLoadStatus = 0;
+ 
+        for(var i = 0; i<dfGroup.length; i++) {
+            dfLoadStatus++;
+            var element = document.createElement('script');
+            element.src = dfGroup[i];
+            element.onload = element.onreadystatechange = function() {
+                if ( ! this.readyState || this.readyState == 'complete') {
+                    dfLoadStatus--;
+                    if (dfLoadStatus==0) downloadJSAtOnload();
+                }
+            };
+            document.body.appendChild(element); 
+      } 
+    }
+     
+    if (window.addEventListener)
+        window.addEventListener("load", downloadJSAtOnload, false);
+    else if (window.attachEvent)
+        window.attachEvent("onload", downloadJSAtOnload);
+    else window.onload = downloadJSAtOnload;
+    
+</script>   
+    
+<script type="text/javascript"> 
+     function onLoadScript(){  
+        {% for activeMenuItem in ACTIVE_MENU %}
+            $("[name='{{ activeMenuItem }}']").addClass("selected");    
+        {% endfor %} 
+	        
+       {% block JSOnLoad %}{% endblock %}
+     }
+    
+</script>    
+</body> 
+</html>
+{{ settings.chatSupport|raw }}
+{{ settings.googleAnalytics|raw }}

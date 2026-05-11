@@ -1,0 +1,128 @@
+{% extends "template.html" %}
+{% block pagetitle %}{{ LANG.news}} | {{ parent() }}{% endblock %}
+{% block contenttitle %}
+<div class="content-wrapper"> 
+<div style="clear:both; height: 2em"></div>
+    <div class=" title" > 
+             <h1>{{ LANG.news|upper }}</h1>  
+        <div class="line"></div>
+    </div>	 
+</div>	  
+{% endblock %}
+{% block content %}
+<div class="content-wrapper"> 
+<div style="height:2em;"></div> 
+{% if totalPages > 0 %}
+<ul class="prev-next-page">
+{% if pageIndex == 0 %}
+{% set class, url = 'inactive-prev-next-page','replaceurl' %}
+{% else %}
+{% set class, url = '', '<a href="/news/page=0" title="' ~ LANG.firstPage ~ '">replaceurl</a>' %}
+{% endif %}
+{{ url|replace({'replaceurl':'<li class="' ~ class ~ '">First</li>'})|raw }}
+{% if pageIndex > 0 %}
+{% set class, url = '','<a href="/news/page=' ~  (pageIndex-1) ~ '" t title="' ~ LANG.previousPage ~ '">replaceurl</a>' %}
+{% else %}
+{% set class, url = 'inactive-prev-next-page', 'replaceurl' %}
+{% endif %}
+{{ url|replace({'replaceurl':'<li class="' ~ class ~ '">Prev</li>'})|raw }}
+{% if pageIndex < (totalPages-1) %}
+{% set class, url = '','<a href="/news/page=' ~  (pageIndex+1) ~ '" title="' ~ LANG.nextPage ~ '">replaceurl</a>' %}
+{% else %}
+{% set class, url = 'inactive-prev-next-page', 'replaceurl' %}
+{% endif %}
+{{ url|replace({'replaceurl':'<li class="' ~ class ~ '">Next</li>'})|raw }}
+{% if pageIndex == (totalPages-1) %}
+{% set class, url = 'inactive-prev-next-page', 'replaceurl' %}
+{% else %}
+{% set class, url = '','<a href="/news/page=' ~  (totalPages-1) ~ '" title="' ~ LANG.lastPage ~ '">replaceurl</a>' %}
+{% endif %}
+{{ url|replace({'replaceurl':'<li class="' ~ class ~ '">Last</li>'})|raw }}
+</ul>
+<ul class="page">
+{% set visiblePages = 5 %}
+{% set showOthers = 1 %}
+{% for i in 0..totalPages-1 %}
+{% if i == 0 or i == totalPages -1 or (i > pageIndex - visiblePages and i < pageIndex + visiblePages) %}
+{% set showOthers = 1 %}
+{% if pageIndex == i %}
+{% set class, url = 'page-active', 'replaceurl' %}
+{% else %}
+{% set class, url = '','<a href="/news/page=' ~  i ~ '" title="' ~ LANG.page ~ ' ' ~  (i + 1) ~ '">replaceurl</a>' %}
+{% endif %}
+{{ url|replace({'replaceurl':'<li class="' ~ class ~ '">' ~ (i+1) ~ '</li>'})|raw }}
+{% else %}
+{% if showOthers == 1%}
+<li class="ellipsis">&middot;&middot;&middot;</li>
+{% set showOthers = 0 %}
+{% endif %}
+{% endif %}
+{% endfor %}
+</ul>
+{% endif %}
+<ul class="news">
+{% for data in rsNews %}
+<li>
+<div class="content-panel auto-height">
+<a href="/news-detail/{{ data.pkey }}/{{ data.linktitle }}" title="{{ data.title }}"><div class="image" alt="{{ data.title }}" style="background-image:url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}news/{{ data.pkey }}/{{ data.file }}&f=png&hash={{ data.phpThumbHash }}')"></div></a>
+<div class="information">
+<a href="/news-detail/{{ data.pkey }}/{{ data.linktitle }}" title="{{ data.title }}"><h2>{{ data.title|upper|raw }}</h2></a>
+<div class="publishdate">{{ data.publishdate|date("d M Y") }}</div>
+<div style="clear:both;height:.5em"></div>
+<div class="shortdesc">{{ data.shortdesc|replace({"\n":"<br>"})|raw }} </div>
+</div>
+</div>
+</li>
+{% endfor %}
+</ul>
+<div style="clear:both;height:1em"></div>
+{% if totalPages > 0 %}
+<ul class="prev-next-page">
+{% if pageIndex == 0 %}
+{% set class, url = 'inactive-prev-next-page','replaceurl' %}
+{% else %}
+{% set class, url = '', '<a href="/news/page=0" title="' ~ LANG.firstPage ~ '">replaceurl</a>' %}
+{% endif %}
+{{ url|replace({'replaceurl':'<li class="' ~ class ~ '">First</li>'})|raw }}
+{% if pageIndex > 0 %}
+{% set class, url = '','<a href="/news/page=' ~  (pageIndex-1) ~ '" t title="' ~ LANG.previousPage ~ '">replaceurl</a>' %}
+{% else %}
+{% set class, url = 'inactive-prev-next-page', 'replaceurl' %}
+{% endif %}
+{{ url|replace({'replaceurl':'<li class="' ~ class ~ '">Prev</li>'})|raw }}
+{% if pageIndex < (totalPages-1) %}
+{% set class, url = '','<a href="/news/page=' ~  (pageIndex+1) ~ '" title="' ~ LANG.nextPage ~ '">replaceurl</a>' %}
+{% else %}
+{% set class, url = 'inactive-prev-next-page', 'replaceurl' %}
+{% endif %}
+{{ url|replace({'replaceurl':'<li class="' ~ class ~ '">Next</li>'})|raw }}
+{% if pageIndex == (totalPages-1) %}
+{% set class, url = 'inactive-prev-next-page', 'replaceurl' %}
+{% else %}
+{% set class, url = '','<a href="/news/page=' ~  (totalPages-1) ~ '" title="' ~ LANG.lastPage ~ '">replaceurl</a>' %}
+{% endif %}
+{{ url|replace({'replaceurl':'<li class="' ~ class ~ '">Last</li>'})|raw }}
+</ul>
+<ul class="page">
+{% set visiblePages = 5 %}
+{% set showOthers = 1 %}
+{% for i in 0..totalPages-1 %}
+{% if i == 0 or i == totalPages -1 or (i > pageIndex - visiblePages and i < pageIndex + visiblePages) %}
+{% set showOthers = 1 %}
+{% if pageIndex == i %}
+{% set class, url = 'page-active', 'replaceurl' %}
+{% else %}
+{% set class, url = '','<a href="/news/page=' ~  i ~ '" title="' ~ LANG.page ~ ' ' ~  (i + 1) ~ '">replaceurl</a>' %}
+{% endif %}
+{{ url|replace({'replaceurl':'<li class="' ~ class ~ '">' ~ (i+1) ~ '</li>'})|raw }}
+{% else %}
+{% if showOthers == 1%}
+<li class="ellipsis">&middot;&middot;&middot;</li>
+{% set showOthers = 0 %}
+{% endif %}
+{% endif %}
+{% endfor %}
+</ul>
+{% endif %}
+</div>
+{% endblock %}

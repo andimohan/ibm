@@ -1,0 +1,36 @@
+{% extends "template.html" %} 
+{% block JS %}
+<script>
+    jQuery(document).ready(function(){   
+          
+	});
+     
+</script>
+{% endblock %}
+{% block filter %}
+ <div> 
+    <!-- <div class="form-group">
+        <label class="col-xs-12 control-label" >Kode</label>
+        <div class="col-xs-12">
+            {{ inputEmployeeCode|raw }}
+        </div>
+    </div> -->
+      <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.period }}</label>
+        <div class="col-xs-6" style="padding-right:5px;"> {{ inputStartDate|raw }} </div>
+        <div class="col-xs-6" style="padding-left:5px;"> {{ inputEndDate|raw }} </div>
+    </div> 
+	<div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.employee }}</label>
+        <div class="col-xs-12">
+            {{ inputSelEmployee|raw }}
+        </div>
+    </div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.status }}</label>
+        <div class="col-xs-12">
+            {{ inputSelStatus|raw }}
+        </div>
+    </div>    
+ </div>	 
+{% endblock %}

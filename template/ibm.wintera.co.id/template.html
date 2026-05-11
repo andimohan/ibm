@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>{% block pagetitle %}Invetex{% endblock %}</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- GLOBAL CSS -->
+<link rel="stylesheet" href="{{ TEMPLATE_CSS_PATH }}bootstrap.min.css">
+<link rel="stylesheet" href="{{ TEMPLATE_CSS_PATH }}all.min.css">
+
+
+{% block CSS %}{% endblock %}
+
+<!-- MAIN STYLE -->
+<link rel="stylesheet" href="{{ TEMPLATE_CSS_PATH }}style.css">
+</head>
+
+<body>
+
+<!-- ================= HEADER (REUSABLE) ================= -->
+<header>
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top">
+    <a class="navbar-brand" href="/">
+      <img src="{{ TEMPLATE_IMG_PATH }}invetex-logo.png">
+    </a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="about-us">About Us</a></li>
+        <li class="nav-item"><a class="nav-link" href="our-services.html">Services</a></li>
+        <li class="nav-item"><a class="nav-link" href="blog.html">Blog</a></li>
+        <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+      </ul>
+
+      <ul class="navbar-nav navbar-social">
+        <li class="nav-item"><a class="nav-link" href="#"><i class="fab fa-facebook-f"></i></a></li>
+        <li class="nav-item"><a class="nav-link" href="#"><i class="fab fa-linkedin-in"></i></a></li>
+        <li class="nav-item"><a class="nav-link" href="#"><i class="fab fa-twitter"></i></a></li>
+        <li class="nav-item"><a class="nav-link" href="#"><i class="fab fa-youtube"></i></a></li>
+      </ul>
+    </div>
+  </nav>
+</header>
+<!-- ================= END HEADER ================= -->
+
+
+<!-- ================= PAGE CONTENT ================= -->
+{% block content %}
+
+
+
+{% endblock %}
+<!-- ================= END PAGE CONTENT ================= -->
+
+
+<!-- ================= FOOTER (REUSABLE) ================= -->
+ <footer class="main-footer bg-dark text-white pt-5 pb-3">
+    <div class="container">
+        <div class="row newsletter-row pb-5 mb-5 border-bottom border-secondary align-items-center">
+            <div class="col-md-6">
+                <h5 class="mb-0">Newsletter</h5>
+            </div>
+            <div class="col-md-6">
+                <form class="newsletter-form d-flex">
+                    <input type="email" class="form-control" placeholder="Enter Your Email">
+                    <button type="submit" class="btn btn-subscribe">Subscribe</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="row mb-5">
+            <div class="col-lg-4 mb-4 mb-lg-0">
+                <img src="{{ TEMPLATE_IMG_PATH }}invetex-logo.png" alt="Invetex" class="mb-4 footer-logo" width="200px">
+                <p class="text-secondary small pr-lg-4">{{ settings.companyName }}</p>
+                <ul class="list-unstyled contact-info small text-secondary mt-4">
+                    <li class="mb-2"><i class="fas fa-map-marker-alt mr-2 text-white"></i> Address: {{ settings.companyAddress|raw }}</li>
+                    <li class="mb-2"><i class="fas fa-phone-alt mr-2 text-white"></i> Phone: {{ settings.companyPhone }}</li>
+                    <li><i class="fas fa-envelope mr-2 text-white"></i> Email: {{ settings.companyEmail }}</li>
+                </ul>
+            </div>
+
+            <div class="col-lg-4 mb-4 mb-lg-0">
+                <h5 class="footer-title mb-4">Recent Posts</h5>
+                <div class="recent-posts">
+                    <div class="post-item d-flex align-items-center mb-3">
+                        <img src="{{ TEMPLATE_IMG_PATH }}hero-img.jpg" class="rounded-circle mr-3" width="50" height="50">
+                        <div>
+                            <h6 class="small mb-1"><a href="#" class="text-white">Modern dozen case included in $17 billion</a></h6>
+                            <small class="text-secondary">April 12, 2018 | 0 Comments</small>
+                        </div>
+                    </div>
+                    <div class="post-item d-flex align-items-center mb-3">
+                        <img src="{{ TEMPLATE_IMG_PATH }}hero-img.jpg" class="rounded-circle mr-3" width="50" height="50">
+                        <div>
+                            <h6 class="small mb-1"><a href="#" class="text-white">Who luckily a boy could be a real assistant</a></h6>
+                            <small class="text-secondary">April 05, 2018 | 0 Comments</small>
+                        </div>
+                    </div>
+                    <div class="post-item d-flex align-items-center">
+                        <img src="{{ TEMPLATE_IMG_PATH }}hero-img.jpg" class="rounded-circle mr-3" width="50" height="50">
+                        <div>
+                            <h6 class="small mb-1"><a href="#" class="text-white">Credit Suisse CEO focuses on wealth management</a></h6>
+                            <small class="text-secondary">March 20, 2018 | 0 Comments</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <h5 class="footer-title mb-4">Contact Form</h5>
+                <form class="footer-contact-form">
+                    <input type="text" class="form-control mb-2" placeholder="User *">
+                    <input type="email" class="form-control mb-2" placeholder="E-mail *">
+                    <textarea class="form-control mb-3" rows="3" placeholder="Message"></textarea>
+                    <button type="submit" class="btn btn-green-submit btn-block">Send Message</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="row border-top border-secondary pt-4 mt-5">
+            <div class="col-12 text-center">
+                <p class="text-secondary small mb-3">Follow us on @Instagram</p>
+                <div class="social-links">
+                    <a href="#" class="text-white mx-2"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="text-white mx-2"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-white mx-2"><i class="fab fa-google-plus-g"></i></a>
+                    <a href="#" class="text-white mx-2"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- ================= END FOOTER ================= -->
+
+
+<!-- GLOBAL JS -->
+<script src="{{ TEMPLATE_JS_PATH }}jquery-3.5.1.slim.min.js"></script>
+<script src="{{ TEMPLATE_JS_PATH }}bootstrap.bundle.min.js"></script>
+
+<!-- PAGE JS -->
+{% block JS %}{% endblock %}
+
+<script src="{{ TEMPLATE_JS_PATH }}custom.js"></script>
+
+</body>
+</html>

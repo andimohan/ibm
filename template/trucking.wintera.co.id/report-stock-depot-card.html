@@ -1,0 +1,19 @@
+{% extends "template-report.html" %}    
+{% block criteriaPanel %}
+<div style="width:500px;"> 
+        <div class="form-group">
+            <label class="col-lg-3 control-label" >{{ LANG.date }}</label>
+            <div class="col-lg-9">
+                    <div style="width:45%; float:left">{{ inputStartDate|raw }}</div> <div style="width:10%; text-align: center; float:left; line-height: 2em">-</div> <div style="width:45%; float:left">{{ inputEndDate|raw }}</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-3 control-label" >{{ LANG.depot }}</label>
+            <div class="col-lg-9"> {{ inputSelDepot|raw }}   </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-3 control-label" >{{ LANG.itemName }}</label>
+            <div class="col-lg-9"> {{ inputItemName|raw }}</div> 
+        </div> 
+</div>       
+{% endblock %}

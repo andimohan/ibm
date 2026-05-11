@@ -1,0 +1,60 @@
+{% extends "template.html" %}  
+{% import "twigMacro.html" as macro %}  
+{% block pagetitle %}{% if not categoryPath is empty %} {{ categoryPath[0].name|raw }} {% else %} {{ LANG.allProducts }} {% endif %} | {{ parent() }}{% endblock %} 
+ 
+
+{% block JS %} 
+<script type="text/javascript" src="{{ TEMPLATE_JS_PAGE_PATH }}products.min.js"></script>
+<script type="text/javascript">
+ 
+</script>
+<!--<script src='https://www.google.com/recaptcha/api.js'></script>-->
+{% endblock %} 
+
+{% block content %} 
+{% set bannerIndex = banner['products'][0] %}
+<div class="static-banner">
+<img src="/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}banner/{{ bannerIndex.pkey }}/{{ bannerIndex.file }}&f=png&hash={{ getPHPThumbHash(bannerIndex.file) }}">
+<div class="banner-text">
+<div class="div-table" style="height: 100%">
+	<div class="div-table-row"> 
+		<div class="div-table-col" style="vertical-align: middle">
+			{{ page['products-banner'].detail|raw }}
+		</div>
+	</div>
+</div>	
+
+</div>
+</div>
+<!--
+<div class="banner banner-content" style="background-image:url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}banner/{{ bannerIndex.pkey }}/{{ bannerIndex.file }}&f=png&hash={{ getPHPThumbHash(bannerIndex.file) }}')">
+<div class="content-wrapper">
+ 
+</div>    
+</div>  
+-->
+
+<div class="content-wrapper">    
+<div class="section-break-2"></div>
+<div class="page-path"><a href="/" title="{{ LANG.home }}"><i class="home fa-solid fa-house"></i></a> <span>{{ LANG.products|raw }}</span></div>
+<div class="section-break-2"></div>
+
+
+<div class="product-page div-table" style="width: 100%">
+    <div class="div-table-row"> 
+        <div class="product-col div-table-col">
+            {% if rsItem is empty %}
+            <div style="text-align:center">{{ LANG.noDataFound }}</div>
+            {% endif %} 
+            {{ macro.buildItemDataCard(_context) }} 
+            
+			<div class="section-break-2"></div>
+            {% set path = 'products/' %} 
+            {{ macro.buildPageList(_context,path) }} 
+        </div>
+    </div>
+</div>    
+</div> 
+
+<div class="section-break-8"></div>
+{% endblock %}

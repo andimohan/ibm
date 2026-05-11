@@ -1,0 +1,69 @@
+{% extends "template.html" %}
+{% block pagetitle %}{{ LANG.cashMovementReport }}{% endblock %}
+{% block reporttitle %}{{ LANG.cashMovementReport }}{% endblock %}
+{% block JS %}
+<script type="text/javascript">
+
+	jQuery(document).ready(function(){  
+		$( "[name=COAName]" ).autocomplete({
+		  source: "../ajax-coa.php?action=searchData",
+		  minLength: 1,
+		  select: function( event, ui ) {      
+				$("[name=hidCOAKey]" ).val(ui.item.pkey); 
+			},  
+		  search: function( event, ui ) {  $("[name=hidCOAKey]" ).val("");},
+		  change: function( event, ui ) {   
+				 if (ui.item == null) 
+					clearAutoCompleteInput(this,'hidCOAKey');
+				 
+			}, 
+		}).change(function() {
+		   if ($(this).val() == "") 
+					clearAutoCompleteInput(this,'hidCOAKey'); 
+		});
+        
+	    $( "[name=trStartDate], [name=trEndDate]" ).change(function() { 
+            var trStartDate = Date.parse(convertDateToStandartFormat($("[name=trStartDate]").val()));
+            var trEndDate = Date.parse(convertDateToStandartFormat($("[name=trEndDate]").val()));
+               
+            if (trStartDate > trEndDate) 
+                $("[name=trEndDate]").val($("[name=trStartDate]").val()); 
+            
+		});
+	});
+
+</script>
+{% endblock %}
+{% block filter %}
+{{ inputHidCOAKey|raw }}
+ <div class="div-table" >  
+   <div class="form-group">
+        <label class="col-lg-3 control-label" >Periode</label>
+        <div class="col-lg-3">
+            <div style="width:48%; float:left;">{{ inputStartDate|raw }} </div> 
+            <div style="width:48%; float:right;">{{ inputEndDate|raw }} </div> 
+        </div>
+    </div> 
+	<div class="form-group">
+        <label class="col-lg-3 control-label" >Akun</label>
+        <div class="col-lg-9">
+            {{ inputCOAName|raw }}
+        </div>
+    </div> 
+    <!--
+      <div class="form-group">
+        <label class="col-lg-3 control-label" >Gudang</label>
+        <div class="col-lg-9">
+            <ul>  
+              {% for warehouse in rsWarehouse %} 
+              <li  style="width:180px;"><input  name="chkWarehouse[]" type="checkbox" value="{{ warehouse.pkey }}"/> {{ warehouse.name }}</li>
+              {% endfor %} 
+            </ul>
+        </div>
+    </div>
+   --> 
+ </div>	 
+{% endblock %} 
+{% block reportContent %} 
+<div class="main-table"></div>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "template.html" %}
+{% block JS %}
+<script type="text/javascript">
+         
+	jQuery(document).ready(function(){   
+         $(".loading-icon").hide(); 
+	});
+
+</script>
+{% endblock %}
+{% block filter %}
+ <div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Kode</label>
+        <div class="col-xs-12"> {{ inputItemCode|raw }}</div>
+    </div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Gudang</label>
+        <div class="col-xs-12"> {{ inputSelWarehouse|raw }}</div>
+    </div> 
+    <!--<div class="form-group">
+        <label class="col-xs-12 control-label" >Pelanggan</label>
+        <div class="col-xs-12"> {{ inputCustomerName|raw }}</div>
+    </div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Pemasok</label>
+        <div class="col-xs-12"> {{ inputSupplierName|raw }}</div>
+    </div> -->
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Internal Part Number</label>
+        <div class="col-xs-12"> {{ inputItemCode|raw }} </div>
+    </div>
+	<div class="form-group">
+        <label class="col-xs-12 control-label" >Nama Item</label>
+        <div class="col-xs-12"> {{ inputItemName|raw }} </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Kategori</label>
+        <div class="col-xs-12"> {{ inputSelCategory|raw }}</div> 
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Merk</label>
+        <div class="col-xs-12"> {{ inputSelBrand|raw }}</div> 
+    </div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Serial Number</label>
+        <div class="col-xs-12"> {{ inputSerialNumber|raw }}</div> 
+    </div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Status</label>
+        <div class="col-xs-12">{{ inputSelStatus|raw }}</div>
+    </div> 
+ </div>	 
+{% endblock %} 
+
+

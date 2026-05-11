@@ -1,0 +1,42 @@
+{% extends "template.html" %}  
+{% block filter %}
+{{ inputHidItemKey|raw }}
+ <div>  
+     <div class="form-group">
+        <label class="col-xs-12 control-label" >Gudang</label>
+        <div class="col-xs-12"> {{ inputSelWarehouse|raw }}</div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Kode</label>
+        <div class="col-xs-12">
+            {{ inputCarCode|raw }}
+        </div>
+    </div>
+	<div class="form-group">
+        <label class="col-xs-12 control-label" >No. Polisi</label>
+        <div class="col-xs-12">
+            {{ inputCarNumber|raw }}
+        </div>
+    </div> 
+      <div class="form-group">
+        <label class="col-xs-12 control-label" >Brand</label>
+        <div class="col-xs-12">
+            {{ inputSelBrand|raw }}
+        </div>
+    </div> 
+      <div class="form-group">
+        <label class="col-xs-12 control-label" >Category</label>
+        <div class="col-xs-12">
+            {{ inputSelCategory|raw }}
+        </div>
+    </div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Status</label>
+        <div class="col-xs-12">
+            {{ inputSelStatus|raw }}
+        </div>
+    </div>   
+    
+ </div>
+{% endblock %}
+

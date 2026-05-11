@@ -1,0 +1,124 @@
+{% extends "template.html" %}
+
+{% block content %}
+
+ <section class="banner-inside">
+    <img class="hero-img-inside" src="{{ TEMPLATE_IMG_PATH }}hero-img.jpg" alt="Contact" />
+    
+    <div class="banner-overlay">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center text-white">
+                    <h1 class="display-4 font-weight-bold">Blog</h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb justify-content-center bg-transparent p-0">
+                            <li class="breadcrumb-item"><a href="#" class="text-white">Home</a></li>
+                            <li class="breadcrumb-item active text-white-50" aria-current="page">Blog</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    </section>   
+
+
+    <section class="blog-page py-5 bg-grey">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <article class="blog-post-item mb-5">
+                    <div class="post-thumb mb-4">
+                        <img src="{{ TEMPLATE_IMG_PATH }}hero-img.jpg" alt="Post" class="img-fluid">
+                    </div>
+                    <div class="post-content">
+                        <h2 class="post-title"><a href="#">Broker-dealer owner indicated in $17 million dump scheme</a></h2>
+                        <div class="post-meta mb-3">
+                            <span>April 28, 2016</span>
+                            <span>in <a href="#">Money</a></span>
+                            <span><a href="#">2 Comments</a></span>
+                        </div>
+                        <p class="post-excerpt text-muted">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci...</p>
+                        <a href="#" class="read-more">Read More</a>
+                    </div>
+                </article>
+
+                <article class="blog-post-item mb-5">
+                    <div class="post-thumb mb-4">
+                        <img src="{{ TEMPLATE_IMG_PATH }}hero-img.jpg" alt="Post" class="img-fluid">
+                        <span class="badge badge-success">MARKET</span>
+                    </div>
+                    <div class="post-content">
+                        <h2 class="post-title"><a href="#">Why buying a big house is a bad investment</a></h2>
+                        <div class="post-meta mb-3">
+                            <span>April 20, 2016</span>
+                            <span>in <a href="#">Money</a></span>
+                            <span><a href="#">0 Comments</a></span>
+                        </div>
+                        <p class="post-excerpt text-muted">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat...</p>
+                        <a href="#" class="read-more">Read More</a>
+                    </div>
+                </article>
+            </div>
+
+            <div class="col-lg-4">
+                <aside class="sidebar">
+                    <div class="widget mb-5 bg-white p-3">
+                        <h5 class="widget-title">Categories</h5>
+                        <ul class="list-unstyled category-list">
+                            <li><a href="#">Business</a></li>
+                            <li><a href="#">Consulting</a></li>
+                            <li><a href="#">Economy</a></li>
+                            <li><a href="#">Funding Trends</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="widget mb-5 bg-white p-3">
+                        <h5 class="widget-title">Search</h5>
+                        <div class="search-form">
+                            <input type="text" class="form-control" placeholder="Search">
+                            <button><i class="fas fa-search"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="widget mb-5 bg-white p-3">
+                        <h5 class="widget-title">Recent Posts</h5>
+                        <div class="recent-post-item d-flex mb-3">
+                            <img src="{{ TEMPLATE_IMG_PATH }}hero-img.jpg" class="rounded-circle mr-3" width="60" height="60">
+                            <div>
+                                <a href="#" class="d-block font-weight-bold">Broker-dealer owner indicated...</a>
+                                <small class="text-muted">April 28, 2016 / 2 Comments</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="widget mb-5 bg-white p-3">
+                      <h5 class="widget-title">Calendar</h5>
+                      <div id="calendar-inline" class="flatpickr-container"></div>
+                  </div>
+
+                    <div class="widget mb-5 bg-white p-3">
+                        <h5 class="widget-title">Tags</h5>
+                        <div class="tag-cloud">
+                            <a href="#" class="badge badge-light border p-2 m-1">Audit</a>
+                            <a href="#" class="badge badge-light border p-2 m-1">Business</a>
+                            <a href="#" class="badge badge-light border p-2 m-1">Sales</a>
+                        </div>
+                    </div>
+
+                    <div class="widget mb-5 bg-white p-3">
+                        <h5 class="widget-title">Archive</h5>
+                        <ul class="list-unstyled category-list">
+                            <li><a href="#">Business (23)</a></li>
+                            <li><a href="#">Consulting (43)</a></li>
+                            <li><a href="#">Economy (13)</a></li>
+                            <li><a href="#">Funding Trends (2)</a></li>
+                        </ul>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

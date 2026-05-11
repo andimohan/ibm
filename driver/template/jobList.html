@@ -1,0 +1,168 @@
+{% extends "template.html" %} 
+{% block dfLoadFiles %}
+["{{ DEFAULT_JS_PATH }}qrcode/filereader.js"],
+["{{ DEFAULT_JS_PATH }}qrcode/qrcodelib.js"],
+["{{ DEFAULT_JS_PATH }}qrcode/webcodecamjquery.js"],
+["{{ DEFAULT_JS_PATH }}qrcode/qrjquery.js"],
+{% endblock %}
+{% block JS %}
+<script>
+function qrPlayButtonHandler(obj,triggerObj, decoder){ 
+    var dataCard = triggerObj.closest(".data-card");
+    
+    var carRegistrationInput = dataCard.find("[name=carRegistrationNumber]");  
+    obj.responseTarget = carRegistrationInput;
+    
+    loadOverlayScreen();
+    $(".barcode-reader").show();
+    decoder.play(); 
+}
+</script>    
+{% endblock %}
+{% block JSOnLoad %}  
+
+var opt = {};
+opt.play = $(".qr-code-play");
+opt.barcodeReaderPanel = $(".barcode-reader");
+
+var qr = new QRReader(opt);
+
+$("[name=btnProceed]").click(function(){ 
+    var panel = $(this).closest('.data-card');
+    $(".data-card").removeClass("selected");
+    $(".data-card .vehicle-condition-panel").hide();
+    $(".data-card .btn-proceed-panel").show();
+
+    panel.addClass("selected");
+    panel.find('.btn-proceed-panel').hide();
+    panel.find('.vehicle-condition-panel').slideDown(); 
+});
+
+$("[name=btnSave]").click(function(){ 
+    var $form = $(this).closest("form"); 
+    disabledButton($form.find(".btn-primary"));   
+
+    var data = $form.serializeArray();
+    data.push({name: "action", value: "proceedWorkOrder"});
+    data.push({name: "hidWOKey", value: $(this).closest('.data-card').attr("relkey")});
+    data.push({name: "carRegistrationNumber", value: $(this).closest('.data-card').find("[name='carRegistrationNumber[]']").val()});
+
+    $.ajax({
+        type: "POST",
+        url:  'ajax-trucking-service-work-order.php',
+        data: data,
+        success: function(data){ 
+
+            data = JSON.parse(data);   
+
+            if (!data[0].valid){
+               alert(data[0]['message']);
+               return;
+            }
+
+            alert("ok");
+        
+        } 
+    }).done(function( data ) {  
+            disabledButton($form.find(".btn-primary"), false);   
+    }); 
+});
+
+{% endblock %} 
+{% block contenttitle %}
+{{ LANG.jobList|upper }}
+<a href="./newWorkOrder"><i class="add-new-in-page fas fa-plus-square"></i></a>
+{% endblock %}
+{% block content %}
+
+<div class="barcode-reader hide-on-dismiss">
+<select class="form-control" id="camera-select"></select>
+<div class="panel-body text-center">
+    <div class="qr-cam-panel">
+        <canvas width="340px" height="240px" id="webcodecam-canvas"></canvas> 
+    </div>
+</div>
+<div style="clear:both"></div>
+</div>
+
+<div class="job-list">
+<ul class="data-card-ul">
+{% if rsWorkOrder is empty %}
+ <div style="text-align: center">{{ LANG.youDontHaveAnyJobYet }}</div>
+{% endif %}
+{% for data in rsWorkOrder %}
+<li class="data-card" relkey="{{ data.pkey }}" >
+<form action="#" > 
+<div class="div-table" style="width: 100%">
+<div class="div-table-row">
+    <div class="div-table-col-3">
+        <div class="work-order-code">{{ data.code }}</div>  
+    </div>
+    <div class="div-table-col-3 car-registration-number-panel">  
+        <div class="flex">
+            <div class="car-registration-number consume">{{ data.inputCarRegistrationNumber|raw }}</div>  
+            <i class="qr-code-play fas fa-qrcode"></i>
+        </div>
+   <!--  
+         <div class="flex">
+            <div class="consume car-registration-number-label">{{ data.policenumber }}</div>
+            <i class="far fa-truck-container"></i>
+        </div>
+    -->
+    </div>
+</div>
+</div>    
+    
+<div style="clear:both; height: 1em"></div>
+     
+<div style="font-weight: bold">
+{% if not data.consigneename is empty %}
+{{ data.consigneename }}
+{% else %}
+{{ data.customername }}
+{% endif %}
+</div> 
+    
+{% if not data.routefrom is empty %}
+<div>{{ data.routefrom }} - {{ data.routeto }}</div>
+{% endif %}
+    
+<div style="clear: both; height: 1em"></div>
+<div>Suhu Badan : <span class="text-green-avocado" style="font-weight: bold;">36.7<sup>o</sup></span></div>
+<div style="clear: both; height: 2em"></div> 
+ 
+<div class="vehicle-condition-panel">
+<div style="text-align: center; font-weight: bold; text-decoration: underline">{{ LANG.vehicleCondition|upper }}</div>    
+<div style="clear: both; height:2em"></div> 
+<div class="div-table vehicle-condition-table" style="width:100%">
+ <div class="div-table-row col-header">
+   <div class="div-table-col-3">{{ LANG.description }}</div>
+   <div class="div-table-col-3" style="text-align: center; width: 140px">
+       <div style="width:50%; float:left">{{ LANG.goodCondition }}</div>
+       <div style="width:50%; float:left">{{ LANG.badCondition }}</div>
+    </div> 
+</div>
+{% for checklist in rsCarChecklist %}
+    <div class="div-table-row">
+       <div class="div-table-col-3">{{ checklist.name|raw }}{{ checklist.inputHiddenPkey|raw }}</div>
+       <div class="div-table-col-3">{{ checklist.inputRdbCondition|raw }}</div> 
+    </div>
+{% endfor %}
+</div>    
+<div style="clear: both; height:1em"></div>
+<div style="font-weight: bold">{{ LANG.note }} </div>
+{{ inputDesc|raw }}
+     
+<div style="clear: both; height: 2em"></div>
+<div style="text-align: center">{{ btnSave|raw }}</div> 
+</div>    
+      
+<div class="btn-proceed-panel" style="text-align: center">{{ btnProceed|raw }}</div>
+
+    
+</form>
+</li>
+{% endfor %}
+</ul> 
+</div>    
+{% endblock %}

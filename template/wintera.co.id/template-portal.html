@@ -1,0 +1,100 @@
+{% extends "template.html" %}
+{% import "twigMacro.html" as macro %}  
+{% block pagetitle %}{{ title }}{% endblock %}
+{% block JS %}
+<script type="text/javascript">
+jQuery(document).ready(function(){ 
+	 $(".floating-wa-panel").hide();
+}); 
+</script>
+{% endblock %}
+{% block JSOnLoad %}updateFilterIconStatus();{% endblock %}
+{% block content %}
+<div style="clear:both;height:1em"></div>
+<div id="portal">
+<div class="content-wrapper">
+<div class="div-table" style="width:100%">
+        <div class="div-table-row">
+            <div class="div-table-col-3 page-menu  hide-mobile">
+				<div class="user-panel">
+					<div class="customer-company-panel flex">
+						<div class="user-company-logo-panel"><div class="user-company-logo" style="background-image: url('/phpthumb/phpThumb.php?src=/../_upload/{{ customerCompany.domain }}/setting/companyLogo/{{ customerCompany.companyLogo }}&f=png&far=C&hash={{ getPHPThumbHash(customerCompany.companyLogo) }}');"></div></div>
+						<div>{{ customerCompany.companyName }}</div>
+					</div>
+					<div style="clear: both; height: 1em"></div>
+					<div class="label">{{ LANG.customer }}</div>
+					<div class="customer-name">{{ LOGIN_USER.name }}</div>
+				</div> 
+				<div class="stick">
+                <ul class="menu-portal">  
+					{% for menuItem in  portalMenu %}
+							<li name="{{ menuItem.url }}"><a href="{{ menuItem.url }}" title="{{ menuItem.title }}">{{ menuItem.title }}</a></li>
+					{% endfor %} 
+                </ul>     
+				
+				<div class="side-menu-logo"> 
+					<div style="margin-bottom: 1em">{{ "now"|date("d M Y") }}</div>
+					<div style="margin-bottom: 1em"><img src="{{ TEMPLATE_IMG_PATH }}logo-text-gray.png"></div>
+					Transportation Management System
+				</div>
+				</div>
+
+            </div>
+            <div class="div-table-col-3 content">
+                <h1>{% block contenttitle %}{% endblock %}<div style="clear:both;"></div><div class="bar"></div><div style="clear:both; height: .3em"></div></h1>
+                <div>
+				   		<form action="/{{ pageFileName }}" method="post">
+						{{ inputHidStatusCriteria|raw }}
+						<div class="action-panel flex">
+						<div class="consume">{% block actionpanelinfo %}{% endblock %}</div>
+						<div class="search-panel consume flex justify-flex-end">
+							<div class="filter-icon">
+								<i class="fas fa-filter"></i>
+								<div class="filter-form user-select-none">
+									{% block filteritem %}
+										<div class="filter-item">
+										<div class="label">{{ LANG.status }}</div>
+										<div class="status-item flex">
+											{% for statusRow in inputChkStatus %}
+												<div class="flex">
+													<div class="chk-panel">{{ statusRow.input|raw }}</div>
+													<div>{{ statusRow.label }}</div>
+												</div>
+											{% endfor %}
+										</div>
+										</div>
+										<div class="filter-item">
+										<div class="label">{{ LANG.date }}</div>
+										<div class="flex mnv-date-range">
+											<div class="chk-panel">{{ inputChkDatePeriod|raw }}</div>
+											<div class="date-panel consume" style="{% if useDatePeriodFilter == 0 %}display: none{% endif %}">{{ inputDatePeriodFrom|raw }}</div>
+											<div class="all-period-label" rel="{% if useDatePeriodFilter == 0 %} - {% else %}{{ LANG.allPeriod }}{% endif %}">{% if useDatePeriodFilter == 1 %} - {% else %}{{ LANG.allPeriod }}{% endif %}</div>
+											<div class="date-panel consume" style="{% if useDatePeriodFilter == 0 %}display: none{% endif %}">{{ inputDatePeriodTo|raw }}</div>
+										</div> 
+										</div> 
+									{% endblock %}
+									<div style="clear: both; height: 1em"></div>
+									<div>{{ inputFilterButton|raw }}</div>
+								</div>
+							</div>
+							<div class="search-column">{{ inputSearch|raw }}</div>
+							<div>{{ inputButton|raw }}</div>
+						</div>
+						</div>
+						</form>
+						<div style="clear: both;height: 1em"></div>
+
+				   		{% block listcontent %}{% endblock %}
+ 
+						<div style="clear: both; height: 2em"></div> 
+						{% set path =  pageFileName ~ '/' %}
+						{{ macro.buildPageList(_context,path) }}
+						<div style="clear: both; height: 2em"></div>
+				</div>
+            </div> 
+        </div>
+        
+    </div>
+</div>
+</div>
+{% endblock %}

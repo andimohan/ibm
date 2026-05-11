@@ -1,0 +1,99 @@
+{% extends "template.html" %}
+{% block pagetitle %}{{ settings.companyName }} | {{ parent() }}{% endblock %}
+{% block contenttitle %}
+<div class="title"><h1>{{ LANG.indexRandomProductTitle }}</h1> </div>
+{% endblock %}
+{% block content %}
+{{ macro.buildItemDataCard(_context) }}
+{% endblock %}
+{% block JSOnLoad %}
+{{ parent() }}
+{{ macro.itemDataCardJS(_context) }}
+    initGalleria();  
+         
+    function initGalleria(){
+        var isDesktop = true;
+		var desktopdata = [
+		  	    {% for banner in banner['slide show'] %}  
+                     	{    	image: '/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}banner/{{ banner.pkey }}/{{  banner.file }}&hash={{  banner.phpThumbHash }}',
+								title: '{{ banner.name }}', 
+								link: '{{ banner.url }}'  ,
+								html: '{{ banner.name }}' 
+							},   
+                {% endfor %} 
+		 ];
+		 var mobiledata = [
+		  	    {% for banner in banner['mobile main banner'] %}  
+                     	{    	image: '/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}banner/{{ banner.pkey }}/{{  banner.file }}&hash={{  banner.phpThumbHash }}',
+								title: '{{ banner.name }}', 
+								link: '{{ banner.url }}',
+                                html: '{{ banner.name }}'
+							},   
+                {% endfor %} 
+		 ];
+		 
+		 
+		 
+		var mobileWidth = 690;
+		var initialdata = desktopdata; 
+		 var galleriaHeight = 0.45;
+		 
+		 if ($( window ).width()  <= mobileWidth){
+		 	initialdata = mobiledata;
+			isDesktop = !isDesktop;
+			galleriaHeight = $( window ).width() * 0.7;
+		 }
+		 
+		Galleria.loadTheme('{{ TEMPLATE_JS_PATH }}galleriathemes/twelve/galleria.twelve.min.js');  
+        
+		Galleria.run('#banner-galleria', { 
+		   dataSource: initialdata,
+		   height:galleriaHeight,
+		   popupLinks:true,
+		   transition: 'fadeslide',
+		    autoplay: 3000 ,  
+			pauseOnInteraction: false,
+			_showFullscreen: false,
+			_showPopout: false, 
+			extend: function() { 
+							var gallery = this;
+							this.$('stage').hover(function() {
+								gallery.pause();
+							}, function() {
+								gallery.play();
+							});
+		 				} 
+		}); 
+		
+		Galleria.ready(function(){
+			var gallery = this;
+				  
+			$( window ).resize(function() {    
+				if ($( window ).width() <= mobileWidth && isDesktop == true){
+					isDesktop = !isDesktop;	 
+				    gallery.load(mobiledata); 
+				}else if ($( window ).width() > mobileWidth && isDesktop == false){ 
+					isDesktop = !isDesktop;	 
+				   $('#banner-galleria  .galleria-container').css("min-height","");
+				    gallery.load(desktopdata);
+				} 
+				resizeGalleriaScaleRatio() 
+			}); 
+			
+		}); 
+        
+		Galleria.on('data',function(){
+			var gallery = this;
+			window.setTimeout(function(){
+				gallery.lazyLoadChunks(3);
+			},10);
+		});
+		
+		function resizeGalleriaScaleRatio(){
+			   if ($( window ).width() <= mobileWidth){ 
+				 var width =  $( window ).width() * 0.7;
+			 	 $('#banner-galleria  .galleria-container').css("min-height",width +"px");
+			   }
+		} 
+    }
+{% endblock %}

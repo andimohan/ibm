@@ -1,0 +1,82 @@
+{% extends "profile-template.html" %}
+{% import "twigMacro.html" as macro %} 
+{% block pagetitle %}{{ LANG.myOrders }} | {{ parent() }}{% endblock %}
+{% block profilecontent %}
+
+<div class="content-wrapper">
+	
+		{% set path = 'transaction-history/' %} 
+	
+  <div id="transaction-history" >
+	<h2 class="text-blue-sbox font-bold">{{ LANG.myOrders }}</h2>
+	<div class="section-break-1"></div>
+	  {% if  rsSalesOrder is empty %}  
+
+	  {% else %}
+	  
+	  {% for data in rsSalesOrder %}
+		<div class="order-summary">
+		  <div class="flex order-header">
+			<div class="order-date">{{ data.trdate|date('d F Y H:m') }}</div>
+			<div class="divider"></div>
+			<div class="order-status">
+					{% if data.paidstatuskey < 3 %}
+						{% set statusname =  LANG.unpaid %}
+				  		{% set statustag = "pending" %}
+				  	{% elseif data.statuskey ==  1 %}
+						{% set statusname =  LANG.beingProcessed %}
+				  		{% set statustag = "process" %}
+				 	{% elseif data.statuskey ==  2 %}
+						{% set statusname =  LANG.beingDelivered %}
+				  		{% set statustag = "deliver" %}
+				  	{% elseif data.statuskey ==  3 %}
+						{% set statusname =  LANG.completed %}
+				  		{% set statustag = "done" %}
+				  	{% elseif data.statuskey ==  4 %}
+						{% set statusname =  LANG.canceled %}
+				  		{% set statustag = "canceled" %}
+				  	{% endif %}
+					<span class="transaction-history-status {{ statustag }}">{{ statusname|upper }}</span>
+			  <!--<a><i class="fa-solid fa-ellipsis-vertical"></i></a>-->
+			</div>
+		  </div>
+		<div class="section-break-1"></div>	
+ 		
+		  <!--<h2 class="item-count">{{ LANG.totalItems }}: {{ data.totalitem|format_number }}</h2>-->
+  
+		  <ul class="product-list list-none">
+		  {% for detailRow in data['detail'] %}
+			<li>
+				<div  class="flex align-items-stretch product-card">
+				  <div class="product-img img-bg" style="background-image: url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}item/{{ detailRow.image[0].refkey }}/{{ detailRow.image[0].file }}&f=png&far=C&&hash={{  getPHPThumbHash(detailRow.image[0].file) }}')"></div>
+				  <div class="flex justify-content-between consume product-info-price">
+					<div class="product-info">
+						<div class="product-name auto-height font-bold text-blue-sbox">{{ detailRow.itemname }}</div>
+						<div class="product-qty"><span class="text-qty">{{ LANG.quantity }}:</span> {{ detailRow.qty|number_format }} {{ detailRow.unitname }}</div>
+					</div>
+					<div class="flex">
+						<div class="product-price font-bold">Rp {{ detailRow.total|number_format }}</div>
+					</div>
+				  </div>
+				</div>	
+			</li> 
+		  {% endfor %}
+		  </ul>
+			
+		<div style="clear: both"></div>	
+			
+		</div>
+
+	  {% endfor %}
+	  {% endif %}
+	<div class="section-break-2"></div> 
+	<div class="flex">
+		<div>{{ LANG.page }}:</div>
+		<div>{{ macro.buildPageList(_context,path) }}</div>
+	</div>
+
+	  	
+  </div>
+</div>
+ 
+{% endblock %}

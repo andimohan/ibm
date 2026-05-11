@@ -1,0 +1,160 @@
+{% extends "template.html" %}
+{% import "twigMacro.html" as macro %}
+{% block pagetitle %}{{ LANG.products }} | {{ parent() }}{% endblock %}
+{% block CSS %}
+<link rel="stylesheet" type="text/css" href="{{ TEMPLATE_CSS_PATH }}tooltipster.bundle.min.css" />
+{% endblock %}
+{% block JS %}
+<script type="text/javascript" src="{{ TEMPLATE_JS_PATH }}tooltipster.bundle.min.js"></script>
+<script type="text/javascript" src="{{ TEMPLATE_JS_PAGE_PATH }}products.js"></script>
+<script>
+    jQuery(document).ready(function(){   
+     
+     var opt = new Array();    
+     var errMsg = new Array();  
+     var lang = new Array();   
+     
+    errMsg['email'] = {{ ERRORMSG.email|json_encode()|raw }}; 
+    lang['registrationSuccessful'] = "{{ LANG.registrationSuccessful|raw }}";
+    
+    
+     opt['errMsg'] = errMsg;
+     opt['lang'] = lang; 
+    
+     var products = new Products(opt); 
+     products.loadOnReady(); 
+
+    })
+</script>
+{% endblock %}
+
+{% block content %}
+
+<div class="bg-white">
+    <div class="section-break-4"></div>
+    <div class="content-wrapper">
+        <div class="flex justify-content-center tagline-image-panel">
+            <div class="tagline-text">
+                <div class="tagline">
+                    <div class="mini-tagline">{{ LANG.miniTaglineProduct }}</div>
+                    <h1 class="font-title italic">{{ LANG.taglineProduct }}</h1>
+                    <div class="section-break-1"></div>
+                    <div class="sub-tagline">
+                        <div>
+                            <h4>{{ LANG.subTaglineProduct }}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tagline-image text-center img-bg"
+            style="background-image: url('{{ TEMPLATE_IMG_PATH }}hero-image-product.png');"></div>
+        </div>
+    </div>
+<div class="section-break-4"></div>
+</div>
+<div class="filter-wrapper bg-white">
+    <div class="flex filter-hide hide-mobile">
+        <div class="flex filter-hide-panel">
+            <img src="{{ TEMPLATE_IMG_PATH }}filter.svg" alt="">
+            <h2 class="font-libre-baskerville text-blue-sbox text-filter">{{ LANG.hideFilters }}</h2>
+            <div class="text-center">
+                <i class="fas fa-chevron-up text-blue-sbox"></i>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-break-4 bg-gray"></div>
+<div class="flex align-items-start mobile-flex-column bg-gray content-wrapper aside-item-panel">
+    <div class="aside-panel hide-mobile">
+        <div>
+            <div class="text-category">{{ LANG.category }}</div>
+            <div class="category-item">
+                <a href="/products" class="category-text">
+                    {{ LANG.allCategory }}
+                </a>
+            </div>
+            <ul class="category-tree list-none">
+                {% for parentData in compiledItemCategory[0].childnode %}
+                <li class="category-item parent-category" data-category-id="{{ parentData.pkey }}" data-parent-id="{{ parentData.parentkey }}">
+
+                    {% if compiledItemCategory[parentData.pkey] is defined and compiledItemCategory[parentData.pkey].childnode|length > 0 %}
+                        <span class="category-text expandable">
+                            {{ parentData.name|raw|ucwords }}
+                            <i class="fa-solid fa-caret-right toggle-icon"></i>
+                        </span>
+                    {% else %}
+                        <a href="/products/{{ parentData.name|urlfilter }}/cat={{ parentData.pkey }}">
+                            <span class="category-text">{{ parentData.name|raw|ucwords }}</span>
+                        </a>
+                    {% endif %}
+                    
+                    <!-- CHILD CATEGORY -->
+                    {% if compiledItemCategory[parentData.pkey] is defined and compiledItemCategory[parentData.pkey].childnode|length > 0 %}
+                    <ul class="child-category-list list-none" style="display: none;">
+                        {% for childData in compiledItemCategory[parentData.pkey].childnode %}
+                        <li class="category-item child-category" data-category-id="{{ childData.pkey }}" data-parent-id="{{ childData.parentkey }}">
+                            <a href="/products/{{ childData.name|urlfilter }}/cat={{ childData.pkey }}">
+                                <span class="category-text">{{ childData.name|raw|ucwords }}</span>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="consume mobile-products">
+        <div class="section-break-2"></div>  
+        {% set path = 'products/' %} 
+        <div class="page-list flex">
+            <div class="hide-mobile">{{ rsItem|length }} {{ LANG.productsShown|lower }}</div>
+            <div class="hide-mobile">|</div>
+            <div>{{ LANG.page }}:</div>
+            <div>{{ macro.buildPageList(_context,path) }}</div>
+        </div> 
+        <div class="section-break-2"></div>  
+        <!-- PRODUCT START -->
+        {% if rsItem|length == 0 %}
+            <div class="text-center" style="font-size: 1.1em;">{{ LANG.dataNotFound }}</div>
+        {% else %}
+        <ul class="item-card-list">
+            {% for data in rsItem %}
+            {% set favClass = (data.pkey in arrFavKey) ? 'text-red-cardinal' : ''  %}
+            {% set favIcon = (data.pkey in arrFavKey) ? 'fa-solid fa-heart' : 'fa-regular fa-heart'  %}
+            <li class="item-card">
+                <div class="item-card-panel">
+                    <div class="image-panel">
+                        <div class="tag">Popular</div>
+                        <div class="like"><i class="btn-fav {{ favIcon }} fa-lg {{ favClass }} "
+                                relkey="{{ data.pkey }}"></i></div>
+                        <a href="/products-detail/{{ data.name|urlfilter|raw }}/{{ data.pkey }}">
+                            <div class="skeleton-img"></div>
+                            <img src="/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}item/{{ data.pkey }}/{{ data.mainimage }}&f=png&far=C&&hash={{  getPHPThumbHash(data.mainimage) }}"
+                                alt="image" class="img-product hidden"
+                                onload="this.previousElementSibling.style.display='none'; this.classList.remove('hidden');">
+                        </a>
+                    </div>
+                    <div class="price-panel ">
+                        <div class="item-name auto-height"><a
+                                href="/products-detail/{{ data.name|urlfilter|raw }}/{{ data.pkey }}"
+                                class="name font-libre-baskerville font-bold">{{ data.name|raw }}</a></div>
+                        <!-- <div class="item-name">{{ data.categoryname }}</div> -->
+                        <div class="price-subpanel">
+                            <div class="price">Rp {{ data.sellingprice|number_format }}</div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <!-- PRODUCT END -->
+        <div class="section-break-2"></div>
+    </div>
+</div>
+<div class="section-break-4 bg-gray"></div>
+
+
+{% endblock %}

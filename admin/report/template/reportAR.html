@@ -1,0 +1,91 @@
+{% extends "template.html" %}
+{% set arrTruckingGroup = [COMPANY_TYPE.trucking, COMPANY_TYPE.forwarding] %} 
+
+{% block JS %}
+ 
+<script type="text/javascript">
+    
+    function updateCustomer(obj){ 
+           var templateKey = $("[name=hidTemplateCustomerKey]").val();
+           $.ajax({
+                type: "GET",
+                url:  "../ajax-template-customer.php", 
+                data: "action=getDetailById&pkey=" + templateKey,  
+            }).done(function( data ) {  
+                 data = JSON.parse(data) ;   
+
+                 $("[name='selCustomer[]']:checked").click(); 
+                 for(i=0;i<data.length;i++) 
+                     $("[name='selCustomer[]'][value="+data[i].customerkey+"]:not(:checked)").click();
+
+            }); 
+     } 
+    
+	jQuery(document).ready(function(){     
+       {% if PLAN_TYPE.categorykey not in arrTruckingGroup %} 
+		$("[name=dummyisGrouping]").click(function(){ 
+            if($(this).prop("checked")) $(".isGrouping").show();
+			else $(".isGrouping").hide();
+        });
+		{% endif %}
+    })
+
+</script>
+{% endblock %}
+{% block filter %}
+ <div > 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Kode</label>
+        <div class="col-xs-12"> {{ inputCode|raw }} </div>
+    </div> 
+    <div class="form-group mnv-date-range">
+        <label class="col-xs-12 control-label" >Periode</label>
+        <div class="col-xs-6" style="padding-right:5px;"> {{ inputStartDate|raw }} </div>
+        <div class="col-xs-6" style="padding-left:5px;"> {{ inputEndDate|raw }} </div>
+    </div>  
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Gudang</label>
+        <div class="col-xs-12"> {{ inputSelWarehouse|raw }} </div>
+    </div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Jenis Transaksi</label>
+        <div class="col-xs-12"> {{ inputSelARType|raw }} </div>
+    </div>  
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Pelanggan</label>
+        <div class="col-xs-12" style="margin-bottom: 0.2em"> {{ inputTemplateCustomer|raw }} </div>
+        <div class="col-xs-12"> {{ inputSelCustomer|raw }} </div>
+    </div> 
+    {% if PLAN_TYPE.categorykey not in arrTruckingGroup %}
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Sales</label>
+        <div class="col-xs-12"> {{ inputSalesName|raw }} </div> 
+    </div> 
+    {% endif %}
+    {% if PLAN_TYPE.categorykey in arrTruckingGroup %}
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >S/I</label>
+        <div class="col-xs-12"> {{ inputSI|raw }} </div>
+    </div>  
+    {% endif %}
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Mata Uang</label>
+        <div class="col-xs-12"> {{ inputSelCurrency|raw }} </div>
+    </div>  
+	 <div class="form-group">
+        <label class="col-xs-12 control-label" >Status</label>
+        <div class="col-xs-12"> {{ inputSelStatus|raw }}  </div>
+    </div>
+    <div class="form-group" style="margin-bottom:0">
+        <label class="col-xs-12 control-label" >{{ LANG.others }}</label> 
+    </div>   
+    <div class="form-group"> 
+        <div class="col-xs-12">{{ inputChkDueDate|raw }}<span style="margin-left: 5px">Tampilkan hanya yang jatuh tempo</span></div> 
+        <div class="col-xs-12">
+			{{ inputIsGrouping|raw }}<span style="margin-left: 5px">Grup</span>
+			<div class="isGrouping" style="display: none; margin-left: 1.2em">{{ inputGroupBy|raw }}</div>
+		</div>
+        <div class="col-xs-12">{{ inputShowDetail|raw }}<span style="margin-left: 5px">Detail</span></div>
+    </div>  
+ </div>	
+{% endblock %}

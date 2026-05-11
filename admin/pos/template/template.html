@@ -1,0 +1,514 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"> 
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>{% block pagetitle %}Point of Sales{% endblock %}</title>
+<link rel="stylesheet" type="text/css" href="{{ TEMPLATE_CSS_PATH }}{{ ADMIN_CSS_VERSION }}">  
+<link rel="stylesheet" type="text/css" href="{{ TEMPLATE_CSS_PATH }}responsive-1.0.min.css"> 
+<link rel="stylesheet" type="text/css" href="{{ TEMPLATE_CSS_PATH }}jquery-ui.css" />    
+<link rel="stylesheet" type="text/css" href="{{ TEMPLATE_CSS_PATH }}bootstrap.css"/>
+<link rel="stylesheet" type="text/css" href="{{ TEMPLATE_CSS_PATH }}scrollToTop.css"/>
+<link rel="stylesheet" type="text/css" href="{{ TEMPLATE_CSS_PATH }}easing.css"/>  
+{% block CSS %}{% endblock %}
+
+<script type="text/javascript" src="{{ TEMPLATE_JS_PATH }}jquery-1.11.1.js"></script>     
+<script type="text/javascript" src="{{ TEMPLATE_JS_PATH }}bootstrapValidator.js"></script>    
+<script type="text/javascript" src="{{ TEMPLATE_JS_PATH }}jquery-ui.js"charset="utf-8"></script>   
+<script type="text/javascript" src="{{ TEMPLATE_JS_PATH }}jquery.formatCurrency-1.4.0.min.js" ></script>  
+<script type="text/javascript" src="{{ TEMPLATE_JS_PATH }}jquery-scrollToTop.js"></script> 
+
+{% block JS %}
+<script type="text/javascript">
+
+	jQuery(document).ready(function(){  
+        $(".pointofsales").bind('keyup keypress', function(e) {
+          var code = e.keyCode || e.which;
+          if (code == 13) { 
+            e.preventDefault();
+            return false;
+          }
+        });
+        
+        $("[name=btnSave]").prop('disabled', true);
+        
+		$('#form-pointofsales')
+			.bootstrapValidator({ 
+				feedbackIcons: {
+						valid: 'glyphicon glyphicon-ok',
+						invalid: 'glyphicon glyphicon-remove',
+						validating: 'glyphicon glyphicon-refresh'
+				},
+				fields: {
+					
+				}
+			})
+			.on('success.form.bv', function(e) {
+				
+				$("[name=btnSave]").prop('disabled', true);
+				
+				// Prevent form submission
+				e.preventDefault(); 
+				// Get the form instance
+				var $form = $(e.target);
+	
+				// Get the BootstrapValidator instance
+				var bv = $form.data('bootstrapValidator');
+	
+				// Use Ajax to submit form data
+				$.post($form.attr('action'), $form.serialize(), function(result) {
+                  
+					var error = "";
+					for (i=0;i<result.length;i++)
+						error = error + "<li>" + result[i].message + "</li>";
+						
+					if (error != "")
+						error = "<ul class=\"message-dialog-ul\">" + error + "</ul>";
+						
+					if (!result[0].valid){
+						$(".notification-msg").html(error).hide().fadeToggle("fast");
+						$(".notification-msg").removeClass("bg-green-avocado").addClass("bg-red-cardinal");
+						$form.data('bootstrapValidator').resetForm();
+					//	grecaptcha.reset();
+						$('body').scrollTop(0);
+					}else{
+						alert("Data berhasil disimpan.");
+						location.reload();
+					}
+					
+				}, 'json');
+			});
+			
+		$(" .inputnumber")
+			 .each(function() {  
+				if($(this).val() == "") $(this).val(0); 
+			 })
+			 .bind( "blur", function(event) { 
+			   inputNumberOnBlur($(this));
+	 	});
+		 
+		// DETAIL CLONE
+		$("[name=btnAddRows]").on('click', function() {
+            if ($("[name=itemName]" ).val() == "" ){
+                alert("Nama barang harus diisi.");
+            }else if ($("[name=hidHeaderItemKey]" ).val() == ""){
+                alert("Data tidak ditemukan."); 
+            }else{
+                var itemNotListed = true;
+                
+                $('[name="hidItemKey[]"]').each(function(){
+                  if ($(this).val() == $("[name=hidHeaderItemKey]").val()){
+                      
+                      $parentRow = $(this).parent().parent();
+                      highlightRow($parentRow);  
+                          
+                      $qtyObj = $parentRow.find('[name="qty[]"]'); 
+                      $qtyObj.val(parseInt($qtyObj.val()) + 1).blur().change();
+                      itemNotListed = false; 
+                      return;
+                  }
+                      
+                });
+                
+                if (itemNotListed){ 
+                    $newRow = addNewTemplateRow("point-of-sales-row-template");
+                    var itemName = $("[name=itemName]" ).val();
+                    var priceInUnit = unformatCurrency($("[name=priceInUnit]" ).val());
+                    var hidItemKey = $("[name=hidHeaderItemKey]" ).val();
+
+                    $newRow.find("[name='hidItemKey[]']" ).val(hidItemKey).attr("readonly",true);
+                    $newRow.find("[name='itemName[]']" ).val(itemName).attr("readonly",true);
+                    $newRow.find("[name='priceInUnit[]']" ).val(priceInUnit).blur().change().attr("readonly",true);
+
+
+                    highlightRow($newRow);
+                }
+			} 
+            clearAutoCompleteInput();
+        });
+        
+        
+        
+        // autocomplete
+       
+		$( "[name=itemName]" ).autocomplete({ 
+		  source: "ajax-item.php?action=searchData",
+		  minLength: 1,
+		  select: function( event, ui ) {      
+				$("[name=hidHeaderItemKey]" ).val(ui.item.pkey); 
+				$("[name=priceInUnit]" ).val(ui.item.sellingprice).blur(); 
+                updateImage();  
+			},  
+		  search: function( event, ui ) {  $("[name=hidHeaderItemKey]" ).val("");},
+		  change: function( event, ui ) {   
+				 if (ui.item == null) 
+					clearAutoCompleteInput();
+				 
+			}, 
+		}).change(function() {
+		   if ($(this).val() == "") 
+					clearAutoCompleteInput(); 
+		}) 
+        
+        $( "[name=itemName]" ).on('keypress', function(e) {
+            if (e.which == "13") { 
+                 $.ajax({
+                        type: "GET",
+                        url:  'ajax-item.php?action=searchData',
+                        data: "exact=1&term=" +  $( "[name=itemName]" ).val() ,  
+                        success: function(data){  
+                                data = JSON.parse(data); 
+                                if (data.length > 0){ 
+                                    $("[name=hidHeaderItemKey]" ).val(data[0].pkey); 
+                                    $("[name=priceInUnit]" ).val(data[0].sellingprice).blur();  
+                                    $("[name=itemName]" ).val(data[0].value);
+                                }
+                        } 
+                    }).done(function( data ) { 
+                            $("[name=btnAddRows]").click();
+                            clearAutoCompleteInput();
+                            $('[name=itemName]').blur().focus();
+                    });
+            }  
+        });
+});
+	
+function clearAutoCompleteInput(){    
+	$("[name=hidHeaderItemKey]").val(""); 
+	$("[name=itemName]").val("");
+	$("[name=priceInUnit]").val(0); 
+	$(".input-data-panel .product-image").css("background-image",'');
+}
+    
+function highlightRow($row){
+      $row.animate({
+          backgroundColor: "#fff69c", 
+        }, 200 ).animate({
+          backgroundColor: "#fff", 
+        }, 700 );
+}
+
+function addNewTemplateRow(selector, arrValue){
+		
+		var $template = $(" ." + selector),
+		$newRow   = $template.clone().removeClass(selector).insertBefore($template.first()).show(); 
+		
+    	$newRow.find('input, select, textarea').each(function(){
+			$(this).removeAttr("disabled");
+		});
+    
+		$newRow.find('.inputnumber').bind( "blur", function(event) { 
+		   inputNumberOnBlur($(this));
+		}); 
+    
+		// Set the label and field name 
+		$newRow 
+		.on('click', '.remove-button', function() {   
+			// Remove element
+			$newRow.remove();
+			 
+		});
+		   
+        return $newRow;    
+		
+}
+	
+function inputNumberOnBlur(obj,decimal){  	 
+	  if(obj.val() == "" || !$.isNumeric(unformatCurrency(obj.val())) ) { 
+		 obj.val(0);
+		 
+		 try {
+			$(obj).closest('form').bootstrapValidator('revalidateField', $(obj).attr("name"));   
+		 }
+		 catch(err) {
+			 
+		}
+	  }
+	  
+	  if (decimal == undefined)
+		decimal = 0 ;
+	  obj.formatCurrency({roundToDecimalPlace: decimal });
+}
+
+function unformatCurrency(value){ 
+	if (value == undefined)
+		return 0;
+		
+	return value.replace(/,/g,"");
+}
+
+function pointOfSalesCalculateDetail(obj){     
+	var parentObj =  $(obj).parent().parent();
+	var qty =  unformatCurrency(parentObj.find("[name='qty[]']").val());
+	var priceInUnit =  unformatCurrency(parentObj.find("[name='priceInUnit[]']").val());
+	var discount =  unformatCurrency(parentObj.find("[name='discountValueInUnit[]']").val());
+	var discountType =  unformatCurrency(parentObj.find("[name='selDiscountType[]']").val());
+	
+	if (discount != 0){
+		if (discountType == 2)
+			discount = discount/100 * priceInUnit;
+	}
+	
+	var subtotal = qty * (priceInUnit - discount);
+	parentObj.find("[name='subtotal[]']").val(subtotal).blur(); 
+	
+	pointOfSalesCalculateTotal();
+}
+
+function pointOfSalesCalculateTotal(){     
+
+	var subtotal = 0;
+	$(" [name='subtotal[]']").each(function() {   
+		subtotal += parseInt(unformatCurrency($(this).val())) || 0;
+	})
+	
+	$(" [name='subtotal']").val(subtotal).blur();
+	
+	var finalDiscount = parseInt(unformatCurrency($(" [name='finalDiscount']").val())) || 0 ;
+	var finalDiscountType = parseInt(unformatCurrency($(" [name='selFinalDiscountType']").val())) || 0 ;
+	var includeTax =   $(" [name='chkIncludeTax']").prop("checked");
+	var taxPercentage =  parseInt(unformatCurrency($(" [name='taxPercentage']").val())) || 0 ; 
+	
+	if (finalDiscount != 0){
+		if (finalDiscountType == 2)
+			finalDiscount = finalDiscount/100 * subtotal;
+	}
+	
+	subtotal -= finalDiscount;
+	
+	$(" [name='beforeTaxTotal']").val(subtotal).blur();
+	
+	var taxValue = 0;
+	if (includeTax == false) {
+		taxValue = subtotal * taxPercentage / 100;
+		subtotal += taxValue;
+	}else{
+		taxValue = (taxPercentage/(100 + taxPercentage)) * subtotal; 
+		$(" [name='beforeTaxTotal']").val(subtotal - taxValue).blur(); 
+	}
+	
+	$(" [name='taxValue']").val(taxValue).blur(); 
+		 
+	var total = subtotal;
+	$(" [name='total']").val(total).blur();
+	
+	var totalPayment = 0; 
+	$(" [name='paymentMethodValue[]']").each(function() {   
+			totalPayment += parseInt(unformatCurrency($(this).val())) || 0;
+	}) 
+		
+    $(" [name='totalPayment']").val(totalPayment).blur();
+    
+    var balance = totalPayment - total;
+    $("[name='balance']").val(balance).blur();
+    if (balance < 0 ){
+        $(" [name='balance']").closest(".form-group").addClass("text-red-cardinal") ; 
+        $(" [name='balance']").addClass("text-red-cardinal") ;
+        $(" [name='btnSave']").attr("disabled",true);
+    }else{
+        $(" [name='balance']").closest(".form-group").removeClass("text-red-cardinal") ; 
+        $(" [name='balance']").removeClass("text-red-cardinal") ; 
+        $(" [name='btnSave']").removeAttr("disabled");
+    }
+       
+        
+}
+
+function updateImage(){
+    if ($("[name=hidHeaderItemKey]" ).val() == "")
+        return;
+    
+      $.ajax({
+            type: "POST",
+            url:  'getItemImages.php',
+            data: "itemkey=" +  $( "[name=hidHeaderItemKey]" ).val() ,  
+            success: function(data){  
+                    data = JSON.parse(data); 
+                    if (data.length > 0){
+                       $(".input-data-panel .product-image").css("background-image",'url(' +data[0].phpthumburl + ')');
+                    }
+            } 
+        });
+}
+
+</script>
+{% endblock %}
+</head> 
+<body>  
+{{ inputHidItemKey|raw }}
+<div class="pointofsales" >
+    <div class="div-table" > 
+        <div class="div-table-row">
+            <div class="div-table-col"> 
+                <div class="title">{% block reporttitle %}{{settings.companyName}} - Point of Sales{% endblock %}</div> 
+                <div style="clear:both; height:1em;"></div>
+				<div class="data-panel"> 
+					 <div class="notification-msg"></div>
+					 <div class="div-table input-data-panel" style="width:100%; ">
+					 <div style="clear:both; height:1em;"></div>
+						<div class="div-table-row">
+							<div class="div-table-col"  style="width:60%; text-align:center"> 
+								<div class="div-table-tab-form" style="margin:auto;"> 
+									<div class="div-table-caption border-orange">Informasi Item</div> 
+									<div class="div-table-row form-group">
+										<div class="div-table-col-5 div-table-col-header">
+											<label class="col-lg-1 control-label">Nama</label>
+										</div> 
+										<div class="div-table-col-5">
+											<div class="col-lg-12"> 
+												 {{ inputItemName|raw }}
+											</div>
+										</div> 
+									</div>
+									<div class="div-table-row form-group">
+										<div class="div-table-col-5 div-table-col-header">
+											<label class="col-lg-1 control-label">Harga</label>
+										</div> 
+										<div class="div-table-col-5">
+											<div class="col-lg-12"> 
+												 {{ inputPriceInUnit|raw }}
+											</div>
+										</div> 
+									 </div>			
+									<div class="div-table-row form-group">
+										<div class="div-table-col-5 div-table-col-header">
+											<label class="col-lg-1 control-label"></label>
+										</div> 
+										<div class="div-table-col-5">
+											<div class="col-lg-12"> 
+												 {{ inputAdd|raw }}
+											</div>
+										</div> 
+									 </div>								
+								</div>
+							</div>
+							<div class="div-table-col"  style="width:2%; text-align:center"> </div>
+							<div class="div-table-col"  style="text-align:center">
+								<div class="product-image"></div>
+							</div>
+						</div>
+						<div style="clear:both; height:1em;"></div>  
+					 </div>
+                    
+                    <div style="clear:both; height:2em;"></div>
+                    <form id="form-pointofsales" method="post"  class="form-horizontal form-default" action="pos/ajaxPointOfSales.php"> 
+                    <div class="div-table" style="width:100%; border-bottom:1px solid #333; ">
+                         <div class="div-table-row"> 
+                            <div class="div-table-col detail-col-header">Item</div>
+                            <div class="div-table-col detail-col-header" style="width:70px; text-align:right;">Jumlah</div>
+                            <div class="div-table-col detail-col-header" style="width:100px; text-align:right;">Harga @</div>
+                            <div class="div-table-col detail-col-header" style="width:100px; text-align:right; padding-right:0;"></div>
+                            <div class="div-table-col detail-col-header" style="width:80px; text-align:right; padding-left:0.2em;">Diskon @</div>
+                            <div class="div-table-col detail-col-header" style="width:180px; text-align:right;">Subtotal</div>
+                            <div class="div-table-col detail-col-header"  style="width:70px"></div>
+                        </div>
+                         <!-- Template for dynamic field -->  
+                        <div class="div-table-row point-of-sales-row-template" style="display:none;" >
+                            <div class="div-table-col detail-col-detail">{{ inputItemNameDetail|raw }}{{ inputHidItemKeyDetail|raw }}</div>
+                            <div class="div-table-col detail-col-detail">{{ inputQty|raw }}</div>
+                            <div class="div-table-col detail-col-detail">{{ inputPriceInUnitDetail|raw }}</div>
+                            <div class="div-table-col detail-col-detail">{{ inputDiscountValueInUnit|raw }}</div>
+                            <div class="div-table-col detail-col-detail">{{ selDiscountType|raw }}</div>
+                            <div class="div-table-col detail-col-detail">{{ inputSubtotalDetail|raw }}</div>
+                            <div class="div-table-col detail-col-detail">{{ removeButton|raw }}</div> 
+                        </div> 
+                    </div>
+
+                    <div style="clear:both; height:1em;"></div> 
+                    <div style="margin-right:70px;">
+                        <div class="div-table" style="float:right; width:20em;"> 
+                            {% for i in 0..paymentMethod|length %}  
+                                    <div class="div-table-row  form-group"> 
+                                        <div class="div-table-col-5" style="text-align:right;">
+                                                {{ paymentMethod[i]|e }}
+                                        </div>  
+                                        <div class="div-table-col-5" style="width:180px;"> 
+                                                {{ hidPaymentMethodKey[i]|raw }}{{ inputPaymentMethodValue[i]|raw }}
+                                        </div>
+                                    </div> 
+                            {% endfor %} 
+                        
+                            
+                        </div>
+                        
+                        <div class="div-table" style="float:right; width:20em;">
+                            <div class="div-table-row  form-group"> 
+                                <div class="div-table-col-5" style="text-align:right;">
+                                    Subtotal 
+                                </div>  
+                                <div class="div-table-col-5" style="width:180px;"> 
+                                    {{ inputSubtotal|raw }}
+                                </div>
+                            </div>
+                            <div class="div-table-row  form-group"> 
+                                <div class="div-table-col-5" style="text-align:right;">
+                                    Diskon 
+                                </div>  
+                                <div class="div-table-col-5" style="width:180px;"> 
+                                     <div style="float:right; padding-left:0.5em;  width:110px;  ">{{ inputFinalDiscount|raw }}</div>
+                                     <div style="float:right;   width:55px; ">{{ selFinalDiscountType|raw }}</div>
+
+                                </div>
+                            </div>
+                            <div class="div-table-row  form-group"> 
+                                <div class="div-table-col-5" style="text-align:right;">
+                                    Sebelum Pajak 
+                                </div>  
+                                <div class="div-table-col-5" style="width:180px;"> 
+                                    {{ inputBeforeTaxTotal|raw }}
+                                </div>
+                            </div>
+                            <div class="div-table-row  form-group"> 
+                                <div class="div-table-col-5" style="text-align:right;">
+                                    Pajak [Include] 
+                                </div>  
+                                <div class="div-table-col-5" style="width:180px;"> 
+                                    <div style="float:right; padding-left:0.5em;  width:90px; ">{{ inputTaxValue|raw }}</div>
+                                    <div style="float:right; padding-left:0.5em; line-height:2.5em;" >% </div>
+                                    <div style="float:right; padding-left:0.5em;  width:45px;"> {{ inputTaxPercentage|raw }}</div> 
+                                    <div style="float:right; padding-top:0.5em;"><input type="checkbox" name="chkIncludeTax"  value="1"  onChange="pointOfSalesCalculateTotal()"></div> 
+                                </div>
+                            </div>
+                            <div class="div-table-row  form-group"> 
+                                <div class="div-table-col-5" style="text-align:right;">
+                                    Total 
+                                </div>  
+                                <div class="div-table-col-5" style="width:180px;"> 
+                                    {{ inputTotal|raw }}
+                                </div>
+                            </div>
+                            <div class="div-table-row  form-group"> 
+                                <div class="div-table-col-5" style="text-align:right;">
+                                    Pembayaran 
+                                </div>  
+                                <div class="div-table-col-5" style="width:180px;">{{ inputTotalPayment|raw }}
+                                </div>
+                            </div>
+                            <div class="div-table-row  form-group"> 
+                                <div class="div-table-col-5" style="text-align:right;">
+                                    Balance 
+                                </div>  
+                                <div class="div-table-col-5" style="width:180px;"> 
+                                    {{ inputBalance|raw }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="clear:both"></div>
+
+                    <div class="form-button-panel" > 
+                        {{ saveButton|raw }}
+                    </div>
+                    </form>
+                    <div style="clear:both; height:2em;"></div>
+				</div>
+            </div>
+        </div>
+    </div>  
+</div>
+<div id="back-to-top"></div>
+</body>
+
+</html>
+

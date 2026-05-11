@@ -1,0 +1,94 @@
+{% extends "template.html" %}
+{% block pagetitle %}{{ LANG.workOrderReport }}{% endblock %}
+{% block reporttitle %}{{ LANG.workOrderReport }}{% endblock %}
+{% block JS %}
+<script type="text/javascript">
+
+	jQuery(document).ready(function(){ 
+         
+        setAutoComplete('filterForm', {objName:'customerName', objValue :'hidCustomerKey', url : 'ajax-customer.php?action=searchData' });
+        setAutoComplete('filterForm', {objName:'consigneeName', objValue :'hidConsigneeKey', url : 'ajax-consignee.php?action=searchData' }); 
+        
+        $( "[name=trStartStuffingDateTime], [name=trEndStuffingDateTime]" ).change(function() { 
+            var trStartDate = Date.parse(convertDateToStandartFormat($("[name=trStartStuffingDateTime]").val()));
+            var trEndDate = Date.parse(convertDateToStandartFormat($("[name=trEndStuffingDateTime]").val()));
+               
+            if (trStartDate > trEndDate) 
+                $("[name=trEndStuffingDateTime]").val($("[name=trStartStuffingDateTime]").val()); 
+            
+		});
+        
+         
+	});
+
+</script>
+{% endblock %}
+{% block filter %}
+{{ inputHidCustomerKey|raw }} 
+{{ inputHidItemKey|raw }}
+ <div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Kode</label>
+        <div class="col-xs-12"> {{ inputWorkOrderCode|raw }} </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Tgl. SPK</label>
+        <div class="col-xs-6" style="padding-right:5px;"> {{ inputStartDateTime|raw }} </div>
+        <div class="col-xs-6" style="padding-left:5px;"> {{ inputEndDateTime|raw }} </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Kode Job Order</label>
+        <div class="col-xs-12"> {{ inputSalesCode|raw }} </div>
+    </div>  
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >S / I</label>
+        <div class="col-xs-12"> {{ inputDONumber|raw }} </div> 
+    </div>  
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Booking Pelayaran</label>
+        <div class="col-xs-12"> {{ inputShipmentNumber|raw }} </div> 
+    </div>  
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >No. Container</label>
+        <div class="col-xs-12"> {{ inputContainerNumber|raw }} </div> 
+    </div>  
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Consignee</label>
+        <div class="col-xs-12"> {{ inputConsigneeName|raw }} </div> 
+    </div>   
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Jenis Kargo</label>
+        <div class="col-xs-12"> {{ inputSelCargoType|raw }} </div> 
+    </div>   
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Jenis Pekerjaan</label>
+        <div class="col-xs-12"> {{ inputSelJobType|raw }} </div> 
+    </div>   
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Status</label>
+        <div class="col-xs-12"> {{ inputSelStatus|raw }} </div> 
+    </div> 
+     
+     
+ </div>	 
+{% endblock %} 
+{% block reportContent %}
+<table class="main-table" style="width:1500px">
+    <tr class="table-header"> 
+        <td style="width:40px; text-align:right;">No.</td> 
+        <td style="width:100px;" class="sortable" relcol="code">Kode</td> 
+        <td style="width:120px; text-align:center; " class="sortable" relcol="trdate" >Tanggal</td> 
+        <td style="width:150px; text-align:center; " class="sortable" relcol="stuffingdatetime" >Tgl. Stuffing</td> 
+        <td style="width:100px;" class="sortable" relcol="serviceordercode" >Job Order</td> 
+        <td style="width:80px;" class="sortable" relcol="cargotype" >Kargo</td>  
+        <td style="width:120px;" class="sortable" relcol="jobtypename" >Jenis Pekerjaan</td>  
+        <td style="width:100px;" class="sortable" relcol="containername" >Layanan</td> 
+        <td style="width:120px;" class="sortable" relcol="donumber" >S / I</td>     
+        <td style="width:130px;" class="sortable" relcol="shipmentnumber" >Booking Pelayaran</td>     
+        <td style="width:150px;" class="sortable" relcol="consigneename" >Consignee</td>     
+        <td style="width:50px; text-align:center" class="sortable" relcol="TL" >TL</td>     
+        <td style="width:80px;" class="sortable" relcol="statusname"  >Status</td>  
+	</tr>  
+</table>
+{% endblock %}
+

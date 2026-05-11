@@ -1,0 +1,95 @@
+{% extends "template-portal.html" %} 
+{% import "twigMacro.html" as macro %}  
+{% block pagetitle %}{{ LANG.invoice }} | {{ parent() }}{% endblock %} 
+{% block contenttitle %} {{ LANG.invoice|upper }}{% endblock %}
+{% set pageFileName = 'invoice-trucking-list' %}
+{% block actionpanelinfo %}<div><b>Outstanding</b><div style="font-size: 1.3em">Rp. {{ totalOutstanding|number_format }}</div></div>{% endblock %}
+{% block listcontent %}
+{% for item in rsInvoice %}
+<div class="card-row flex flex-start">   
+		<div class="consume">
+			<h2>{{ item.code }}</h2>
+			<div class="data-row flex">
+				<div class="label">{{ LANG.date }}</div>
+				<div class="consume">{{ item.trdate|date("d M Y") }}</div>
+			</div>	
+			<div class="data-row flex">
+				<div class="label">{{ LANG.duedate }}</div>
+				<div class="consume">{{ item.duedate|date("d M Y") }}</div>
+			</div>	 
+			
+			<div class="data-row flex">
+				<div class="label">{{ LANG.recipientName }}</div>
+				<div class="consume">
+					{% if item.recipientname is empty %}-{% else %}{{ item.recipientname }}{% endif %}
+				</div>
+			</div>	
+			<div class="data-row flex">
+				<div class="label">{{ LANG.receivedDate }}</div>
+				<div class="consume">
+					{% if isEmptyDate(item.receiveddate) %}
+						{{ LANG.onDelivery }}
+					{% else %}
+						{{ item.receiveddate|date("d M Y") }} 
+					{% endif %}
+				</div>
+			</div>	
+			<div class="data-row flex">
+				<div class="label">{{ LANG.total }}</div>
+				<div  class="consume" >Rp. {{ item.grandtotal|number_format }}</div> 
+			</div>	 
+			<div class="data-row flex">
+				<div class="label">{{ LANG.status }}</div>
+				<div  class="consume" >{% if not item.arstatusname is empty %}{{ item.arstatusname }}{% else %}Lunas{% endif %}</div> 
+			</div> 
+			<div class="data-row flex flex-start">
+				<div class="label">{{ LANG.documents }}</div>
+				<div  class="consume">
+				    {% for fileItem in item.file %}
+				    <div><a href="{{ fileItem.url }}" target="_blank">{{ fileItem.fileName }}</a></div>
+				    {% endfor %}
+				</div> 
+			</div>  
+			<!--<div class="data-row flex">-->
+			<!--	<div class="label">{{ LANG.taxInvoice }}</div>-->
+			<!--	<div  class="consume">{% if not item.filetax is empty %}<a href="/download-file?module=trucking-invoice-tax&pkey={{ item.pkey }}" target="_blank">{{ LANG.downloadDocument }}</a>{% else %}-{% endif %}</div> -->
+			<!--</div>  -->
+		</div>
+		<div class="consume" >
+			<div class="expand-group">
+			   <div  class="label  user-select-none expand-link">{{ LANG.jobInformation }}<i class="fas fa-caret-down expand-icon"></i><i class="fas fa-caret-up expand-icon" style="display:none"></i></div>
+			   <div class="expand-detail">
+				<div style="clear:both; height: .5em"></div>
+			   {% for detail in rsDetail[item.pkey] %}
+				<h3 class="flex flex-space-between">
+					<div>{{ detail.socode }}</div>
+					<div>{{ detail.sodate|date("d M Y") }}</div>
+				</h3>
+				  	
+					<div class="div-table" style="width:100%; font-size: .9em;"> 
+					{% for itemDetail in rsItemDetail[detail.pkey] %}
+							<div class="div-table-row">
+								<div class="div-table-col">{{ itemDetail.qtyinbaseunit|number_format }} x {% if not itemDetail.aliasname is empty %} {{ itemDetail.aliasname }} {% else %}{{ itemDetail.itemname }}{% endif %}</div>
+								<div class="div-table-col" style="text-align: right; width: 6em">{{ itemDetail.priceinunit|number_format }}</div>
+							 
+								{% if itemDetail.taxdetailvalue > 0 %} 
+									<div class="div-table-col" style="text-align: right; width: 7em">{{ itemDetail.taxdetailvalue|number_format }} </div>
+								{% else %} 
+									<div class="div-table-col" style="text-align: right; width: 7em">{{ itemDetail.total|number_format }} </div>
+								{% endif %}  
+							</div>
+					{% endfor %} 
+					</div>	 
+			
+				<div style="clear: both;height: 0.5em"></div>
+				{% endfor %}
+				</div>
+			</div>
+		</div>  
+</div>   
+{% endfor %}
+
+{% if rsInvoice is empty %}
+<div style="text-align: center; padding-top:1em">{{ LANG.noDataFound }}</div>
+{% endif %}
+{% endblock %}

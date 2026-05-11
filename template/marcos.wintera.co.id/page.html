@@ -1,0 +1,13 @@
+{% extends "template.html" %}
+{% block pagetitle %}{{ title }}{% endblock %}  
+
+{% block CSSInline %}
+{% endblock %}    
+
+{% block content %}
+<div class="section-break-4"></div>
+<div class="free-page">
+{{ content|raw }}
+</div>
+<div class="section-break-8"></div>
+{% endblock %}

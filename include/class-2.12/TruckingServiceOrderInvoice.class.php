@@ -1,0 +1,2992 @@
+<?php
+
+class TruckingServiceOrderInvoice extends BaseClass{
+	
+    function __construct(){
+
+    parent::__construct();
+
+    $this->tableName = 'trucking_service_order_invoice_header';
+    $this->tableNameDetail = 'trucking_service_order_invoice_detail';
+    $this->tableNameItemDetail = 'trucking_service_order_invoice_item_detail';
+    $this->tableCustomer = 'customer';
+    $this->tableItem = 'item';
+    $this->tableStatus = 'transaction_status';
+    $this->tableWarehouse = 'warehouse';   
+    $this->tablePayment= 'trucking_service_order_invoice_payment'; 
+    $this->tableSalesOrder= 'trucking_service_order_header';
+    $this->tableSalesOrderCategory= 'trucking_service_order_category';
+    $this->tableWorkOrder= 'trucking_service_work_order';    
+    $this->tableConsignee= 'consignee'; 
+    $this->tablePaymentMethod = 'payment_method';
+    $this->tableDownpaymentDetail = 'trucking_service_order_invoice_downpayment';
+    $this->tableDownpayment = 'customer_downpayment';
+    $this->tablePartialInvoice = 'trucking_service_order_header_partial_invoice';  
+    $this->tableAR = 'ar';
+    $this->tableARStatus = 'ar_status';
+    $this->tableARPaymentHeader = 'ar_payment_header';
+    $this->tableARPaymentDetail = 'ar_payment_detail';
+    $this->tableCustomCode = 'custom_code'; 
+    $this->tableFile = 'trucking_service_order_invoice_file';
+    $this->isTransaction = true;
+    $this->securityObject = 'TruckingServiceOrderInvoice';
+    $this->tableCOA  = 'chart_of_account';
+    $this->autoPrintURL = 'print/truckingServiceOrderInvoice'; 
+    $this->uploadFileFolder = 'trucking-service-order-invoice/';  
+    $this->uploadFileTaxFolder = 'trucking-service-order-invoice-tax/';  
+    $this->useStorage = $this->useStorage('S3');		  
+              
+    $this->arrItem = array();  
+    $this->arrItem['pkey'] = array('hidDetailItemKey');
+    $this->arrItem['refkey'] = array('hidDetailKey','ref');  
+    $this->arrItem['refheaderkey'] = array('pkey','ref');  
+    $this->arrItem['itemkey'] = array('hidItemDetailKey', array('mandatory'=>true)); 
+    $this->arrItem['refsodetailkey'] = array('hidRefSODetailKey'); 
+    $this->arrItem['istax23'] = array('chkIsTax23'); 
+    $this->arrItem['aliasname'] = array('itemNameAliasDetail'); 
+    $this->arrItem['qtyinbaseunit'] = array('qtyDetail','number', array('mandatory'=>true));
+    $this->arrItem['priceinunit'] = array('priceInUnitDetail','number', array('mandatory'=>true)); 
+    $this->arrItem['total'] = array('subtotalDetail','number'); 
+    $this->arrItem['taxdetail'] = array('taxDetail','number'); 
+    $this->arrItem['taxdetailvalue'] = array('taxValueDetail','number'); 
+    $this->arrItem['beforetaxdetailvalue'] = array('beforeTaxDetail','number'); 
+    $this->arrItem['aftertaxdetailvalue'] = array('afterTaxDetail','number'); 
+    $this->arrItem['ispriceincludetax'] = array('chkIncludeTaxDetail'); 
+    $this->arrItem['discountdetailtype'] = array('selDiscountDetailType'); 
+    $this->arrItem['discountdetailvalue'] = array('discountValueDetail','number'); 
+
+    $this->arrDataDetail = array(); 
+    $this->arrDataDetail['pkey'] = array('hidDetailKey', array('dataDetail' => array('dataset' => $this->arrItem, 'tableName' => $this->tableNameItemDetail)));
+    $this->arrDataDetail['refkey'] = array('pkey','ref'); 
+    $this->arrDataDetail['salesorderkey'] = array('hidSalesOrderKey');
+    $this->arrDataDetail['workorderkey'] = array('selWorkOrderKey');
+    $this->arrDataDetail['trdate'] = array('salesOrderDate', 'date');
+    $this->arrDataDetail['invoicetype'] = array('selInvoiceType', array('mandatory'=>true)); 
+    $this->arrDataDetail['salesordergrandtotal'] = array('salesOrderSubtotal','number');
+    $this->arrDataDetail['salesordertotalinvoiced'] = array('salesOrderDownpayment','number');
+    $this->arrDataDetail['itemkey'] = array('hidItemKey');
+    $this->arrDataDetail['description'] = array('detailNote');
+    $this->arrDataDetail['amount'] = array('amount','number');
+    $this->arrDataDetail['orderlist'] = array('hidOrderList');
+        
+    $this->arrPaymentDetail = array(); 
+    $this->arrPaymentDetail['pkey'] = array('hidDetailPaymentKey');
+    $this->arrPaymentDetail['refkey'] = array('pkey', 'ref');
+    $this->arrPaymentDetail['amount'] = array('paymentMethodValue',array('datatype' => 'number','mandatory'=>true));
+    $this->arrPaymentDetail['paymentkey'] = array('selPaymentMethod',array('mandatory'=>true)); 
+    
+    $this->arrDownpaymentDetail = array(); 
+    $this->arrDownpaymentDetail['pkey'] = array('hidDetailDownpaymentKey');
+    $this->arrDownpaymentDetail['refkey'] = array('pkey', 'ref');
+    $this->arrDownpaymentDetail['amount'] = array('downpaymentAmount',array('datatype' => 'number','mandatory'=>true));
+    $this->arrDownpaymentDetail['downpaymentkey'] = array('hidDownpaymentKey',array('mandatory'=>true));
+
+    $this->arrDataFileDetail = array();  
+    $this->arrDataFileDetail['pkey'] = array('hidDetailFileKey');
+    $this->arrDataFileDetail['refkey'] = array('pkey','ref');
+    $this->arrDataFileDetail['file'] = array('fileDetail',array('datatype' => 'file','uploadFolder' => $this->uploadFileFolder));
+
+    $this->arrDetails = array(); 
+    array_push($this->arrDetails, array('dataset' => $this->arrDataDetail, 'tableName' => $this->tableNameDetail));
+    array_push($this->arrDetails, array('dataset' => $this->arrPaymentDetail, 'tableName' => $this->tablePayment));
+    array_push($this->arrDetails, array('dataset' => $this->arrDownpaymentDetail, 'tableName' => $this->tableDownpaymentDetail));
+    
+    // khusus thomas sementara
+    if($this->useStorage)
+        array_push($this->arrDetails, array('dataset' => $this->arrDataFileDetail, 'tableName' => $this->tableFile));
+        
+    $this->arrData = array(); 
+    $this->arrData['pkey'] = array('pkey', array('dataDetail' => $this->arrDetails));  
+    $this->arrData['code'] = array('code');
+    $this->arrData['trdate'] = array('trDate','date');
+    $this->arrData['refinvoicekey'] = array('hidRefInvoiceKey');
+    $this->arrData['customerkey'] = array('hidCustomerKey');
+    $this->arrData['warehousekey'] = array('selWarehouseKey');
+    $this->arrData['trdesc'] = array('trDesc');
+    $this->arrData['statuskey'] = array('selStatus');
+    $this->arrData['companybankkey'] = array('selBank');
+    $this->arrData['grandtotal'] = array('grandTotal','number');
+    //$this->arrData['customertaxdate'] = array('trDateCustomerTax','date');
+    //$this->arrData['customertaxid'] = array('customerTaxId');
+    $this->arrData['termofpaymentkey'] = array('selTermOfPayment'); 
+    $this->arrData['customcodekey'] = array('selCustomCode'); 
+    $this->arrData['subtotal'] = array('subtotal','number'); 
+    $this->arrData['beforetaxtotal'] = array('beforeTaxTotal','number'); 
+    $this->arrData['ispriceincludetax'] = array('isPriceIncludeTax'); 
+    $this->arrData['totalpayment'] = array('totalPayment','number'); 
+    $this->arrData['balance'] = array('balance','number'); 
+    $this->arrData['finaldiscounttype'] = array('selFinalDiscountType'); 
+    $this->arrData['finaldiscount'] = array('finalDiscount','number'); 
+    $this->arrData['finaldiscounttype'] = array('selFinalDiscountType'); 
+    $this->arrData['ispriceincludetax'] = array('isPriceIncludeTax'); 
+    $this->arrData['taxpercentage'] = array('taxPercentage','number'); 
+    $this->arrData['taxvalue'] = array('taxValue','number'); 
+    $this->arrData['ispriceincludetax'] = array('chkIncludeTax');
+    $this->arrData['tax23percentage'] = array('tax23Percentage','number');    
+    $this->arrData['tax23value'] = array('tax23Value','number');    
+    $this->arrData['usetax23'] = array('chkTax23'); 
+    $this->arrData['donumber'] = array('doNumber');
+    $this->arrData['shipmentnumber'] = array('shipmentNumber'); 
+    $this->arrData['totaldownpayment'] = array('totalDownpayment','number');
+    $this->arrData['outstanding'] = array('outstanding','number');
+    $this->arrData['salesordercodecache'] = array('salesordercodecache');
+    $this->arrData['isdownpayment'] = array('chkDownpayment');
+    $this->arrData['invoiceto'] = array('selInvoiceTo'); 
+    $this->arrData['invoicenotify'] = array('selInvoiceNotify'); 
+    $this->arrData['invoiceconsigneenotifyname'] = array('invoiceNotifyConsigneeName'); // biar gk bentrok sama consigneename dr query
+    $this->arrData['invoiceconsigneenotifyaddress'] = array('invoiceNotifyConsigneeAddress');   
+
+	$this->arrData['currencykey'] = array('selCurrency');
+    $this->arrData['rate'] = array('currencyRate','number');
+	$this->arrData['stampfee'] = array('stampFee','number');
+	$this->arrData['vanumber'] = array('vanumber');
+	$this->arrData['containernumber'] = array('containerNumber'); // taro di header saja biar bisa ditrim, kalo nanti perlu br detail ditambahin jg
+    $this->arrData['requestid'] = array('requestId'); // taro di header saja biar bisa ditrim, kalo nanti perlu br detail ditambahin jg
+    $this->arrData['reference1'] = array('reference1'); // taro di header saja biar bisa ditrim, kalo nanti perlu br detail ditambahin jg
+   	$this->arrData['isapi'] = array('_mnv-api');
+//    $this->arrData['consigneekey'] = array('hidConsigneeKey'); // tidak perlu disimpan, karena bisa beda2, free text
+    $this->arrData['invoiceconsigneename'] = array('invoiceConsigneeName'); // biar gk bentrok sama consigneename dr query
+    $this->arrData['invoiceconsigneeaddress'] = array('invoiceConsigneeAddress');
+    $this->arrData['usenotify'] = array('chkUseNotify');
+    $this->arrData['usedateperiod'] = array('chkDatePeriod');
+    $this->arrData['startdateperiod'] = array('trStartDate','date');
+    $this->arrData['enddateperiod'] = array('trEndDate','date');
+    $this->arrData['invoicesignaturekey'] = array('hidInvoiceSignatureKey');
+    $this->arrData['locationfromkey'] = array('hidLocationFromKey');
+    $this->arrData['locationtokey'] = array('hidLocationToKey');
+        
+    if($this->useStorage){
+        
+    }else{ 
+        $this->arrData['file'] = array('item-file-uploader',array('datatype' => 'file', 'uploadFolder' => $this->uploadFileFolder,  'token' => 'token-item-file-uploader', 'fileName' => 'item-file-uploader'));
+        $this->arrData['filetax'] = array('item-file-tax-uploader',array('datatype' => 'file', 'uploadFolder' => $this->uploadFileTaxFolder,  'token' => 'token-item-file-tax-uploader', 'fileName' => 'item-file-tax-uploader'));
+    }
+        
+        
+    $this->refAutoCode = array( 'param' => 'hidRefInvoiceKey', 'refField' => 'pkey');
+        
+    // perlu tambahin $this->tableNameItemDetail, tp harus manual, karena refkeynya beda
+    //$this->tableNeedToBeCopyOnCancel = array($this->tableNameDetail, $this->tablePayment, $this->tableDownpaymentDetail);
+  
+    $this->arrDataListAvailableColumn = array(); 
+    array_push($this->arrDataListAvailableColumn, array('code' => 'code','title' => 'code','dbfield' => 'code','default'=>true, 'width' => 120));
+    array_push($this->arrDataListAvailableColumn, array('code' => 'date','title' => 'date','dbfield' => 'trdate','default'=>true, 'width' => 90,  'align' => 'center', 'format' => 'date'));
+    array_push($this->arrDataListAvailableColumn, array('code' => 'duedate','title' => 'duedate','dbfield' => 'duedate',  'width' => 90,  'align' => 'center', 'format' => 'date'));
+    array_push($this->arrDataListAvailableColumn, array('code' => 'customer','title' => 'customer','dbfield' => 'customername','default'=>true, 'width' => 150));
+    array_push($this->arrDataListAvailableColumn, array('code' => 'consignee','title' => 'consignee','dbfield' => 'consigneename','default'=>true, 'width' => 150));
+    array_push($this->arrDataListAvailableColumn, array('code' => 'invoiceAmount','title' => 'invoiceAmount','dbfield' => 'grandtotal','default'=>true,'align'=>'right','format'=>'integer', 'width' => 100));
+    array_push($this->arrDataListAvailableColumn, array('code' => 'downpayment','title' => 'downpayment','dbfield' => 'totaldownpayment','default'=>true, 'align'=>'right','format'=>'integer', 'width' => 90));
+    array_push($this->arrDataListAvailableColumn, array('code' => 'invoiceOutstanding','title' => 'invoiceOutstanding','dbfield' => 'outstanding','default'=>true, 'align'=>'right','format'=>'integer', 'width' => 90));
+    array_push($this->arrDataListAvailableColumn, array('code' => 'arOutstanding','title' => 'outstanding','dbfield' => 'aroutstanding', 'align'=>'right','format'=>'integer', 'width' => 100));
+    array_push($this->arrDataListAvailableColumn, array('code' => 'arstatusname','title' => 'arStatus','dbfield' => 'arstatusname', 'width' => 100,'default'=>true));
+    array_push($this->arrDataListAvailableColumn, array('code' => 'status','title' => 'status','dbfield' => 'statusname','default'=>true, 'width' => 70));
+    array_push($this->arrDataListAvailableColumn, array('code' => 'description','title' => 'note','dbfield' => 'trdesc', 'width' => 150));
+    array_push($this->arrDataListAvailableColumn, array('code' => 'warehouse','title' => 'warehouse','dbfield' => 'warehousename', 'width' => 120));
+    array_push($this->arrDataListAvailableColumn, array('code' => 'invoiceType','title' => 'invoiceType','dbfield' => 'invoicetype', 'width' => 100));
+    array_push($this->arrDataListAvailableColumn, array('code' => 'receiptDate','title' => 'receiptDate','dbfield' => 'receiptdt', 'width' => 100, 'align' => 'center','format'=>'date'));
+    //array_push($this->arrDataListAvailableColumn, array('code' => 'receivedDate','title' => 'dateReceived','dbfield' => 'receiveddate', 'width' => 100, 'align' => 'center','format'=>'date'));
+    array_push($this->arrDataListAvailableColumn, array('code' => 'salesordercodecache','title' => 'JOCode','dbfield' => 'salesordercodecache', 'width' => 150));
+    array_push($this->arrDataListAvailableColumn, array('code' => 'taxvalue','title' => 'tax','dbfield' => 'taxvalue', 'width' => 100,'align'=>'right','format'=>'integer',));
+    array_push($this->arrDataListAvailableColumn, array('code' => 'tax23value','title' => 'tax23','dbfield' => 'tax23value', 'width' => 100,'align'=>'right','format'=>'integer'));
+    array_push($this->arrDataListAvailableColumn, array('code' => 'confirmedon','title' => 'confirmedDate','dbfield' => 'confirmedon', 'width' => 100, 'align' => 'center','format'=>'date'));
+    array_push($this->arrDataListAvailableColumn, array('code' => 'invoicetaxnumber','title' => 'invoiceTaxNumber','dbfield' => 'invoicetaxnumber','default'=>false, 'width' => 130));
+   
+    $this->printMenu = array();
+    array_push($this->printMenu,array('code' => 'printInvoice', 'name' => $this->lang['printInvoice'],  'icon' => 'print', 'url' => 'print/truckingServiceOrderInvoice'));
+     
+    array_push($this->filterCriteria, array('title' => $this->lang['warehouse'], 'field' => 'warehousekey'));
+    array_push($this->filterCriteria, array('title' => $this->lang['ar'], 'field' => $this->tableARStatus.'.pkey', 'alias' => 'arstatuskey', 'sql' => 'select pkey,status as name from '. $this->tableARStatus.' where 1=1' ));
+        
+    $this->includeClassDependencies(array( 
+          'AP.class.php',
+          'AR.class.php',
+          'Car.class.php',
+          'CarTurnover.class.php',
+          'COALink.class.php',
+          'Customer.class.php',
+          'Downpayment.class.php',
+          'CustomerDownpayment.class.php',
+          'GeneralJournal.class.php',
+          'Item.class.php',
+          'SalesOrderInvoiceReceipt.class.php', 
+          'Supplier.class.php',
+          'TermOfPayment.class.php',
+          'Category.class.php',
+          'TruckingServiceOrderCategory.class.php',
+          'TruckingServiceOrder.class.php',
+          'TruckingServiceWorkOrder.class.php',
+          'TermOfPayment.class.php',
+          'Warehouse.class.php' ,
+          'Item.class.php' ,
+          'Service.class.php',
+          'InvoiceTax.class.php',
+		  'ARPrepaidTax23.class.php'
+    ));      
+        
+	$this->overwriteConfig();
+          
+    }
+
+    function getQuery(){
+        
+        $rsKey = $this->getTableKeyAndObj($this->tableName,array('key'));
+        
+        $sql = '
+            SELECT
+                '.$this->tableName.'.* ,  
+                group_concat('.$this->tableConsignee.'.name separator \', \')  as consigneename, 
+                '.$this->tableWarehouse.'.name as warehousename, 
+                '.$this->tableCustomer.'.code as customercode, 
+                '.$this->tableCustomer.'.name as customername, 
+                '.$this->tableCustomer.'.taxid as customertaxid, 
+                '.$this->tableStatus.'.status as statusname,
+                '.$this->tablePaymentMethod.'.name as companybank,
+                '.$this->tablePaymentMethod.'.isvirtualaccount,
+                '.$this->tableCustomCode.'.name as invoicetype,  
+                '.$this->tableCustomCode.'.pkey as invoicetypekey,
+                '.$this->tableCustomCode.'.isreimburse,
+                group_concat( DISTINCT('.$this->tableSalesOrderCategory.'.name) separator \', \')  as jobcategoryname,
+                '.$this->tableAR.'.duedate,
+                coalesce('.$this->tableAR.'.outstanding,0) as aroutstanding,
+                '.$this->tableAR.'.statuskey as arstatuskey,
+                '.$this->tableARStatus.'.status as arstatusname,
+                '.$this->tableSalesOrder.'.donumber,
+                invoicesignature.name as invoicesignaturename
+            FROM '.$this->tableStatus.',
+                 '.$this->tableName.'
+                    left join '.$this->tableEmployee.' invoicesignature on '.$this->tableName.'.invoicesignaturekey =  invoicesignature.pkey  
+                    left join '.$this->tableNameDetail.' on '.$this->tableNameDetail.'.refkey = '.$this->tableName.'.pkey
+                    left join '.$this->tableItem.' on '.$this->tableNameDetail.'.itemkey  =  '.$this->tableItem.'.pkey
+                    left join '.$this->tableSalesOrder.' on '.$this->tableNameDetail.'.salesorderkey  =  '.$this->tableSalesOrder.'.pkey
+                    left join '.$this->tableSalesOrderCategory.' on '.$this->tableSalesOrderCategory.'.pkey  =  '.$this->tableSalesOrder.'.categorykey
+                    left join '.$this->tablePaymentMethod.' on '.$this->tableName.'.companybankkey =  '.$this->tablePaymentMethod.'.pkey
+                    left join '.$this->tableConsignee.' on '.$this->tableSalesOrder.'.consigneekey =  '.$this->tableConsignee.'.pkey  
+                    left join '.$this->tableAR.' on '.$this->tableAR.'.refheaderkey = '.$this->tableName.'.pkey and
+                              '.$this->tableAR.'.reftabletype = '. $this->oDbCon->paramString($rsKey['key']).' 
+                    left join 
+                            '.$this->tableARStatus.' on '.$this->tableAR.'.statuskey = '.$this->tableARStatus.'.pkey and
+                            '.$this->tableAR.'.statuskey <> 4
+                    left join '.$this->tableCustomCode.' on 
+                            '.$this->tableName.'.customcodekey =  '.$this->tableCustomCode.'.pkey and
+                            '.$this->tableCustomCode.'.reftabletype = '. $this->oDbCon->paramString($rsKey['key']).', 
+                 '.$this->tableCustomer.', 
+                 '.$this->tableWarehouse.' 
+            WHERE   
+                  '.$this->tableName.'.customerkey = '.$this->tableCustomer.'.pkey and
+                  '.$this->tableName.'.statuskey = '.$this->tableStatus.'.pkey and
+                  '.$this->tableName.'.warehousekey = '.$this->tableWarehouse.'.pkey 
+            ' .$this->criteria ;
+            
+        $sql .=  $this->getWarehouseCriteria() ;
+         
+        $sql .= ' group by '.$this->tableName.'.pkey ';
+     
+        return $sql;
+    }
+
+ 
+    function reCountGrandTotal($arrParam){
+          
+        $truckingServiceOrder = new TruckingServiceOrder();
+
+        $usePPNDetail = $this->loadSetting('usePPNDetail');
+        
+        $grandtotal = 0;
+        $subtotal = 0;
+
+        $isPriceIncludeTax =  $arrParam['chkIncludeTax'];
+        //$taxValue = $this->unFormatNumber($arrParam['taxValue']);  
+        $finalDiscount = $this->unFormatNumber($arrParam['finalDiscount']); 
+        $finalDiscountType = $arrParam['selFinalDiscountType']; 
+        $taxPercentage = $this->unFormatNumber($arrParam['taxPercentage']);  
+        $arrSalesOrderKey = $arrParam['hidSalesOrderKey'];
+        $arrSalesOrderDescription  = $arrParam['detailNote'];
+        $arrItemKey = $arrParam['hidItemKey']; 
+        $arrSalesOrderDownpayment = $arrParam['salesOrderDownpayment'];
+        $arrAmount = $arrParam['amount'];
+		$stampFee =  $this->unFormatNumber($arrParam['stampFee']); 
+        $arrPick = $arrParam['chkPick'];  
+
+        $detailSubtotalTaxed = 0;
+        $detailBeforeTaxTotal = 0;
+        $detailTaxTotal = 0;
+		$arrDetailInvoice = array();
+         
+        for ($i=0;$i<count($arrPick);$i++){ 
+                $arrAmount[$i] = $this->unFormatNumber($arrAmount[$i]);
+                $arrSalesOrderDownpayment[$i] = $this->unFormatNumber($arrSalesOrderDownpayment[$i]);
+ 
+                if ( (empty($arrSalesOrderKey[$i]) && empty($arrItemKey[$i]) ) ||  empty($arrAmount[$i]) || empty($arrPick[$i]) )  
+                    continue;
+             
+            
+                if (empty($arrSalesOrderKey[$i]) || $arrParam['chkDownpayment'] ){  
+                    //$this->setLog($arrAmount[$i]);
+                    $subtotal += $arrAmount[$i];
+                }else{ 
+                    $sokey = $arrSalesOrderKey[$i];
+                    $rsPrice = $truckingServiceOrder->getUnInvoicedItemDetail($sokey);
+                    $arrDefaultPrice = array_column($rsPrice,'priceinunit', 'joinkey');
+
+                    $arrChkService = $arrParam['chkService'][$i];  
+                    $arrChkTax = $arrParam['chkIsTax23'][$i]; 
+                    $arrQtyService = $arrParam['qtyDetail'][$i]; 
+                    $arrItemDetailKey = $arrParam['hidItemDetailKey'][$i] ?? array();  
+                    $arrSODetailKey = $arrParam['hidRefSODetailKey'][$i]; 
+                    $arrTaxDetail = $arrParam['taxDetail'][$i]; 
+                    $arrIsPriceIncludeTaxDetail = $arrParam['chkIncludeTaxDetail'][$i]; 
+                    $arrDiscountValueDetail =  $this->unFormatNumber($arrParam['discountValueDetail'][$i]); 
+                    $arrDiscountType = $arrParam['selDiscountDetailType'][$i]; 
+
+                    $salesOrderSubtotal = 0; // nilai total murni dr selling JO
+                    $detailSubtotal = 0;
+                    //$this->setLog($arrItemDetailKey,true);
+					$arrDetailInvoiceItem = array();
+
+                    for ($j=0;$j<count($arrItemDetailKey);$j++){  
+                        $joinkey = $arrSODetailKey[$j] . '-' . $arrItemDetailKey[$j]; 
+                        $priceInUnit = (isset($arrDefaultPrice[$joinkey])) ? $arrDefaultPrice[$joinkey] : 0 ;
+                        $discount = $arrDiscountValueDetail[$j];
+                        $discountType = $arrDiscountType[$j];
+
+                        $discount = $this->getDiscountValue($priceInUnit, $discount,$discountType);
+                        
+                        $total =  $this->unFormatNumber($arrQtyService[$j]) * ($priceInUnit - $discount);
+  
+                        $salesOrderSubtotal += $total;
+                        
+                        // gk boleh pake chkService karena gk kepecah
+                        // gk kepecah karena kita gk assign chkService di arrItem
+                        //  empty($arrChkService[$j]) || 
+                        //  || empty($total) // gk bisas pake empty, kalo ad diskon 0%, jadinya gk muncul
+                        if (empty($arrSODetailKey[$j]) || empty($arrItemDetailKey[$j]) )  
+                            continue;    
+ 
+                         // jika informasi PPN di detail, sekalian hitung ulang nilai per detailnya
+						 if($usePPNDetail){
+							$taxDetail =  $this->unFormatNumber($arrTaxDetail[$j]);
+							$isPriceIncludeTaxDetail = $arrIsPriceIncludeTaxDetail[$j];
+							  
+                            $detailBeforeTax = 0;  
+							$arrDetailInvoiceItem[$j]['priceInUnitDetail'] = $priceInUnit;
+							$arrDetailInvoiceItem[$j]['subtotalDetail'] = $total;  
+                            $this->recalculateTaxAndValue($detailBeforeTax,$total,$taxDetailValue, $taxDetail, $isPriceIncludeTaxDetail); 
+                              
+							$arrDetailInvoiceItem[$j]['beforeTaxDetail'] = $detailBeforeTax;
+							$arrDetailInvoiceItem[$j]['afterTaxDetail'] = $total;
+							$arrDetailInvoiceItem[$j]['taxValueDetail'] = $taxDetailValue; 
+                             
+                            $detailTaxTotal += $taxDetailValue;
+                            $detailBeforeTaxTotal += $detailBeforeTax; 
+						 }
+						  
+                         //$this->setLog('total '.$total,true);
+                         $detailSubtotal += $total;  
+
+                        // ini utk PPH 23 
+                        if(!empty($arrChkTax[$j]))
+                            $detailSubtotalTaxed += ($usePPNDetail)  ? $detailBeforeTax : $total;
+                    }
+			         
+                    if($usePPNDetail)
+						$arrDetailInvoice[$i]['detailValue'] = $arrDetailInvoiceItem;
+                    
+                    
+                    $detailSubtotal -= $arrSalesOrderDownpayment[$i];
+                    if ($detailSubtotal < 0 ) $detailSubtotal = 0;
+
+                    $subtotal += $detailSubtotal;   
+                    
+                    // khusus menghitung subtotal level JO
+                    $arrDetailInvoice[$i]['salesOrderSubtotal'] = $salesOrderSubtotal;
+                    $arrDetailInvoice[$i]['amount'] = $salesOrderSubtotal - $arrSalesOrderDownpayment[$i];
+                    if($arrDetailInvoice[$i]['amount'] < 0) $arrDetailInvoice[$i]['amount'] = 0;
+                    
+                }
+        } 
+
+	    if($usePPNDetail){
+            $beforeTaxTotal = $detailBeforeTaxTotal;
+            $grandtotal = $beforeTaxTotal + $detailTaxTotal; 
+        }else{ 
+ 
+            if ($finalDiscount != 0){
+                if ($finalDiscountType == 2)
+                    $finalDiscount = $finalDiscount/100 * $subtotal;
+            } 
+ 
+            $beforeTaxTotal = $subtotal - $finalDiscount;
+            $grandtotal = $beforeTaxTotal;
+ 
+            $this->recalculateTaxAndValue($beforeTaxTotal,$grandtotal,$taxValue, $taxPercentage, $isPriceIncludeTax); 
+        }  
+		
+		$grandtotal += $stampFee;
+        
+        // balance dipotong tax karena ppn dibebaskan
+        // plus karena nilai balancenya normalnya minus
+		$ppnType = $this->loadSetting('companyPPNType'); 
+		if($ppnType == 1)  
+            $grandtotal -=  ($usePPNDetail) ? $detailTaxTotal : $taxValue; // plus karena nilai minus
+        
+        
+        $balance = 0;
+        $totalPayment = 0; 
+
+        $termOfPayment = new TermOfPayment();
+        $rsTOP = $termOfPayment->getDataRowById($arrParam['selTermOfPayment']);  
+        if ($rsTOP[0]['duedays'] == 0){ 
+            $payment = $arrParam['paymentMethodValue'] ?? array();
+            for($i=0;$i<count($payment);$i++){
+                $totalPayment += $this->unFormatNumber($payment[$i]);
+            } 
+        } 
+
+        $totalDowpayment = 0; 
+        $downpayment = $arrParam['downpaymentAmount'] ?? array();
+        $downpaymentKey = $arrParam['hidDownpaymentKey'];
+        for($i=0;$i<count($downpayment);$i++){
+            if(empty($downpaymentKey[$i]))
+                continue;
+            $totalDowpayment += $this->unFormatNumber($downpayment[$i]);
+        }  
+        $tax23Percentage = $arrParam['tax23Percentage'];
+
+        $outstanding = $grandtotal - $totalDowpayment;
+        $balance = $totalPayment - $outstanding;  
+        
+    
+		 
+        // hitung PPH 23  
+        if ($isPriceIncludeTax) 
+                $detailSubtotalTaxed = $detailSubtotalTaxed - (round(($taxPercentage/(100 + $taxPercentage)) * $detailSubtotalTaxed)) ; 
+        $tax23 = $tax23Percentage * $detailSubtotalTaxed / 100; 
+ 
+        
+        $reCountResult = array();
+        $reCountResult['subtotal'] = $subtotal;
+        $reCountResult['beforeTaxTotal'] = $beforeTaxTotal;
+        $reCountResult['isPriceIncludeTax'] = $isPriceIncludeTax;
+        $reCountResult['grandTotal'] = $grandtotal;
+        $reCountResult['totalPayment'] = $totalPayment;
+        $reCountResult['totalDownpayment'] = $totalDowpayment;
+        $reCountResult['outstanding'] = $outstanding;
+        $reCountResult['balance'] = $balance; 
+        $reCountResult['tax23Value'] = $tax23;
+        $reCountResult['taxValue'] = ($usePPNDetail) ? $detailTaxTotal : $taxValue;  
+        $reCountResult['recountDetail'] = ($usePPNDetail) ? $arrDetailInvoice : array();      
+ 
+        return $reCountResult;
+
+    } 
+
+    function validateForm($arr,$pkey = ''){ 
+
+        $truckingServiceOrder = new TruckingServiceOrder();
+        $arrayToJs = parent::validateForm($arr,$pkey); 
+        $downpayment = new CustomerDownpayment();
+
+        $customerkey = $arr['hidCustomerKey']; 
+        $arrAmount = $arr['amount'];
+        $arrSalesOrderKey = $arr['hidSalesOrderKey']; 
+        $arrSalesOrderDescription  = $arr['detailNote'];
+        $arrPick = $arr['chkPick']; 
+        $arrDownpaymentKey = $arr['hidDownpaymentKey'] ?? array();
+		$arrDownpaymentAmount = $arr['downpaymentAmount'];
+		$arrDownpaymentCode = $arr['downpaymentCode'];
+		$subtotal = $arr['subtotal'];
+        $salesOrderSubtotal = $arr['salesOrderSubtotal'];
+        $salesOrderDownpayment = $arr['salesOrderDownpayment'];
+        $refInvoiceKey =  $arr['hidRefInvoiceKey'];
+		$currencykey = $arr['selCurrency']; 
+        
+        $arrDetailKey = array();
+          
+        if(empty($customerkey)) 
+            $this->addErrorList($arrayToJs,false,$this->errorMsg['customer'][1]);
+        
+        //validasi kalo status gk menunggu gk bisa edit 
+        if (!empty($pkey)){
+            $rs = $this->getDataRowById($pkey);
+            if ($rs[0]['statuskey'] <> 1){
+                $this->addErrorList($arrayToJs,false,$this->errorMsg[212]);
+            }
+        }  
+ 
+         if (!empty($refInvoiceKey)){
+            $rsRef = $this->getDataRowById($refInvoiceKey);
+            if ($rsRef[0]['customerkey'] <> $customerkey){
+                $this->addErrorList($arrayToJs,false,$this->errorMsg['truckingServiceOrderInvoice'][7]);
+            }
+        }  
+ 
+        
+        for($i=0;$i<count($arrAmount);$i++) { 
+            $arrAmount[$i] = $this->unformatNumber($arrAmount[$i]);
+            $salesOrderSubtotal[$i] = $this->unformatNumber($salesOrderSubtotal[$i]);
+            $salesOrderDownpayment[$i] = $this->unformatNumber($salesOrderDownpayment[$i]);
+            
+            if ($arrAmount[$i] <= 0)
+                $this->addErrorList($arrayToJs,false,$this->errorMsg[503]);
+            
+            
+            if (!empty($rsDetail[$i]['salesorderkey']) && ($arrAmount[$i] > ($salesOrderSubtotal[$i] - $salesOrderDownpayment[$i])))
+                $this->addErrorList($arrayToJs,false,$this->errorMsg[508]);
+        }
+        
+        
+        $hasSO = false; 
+        // cek ad duplikasi gk, dan cek customernya sesuai gk
+        for($i=0;$i<count($arrSalesOrderKey);$i++) {   
+
+            if ( (!empty($arrSalesOrderKey[$i]) ) && !empty($arrPick[$i]) )  {
+                $hasSO = true;   
+                
+                $rsSO = $truckingServiceOrder->getDataRowById($arrSalesOrderKey[$i]);
+
+                if (in_array($arrSalesOrderKey[$i],$arrDetailKey)){  
+                    $this->addErrorList($arrayToJs,false, $rsSO[0]['code'].'. '.$this->errorMsg[215]); 	 
+                }else{ 
+                    if (!empty($arrSalesOrderKey[$i])) {  
+                        array_push($arrDetailKey, $arrSalesOrderKey[$i]);
+                    }
+                }
+
+                if ($rsSO[0]['customerkey'] <> $customerkey)
+                    $this->addErrorList($arrayToJs,false, $rsSO[0]['code'].'. '.$this->errorMsg['truckingServiceOrderInvoice'][3]); 	
+            }
+  
+             
+        } 
+
+        /*
+        if (!$hasSO)
+        $this->addErrorList($arrayToJs,false, $this->errorMsg['salesOrder'][1]); 	
+        */
+ 
+             
+            
+        $arrDownpaymentExistKey = array();
+        for($i=0;$i<count($arrDownpaymentKey);$i++) {  
+            if(empty($arrDownpaymentKey[$i]))
+                continue;
+            
+            // validasi DP masi available gk
+            $rsDP = $downpayment->searchData($downpayment->tableName.'.pkey',$arrDownpaymentKey[$i],true, ' and '.$downpayment->tableName.'.statuskey in (2) ');
+               
+            if(empty($rsDP)){ 
+                $this->addErrorList($arrayToJs,false,$arrDownpaymentCode[$i]. '. ' . $this->errorMsg['downpayment'][9]);
+            }else{
+              
+                if ($customerkey <> $rsDP[0]['customerkey'])
+                    $this->addErrorList($arrayToJs,false,$arrDownpaymentCode[$i]. '. ' . $this->errorMsg['downpayment'][6]); 
+                
+				if ($currencykey <> $rsDP[0]['currencykey'])
+                    $this->addErrorList($arrayToJs,false,$arrDownpaymentCode[$i]. '. ' . $this->errorMsg['downpayment'][10]);                 // cek double gk
+                 if (in_array($arrDownpaymentKey[$i],$arrDownpaymentExistKey)){  
+                    $this->addErrorList($arrayToJs,false, $rsDP[0]['code'].'. '.$this->errorMsg[215]); 	 
+                }else{ 
+                    if (!empty($arrDownpaymentKey[$i])) {  
+                        array_push($arrDownpaymentExistKey, $arrDownpaymentKey[$i]);
+                    }
+                }
+                
+                // validasi nilai DP masi mencukupi gk
+                $amount = $this->unformatNumber($arrDownpaymentAmount[$i]);
+                if ($amount > $rsDP[0]['outstanding'] )
+                    $this->addErrorList($arrayToJs,false,$arrDownpaymentCode[$i]. '. ' . $this->errorMsg['downpayment'][8].' ('.$this->lang['outstanding']. ': ' .$this->formatNumber($rsDP[0]['outstanding']).')');  
+            }
+                
+        }
+ 
+
+
+    return $arrayToJs;
+    }
+    
+    
+    function recalculatePriceBeforeTaxAndFinalDiscount($rs,$amount){
+        // potong diskon proposional dan hitung harga sebelum pajak
+        
+        $finalDiscount = ($rs[0]['finaldiscount'] != 0 && $rs[0]['finaldiscounttype'] == 2) ? $rs[0]['finaldiscount']/100 * $rs[0]['subtotal'] : $rs[0]['finaldiscount']; 
+        $total =  $rs[0]['subtotal'];
+        $taxPercentage = $rs[0]['taxpercentage'];
+        
+        $discount = (!empty($finalDiscount)) ? $amount / $total * $finalDiscount : 0;
+         
+        $priceBeforeTax = $amount - $discount; 
+        
+        if(!empty($rs[0]['taxvalue'])){   
+            if ($rs[0]['ispriceincludetax']) { 
+                $taxValue = round(($taxPercentage/(100 + $taxPercentage)) * $priceBeforeTax);   
+                $priceBeforeTax = $priceBeforeTax - $taxValue ;
+            } 
+        }
+
+     
+        return $priceBeforeTax;
+        
+    }
+  
+    function updateGL($rs,$arrShareProfit){ 
+        if (!USE_GL) return;
+
+        $generalJournal = new GeneralJournal();
+        $truckingServiceOrder = new TruckingServiceOrder();  
+        $coaLink = new COALink(); 
+        $warehouse = new Warehouse();
+        $customer = new Customer();
+        $item = new Item();
+        $customCode = new CustomCode();
+        
+        $rsCustomCode = $customCode->getDataRowById($rs[0]['customcodekey']); 
+        $isReimburse = $rsCustomCode[0]['isreimburse']; 
+        
+        // harusnya gk perlu, sebelum dipanggil sudah divalidasi
+        //$nogl =  $rsCustomCode[0]['nogl']; 
+        //kalo gk pake GL, biasanya utk invoice void
+        //if($nogl == 1) return;
+        
+        $usePPNDetail = $this->loadSetting('usePPNDetail'); 
+		$tax23Type = $this->loadSetting('tax23GLInInvoice');
+		$ppnType = $this->loadSetting('companyPPNType');
+		
+        $warehousekey = $rs[0]['warehousekey'];
+        $id = $rs[0]['pkey']; 
+		
+        $rsDetail = $this->getDetailById($id);  
+       
+        // gk perlu karena pas buat AR diatas udah ditambahin
+        // balikin dulu grandtotal, tambah dengan tax
+        //if($ppnType == 1)
+        //    $rs[0]['grandtotal'] += $rs[0]['taxvalue'];
+        
+        //$invoiceType = $rs[0]['customcodekey'];
+          
+        $rsKey = $generalJournal->getTableKeyAndObj($this->tableName, array('key'));
+        $arr = array();
+        $arr['pkey'] = $generalJournal->getNextKey($generalJournal->tableName);
+        $arr['code'] = 'xxxxx';
+        $arr['refkey'] = $rs[0]['pkey'];
+        $arr['refTableType'] = $rsKey['key'];
+        $arr['trDate'] = $this->formatDBDate($rs[0]['trdate'],'d / m / Y');  
+        $arr['createdBy'] = 0;
+		$arr['selWarehouseKey'] = $rs[0]['warehousekey'];
+        
+        // desc
+        $desc = array(); 
+        $rsCustomer = $customer->getDataRowById($rs[0]['customerkey']);
+        array_push($desc,$rsCustomer[0]['name']);  
+        if(!empty($rs[0]['trdesc'])) array_push($desc,$rs[0]['trdesc']); 
+		$desc = implode(chr(13),$desc);
+		$arr['trDesc'] = $desc;
+        
+
+        $temp = -1; 
+        $totalDisc = 0 ; 
+  
+/*        $finalDiscount = ($rs[0]['finaldiscount'] != 0 && $rs[0]['finaldiscounttype'] == 2) ? $rs[0]['finaldiscount']/100 * $rs[0]['subtotal'] : $rs[0]['finaldiscount']; 
+        $totalDisc = $finalDiscount;*/
+
+        $termOfPayment = new TermOfPayment();
+        $rsTOP = $termOfPayment->getDataRowById($rs[0]['termofpaymentkey']); 
+        $isCash = ($rsTOP[0]['duedays'] == 0) ? true : false; 
+		$customerARCOAKey = 0;
+		$taxOutCOAKey = $coaLink->getCOALink ('taxout', $warehouse->tableName,$warehousekey, 0)[0]['coakey'];
+		
+
+        if ($isCash) {
+            $rsPayment = $this->getPaymentMethodDetail($rs[0]['pkey']);  
+            for($i=0;$i<count($rsPayment); $i++){ 
+                 $rsCOA = $coaLink->getCOALink ('payment', $warehouse->tableName,$warehousekey, $rsPayment[$i]['paymentkey']);
+                 $temp++;
+                 $arr['hidCOAKey'][$temp] = $rsCOA[0]['coakey'];
+                 $arr['debit'][$temp] = $rsPayment[$i]['amount']; 
+                 $arr['credit'][$temp] = 0;  
+            }
+             
+			// kalo PPN tdk perlu dibayarkn
+			if($ppnType == 1){ 
+                 $temp++;
+                 $arr['hidCOAKey'][$temp] = $taxOutCOAKey;
+                 $arr['debit'][$temp] = $rs[0]['taxvalue']; 
+                 $arr['credit'][$temp] = 0;  
+			}
+             
+            //selisih pembayaran   
+            $temp++; 
+            if ($rs[0]['balance'] < 0){ 
+                $rsCOA = $coaLink->getCOALink ('othercost', $warehouse->tableName,$warehousekey, 0); 
+                $arr['debit'][$temp] = abs($rs[0]['balance']); 
+                $arr['credit'][$temp] = 0; 
+            }else{ 
+                $rsCOA = $coaLink->getCOALink ('otherrevenue', $warehouse->tableName,$warehousekey, 0); 
+                $arr['debit'][$temp] = 0; 
+                $arr['credit'][$temp] = abs($rs[0]['balance']); 
+            }
+
+            $arr['hidCOAKey'][$temp] = $rsCOA[0]['coakey'];
+
+        }else {  
+			 	$totalAR = $rs[0]['grandtotal'] - $rs[0]['totaldownpayment'];
+				if($tax23Type == 2) $totalAR -= $rs[0]['tax23value'];
+				 
+				// kalo split reimburse, sementara utk PPn yg di footer dulu
+				$isReimburseCOA = false;
+				if($isReimburse){ 
+					$splitARReimburse = $this->loadSetting('splitARReimbursement');
+					$isReimburseCOA = ($splitARReimburse == 1) ? true : false ;
+				}
+				$customerARCOAKey = $customer->getARCOAKey($rs[0]['customerkey'],$warehousekey,$isReimburseCOA);
+			
+                $temp++;
+                $arr['hidCOAKey'][$temp] = $customerARCOAKey;
+                $arr['debit'][$temp] = $totalAR ; 
+                $arr['credit'][$temp] = 0;  
+        } 
+ 
+        //downpayment 
+		$rsDownpayment = $this->getDownpaymentDetail($rs[0]['pkey']);  
+        for($i=0;$i<count($rsDownpayment); $i++){  
+             $temp++;
+             $arr['hidCOAKey'][$temp] = $customer->getDownpaymentCOAKey($rs[0]['customerkey'],$warehousekey);   
+             $arr['debit'][$temp] = $rsDownpayment[$i]['amount']; 
+             $arr['credit'][$temp] = 0;  
+        }
+        
+        if (!$rs[0]['isdownpayment']){ 
+            
+			// HATI2 untuk case seperti logol, 
+			// yg COA berdasarkan kategori job, utk COA tipe reimburse BELUM dimapping ke job category
+			
+            if($isReimburse == 1){
+                
+                $arrCOAAmout = array();
+
+                for($i=0;$i<count($rsDetail);$i++){
+                    if ($rsDetail[$i]['invoicetype'] == 2){
+                        $rsItem = $item->getDataRowById($rsDetail[$i]['itemkey']); 
+                        $coakey = $rsItem[0]['costcoakey'];
+                        if (!isset($arrCOAAmout[$coakey]))
+                            $arrCOAAmout[$coakey] = 0;
+
+                        $arrCOAAmout[$coakey] += $this->recalculatePriceBeforeTaxAndFinalDiscount($rs,$rsDetail[$i]['amount']);  
+
+                    }else{ 
+                        $rsServiceDetail = $this->getItemDetail($rsDetail[$i]['pkey']);
+                        for($j=0;$j<count($rsServiceDetail);$j++){ 
+                            $coakey = $rsServiceDetail[$j]['costcoakey'];
+                            if (empty($coakey)){  
+                                 $coatype = 'operationalcost';
+                                 $rsCOA = $coaLink->getCOALink ($coatype, $warehouse->tableName,$warehousekey, 0);
+                                 $coakey = $rsCOA[0]['coakey'];
+                            }
+
+                            if (!isset($arrCOAAmout[$coakey]))
+                                $arrCOAAmout[$coakey] = 0;
+
+                            $arrCOAAmout[$coakey] += ($usePPNDetail) ? $rsServiceDetail[$j]['beforetaxdetailvalue'] : $this->recalculatePriceBeforeTaxAndFinalDiscount($rs,$rsServiceDetail[$j]['total']);  
+                        }
+                    }
+                }
+                
+                foreach ($arrCOAAmout as $key => $amount) { 
+                        $temp++;
+                        $arr['hidCOAKey'][$temp] = $key;
+                        $arr['debit'][$temp] = 0;
+                        $arr['credit'][$temp] = $amount;   
+                }
+                
+            }else{
+                $arrCOAAmout = array();
+                $truckingCost =  new Service(TRUCKING_SERVICE,1);  
+
+                for($i=0;$i<count($rsDetail);$i++){ 
+
+                    if ($rsDetail[$i]['invoicetype'] == 2){
+                        $rsItem = $item->getDataRowById($rsDetail[$i]['itemkey']); 
+
+                        // tergantung kategori juga nanti, tp gk bisa karena gk ad informasi job category
+                        // terus nanti pilih revenuekeynya ap ? karena kosong
+                        // untuk sementara aman karena logol tidak ad pilihan item / biaya langsung
+
+                        $coakey =  $rsItem[0]['revenuecoakey'];  
+
+                        if (!isset($arrCOAAmout[$coakey]))
+                            $arrCOAAmout[$coakey] = 0;
+
+                        $arrCOAAmout[$coakey] += $this->recalculatePriceBeforeTaxAndFinalDiscount($rs,$rsDetail[$i]['amount']);   
+                    }else{ 
+
+                        // kalo sales order
+                        $rsJobOrder = $truckingServiceOrder->getDataRowById($rsDetail[$i]['salesorderkey']);
+                        $jobCategoryKey = $rsJobOrder[0]['categorykey'];
+
+                        $rsServiceDetail = $this->getItemDetail($rsDetail[$i]['pkey']);
+                        for($j=0;$j<count($rsServiceDetail);$j++){ 
+
+                            // ? disini perlu dipisah, kalo pake PPN detail, harus pecah lg mana yg tipenya reimburse (gk ada pph) mana yg pendapatan 
+                            // : kalo tipe invoice biasa, penentuan reimburse (ambil dr costcoakey) tergantugn dr jenis invoice
+                            $coakey = ( $usePPNDetail && $rsServiceDetail[$j]['taxdetail'] == 0 ) ?  $truckingCost->getCostCOAKeyByJobCategory($rsServiceDetail[$j]['itemkey'] ,$jobCategoryKey,$warehousekey) :  $truckingCost->getRevenueCOAKeyByJobCategory($rsServiceDetail[$j]['itemkey'] ,$jobCategoryKey,$warehousekey, (empty($rsServiceDetail[$j]['refsodetailkey'])) ? 'otherrevenue' : 'salesservice');  //$rsItem[0]['revenuecoakey']; // tergantung jenis //$rsServiceDetail[$j]['revenuecoakey'] ;
+
+                            /*if (empty($coakey)){ 
+                                 $coatype = (empty($rsServiceDetail[$j]['refsodetailkey'])) ? 'otherrevenue' : 'salesservice';  
+                                 $rsCOA = $coaLink->getCOALink ($coatype, $warehouse->tableName,$warehousekey, 0);
+                                 $coakey = $rsCOA[0]['coakey'];
+                            }*/
+
+                            if (!isset($arrCOAAmout[$coakey]))
+                                $arrCOAAmout[$coakey] = 0;
+
+                            $arrCOAAmout[$coakey] += ($usePPNDetail) ? $rsServiceDetail[$j]['beforetaxdetailvalue'] : $this->recalculatePriceBeforeTaxAndFinalDiscount($rs,$rsServiceDetail[$j]['total']); 
+
+                        }
+                    }
+
+                }
+
+                foreach ($arrCOAAmout as $key => $amount) { 
+                        $temp++;
+                        $arr['hidCOAKey'][$temp] = $key;
+                        $arr['debit'][$temp] = 0;
+                        $arr['credit'][$temp] = $amount;   
+                } 
+            } 
+        } else{
+                $totalDP = 0;
+                $coaKey  = $coaLink->getCOALink ('salesservice', $warehouse->tableName,$warehousekey, 0);
+                for($i=0;$i<count($rsDetail);$i++) 
+                    $totalDP += $this->recalculatePriceBeforeTaxAndFinalDiscount($rs,$rsDetail[$i]['amount']);   
+
+
+                $temp++;
+                $arr['hidCOAKey'][$temp] = $coaKey[0]['coakey'];
+                $arr['debit'][$temp] = 0;
+                $arr['credit'][$temp] = $totalDP;   
+        }
+         
+/*        $rsCOA = $coaLink->getCOALink ('salesservicediscount', $warehouse->tableName,$warehousekey, 0);
+        $temp++;
+        $arr['hidCOAKey'][$temp] = $rsCOA[0]['coakey'];
+        $arr['debit'][$temp] = $totalDisc; 
+        $arr['credit'][$temp] = 0; */
+
+        
+        $temp++;
+        $arr['hidCOAKey'][$temp] = $taxOutCOAKey;
+        $arr['debit'][$temp] = 0;
+        $arr['credit'][$temp] = $rs[0]['taxvalue'];   
+ 
+        
+        // kalo ad share profit
+        $rsCOA = $coaLink->getCOALink ('outsourcecost', $warehouse->tableName, $warehousekey);   
+        foreach($arrShareProfit as $shareProfitRow){ 
+            
+            $temp++;
+            $arr['hidCOAKey'][$temp] = $rsCOA[0]['coakey'];
+            $arr['debit'][$temp] = $shareProfitRow['amount'];
+            $arr['credit'][$temp] = 0;   
+            
+            $temp++;
+            $arr['hidCOAKey'][$temp] = $shareProfitRow['coakey'];
+            $arr['debit'][$temp] = 0;
+            $arr['credit'][$temp] = $shareProfitRow['amount'];   
+        }
+        
+		// kalo ad biaya materai
+		if($rs[0]['stampfee'] > 0){ 
+				$rsCOA = $coaLink->getCOALink ('stampfee', $warehouse->tableName, $warehousekey);    
+				$temp++;
+				$arr['hidCOAKey'][$temp] = $rsCOA[0]['coakey'];
+				$arr['debit'][$temp] = 0;
+				$arr['credit'][$temp] = $rs[0]['stampfee']; 
+		}
+
+        // kalo pph23 dibayar dimuka diakui, tidak potong AR
+		if($rs[0]['tax23value'] > 0){
+			 if($tax23Type == 1 ){
+				$rsCOA = $coaLink->getCOALink ('prepaidTax23', $warehouse->tableName, $warehousekey);    
+				$temp++;
+				$arr['hidCOAKey'][$temp] = $rsCOA[0]['coakey'];
+				$arr['debit'][$temp] = $rs[0]['tax23value'];
+				$arr['credit'][$temp] = 0;   
+
+				$rsCOA = $coaLink->getCOALink ('prepaidTax23Counter', $warehouse->tableName, $warehousekey);   
+				$temp++;
+				$arr['hidCOAKey'][$temp] =  $rsCOA[0]['coakey'];
+				$arr['debit'][$temp] = 0;
+				$arr['credit'][$temp] = $rs[0]['tax23value'];   
+			}else if ($tax23Type == 2){
+				$rsCOA = $coaLink->getCOALink ('prepaidTax23', $warehouse->tableName, $warehousekey);    
+				$temp++;
+				$arr['hidCOAKey'][$temp] = $rsCOA[0]['coakey'];
+				$arr['debit'][$temp] = $rs[0]['tax23value'];
+				$arr['credit'][$temp] = 0;   
+	 
+			}
+		}
+		
+        
+        $arrayToJs = $generalJournal->addData($arr); 
+        if (!$arrayToJs[0]['valid'])
+            throw new Exception('<strong>'.$rs[0]['code'] . '</strong>. '.$this->errorMsg[504].' '.$arrayToJs[0]['message']);
+		
+		// jurnal balik jika PPN tidak dipungut
+		// kalo cash perlakuan beda
+		if($ppnType == 1 && !$isCash){
+			    $arr = array();
+				$arr['pkey'] = $generalJournal->getNextKey($generalJournal->tableName);
+				$arr['code'] = 'xxxxx';
+				$arr['refkey'] = $rs[0]['pkey'];
+				$arr['refTableType'] = $rsKey['key'];
+				$arr['trDate'] = $this->formatDBDate($rs[0]['trdate'],'d / m / Y');  
+				$arr['createdBy'] = 0;
+				$arr['selWarehouseKey'] = $rs[0]['warehousekey']; 
+				$arr['trDesc'] = $desc;
+
+				$temp = -1; 
+				// reset ulang
+				$arr['hidCOAKey'] = array();
+				$arr['debit'] = array();
+				$arr['credit'] = array();
+				
+				$temp++;
+				$arr['hidCOAKey'][$temp] = $taxOutCOAKey;
+				$arr['debit'][$temp] =  $rs[0]['taxvalue'];   
+				$arr['credit'][$temp] = 0;
+			
+				$temp++;
+				$arr['hidCOAKey'][$temp] = $customerARCOAKey;
+				$arr['debit'][$temp] =  0;   
+				$arr['credit'][$temp] = $rs[0]['taxvalue']; 
+
+				$arrayToJs = $generalJournal->addData($arr); 
+				if (!$arrayToJs[0]['valid'])
+					throw new Exception('<strong>'.$rs[0]['code'] . '</strong>. '.$this->errorMsg[504].' '.$arrayToJs[0]['message']);
+
+		}
+
+    } 
+   
+    function getDetailWithRelatedInformation($pkey,$criteria='',$orderBy=''){
+        $sql = 'select
+            '.$this->tableNameDetail.'.*,  
+            '.$this->tableSalesOrder.'.code as socode,  
+            '.$this->tableSalesOrder.'.donumber,  
+            '.$this->tableSalesOrder.'.trdate as sodate, 
+            '.$this->tableSalesOrder.'.lastwodate, 
+            '.$this->tableSalesOrder.'.consigneename ,
+            '.$this->tableSalesOrder.'.containernumber ,
+            '.$this->tableItem.'.name as itemname
+          from
+            '.$this->tableNameDetail.'
+                left join 
+                    (select 
+                        '.$this->tableSalesOrder.'.pkey, 
+                        '.$this->tableSalesOrder.'.code, 
+                        '.$this->tableSalesOrder.'.donumber, 
+                        '.$this->tableSalesOrder.'.trdate,  
+                        '.$this->tableSalesOrder.'.lastwodate,  
+                        '.$this->tableSalesOrder.'.containernumber ,
+                        '.$this->tableConsignee.'.name as consigneename 
+                    from 
+                        '.$this->tableSalesOrder.' 
+                            left join '.$this->tableConsignee.' on '.$this->tableSalesOrder.'.consigneekey = '.$this->tableConsignee.'.pkey
+                    ) as '.$this->tableSalesOrder.' on  '.$this->tableNameDetail.'.salesorderkey = '.$this->tableSalesOrder.'.pkey
+                left join '.$this->tableItem.' on  '.$this->tableNameDetail.'.itemkey = '.$this->tableItem.'.pkey 
+          where  
+            '. $this->tableNameDetail.'.refkey in  ('.$this->oDbCon->paramString($pkey,',') . ') ' ;
+
+        $sql .= $criteria;
+        $sql .= $orderBy;
+  
+        return $this->oDbCon->doQuery($sql);
+
+    }
+ 
+	function generateInvoiceReport($criteria='',$order='',$pkey='',$itemkey = ''){ 
+     
+	   $sql =  '
+			SELECT '.$this->tableName.'.pkey,
+                   '.$this->tableName.'.code, 
+                   '.$this->tableName.'.grandtotal,
+                   '.$this->tableName.'.tax23value,
+                   '.$this->tableName.'.taxvalue,
+                   '.$this->tableName.'.invoicetaxnumber,
+                   '.$this->tableName.'.beforetaxtotal,
+                   '.$this->tableCustomer.'.name as customername,
+                   '.$this->tableCustomer.'.taxid as customertaxid,   
+                    group_concat('.$this->tableConsignee.'.name separator \', \')  as consigneename, 
+                   '.$this->tableName.'.salesordercodecache, 
+                   '.$this->tableName.'.customcodekey, 
+                   '.$this->tableName.'.trdate, 
+                   '.$this->tableNameDetail.'.description, 
+                   '.$this->tableSalesOrder.'.code as socode, 
+                   '.$this->tableSalesOrder.'.trdate as sodate, 
+                   '.$this->tableSalesOrder.'.lastwodate, 
+                   '.$this->tableStatus.'.status as statusname , 
+                   '.$this->tableWarehouse.'.name as warehousename ,  
+                    group_concat( DISTINCT('.$this->tableSalesOrderCategory.'.name) separator \', \')  as jobcategoryname
+			FROM 
+                '.$this->tableStatus.',  
+                '.$this->tableName.' 
+                       left join '.$this->tableNameDetail.' on  '.$this->tableNameDetail.'.refkey = '.$this->tableName.'.pkey
+                       left join '.$this->tableSalesOrder.' on  '.$this->tableNameDetail.'.salesorderkey = '.$this->tableSalesOrder.'.pkey
+                       left join '.$this->tableSalesOrderCategory.' on '.$this->tableSalesOrderCategory.'.pkey  =  '.$this->tableSalesOrder.'.categorykey
+                       left join '.$this->tableConsignee.' on '.$this->tableSalesOrder.'.consigneekey =  '.$this->tableConsignee.'.pkey   ,
+                '.$this->tableCustomer.', 
+                '.$this->tableWarehouse.'
+			WHERE     
+                '.$this->tableName.'.statuskey = '.$this->tableStatus.'.pkey and  
+                '.$this->tableName.'.customerkey = '.$this->tableCustomer.'.pkey and 
+                '.$this->tableName.'.warehousekey = '.$this->tableWarehouse.'.pkey
+ 		'; 
+        
+        if (!empty($criteria))  
+            $sql .=  ' ' .$criteria; 
+        
+        if (!empty($pkey))  
+            $sql .=  '  and '.$this->tableName.'.pkey = ' .$this->oDbCon->paramString($pkey);
+         
+        $sql .=  $this->getWarehouseCriteria() ;
+        
+        $sql .= ' group by '.$this->tableName.'.pkey ';
+        
+        if (!empty($order))  
+            $sql .=  ' ' .$order;  
+           
+        return $this->oDbCon->doQuery($sql);
+		 
+    }
+  
+    /*function updateConsignee($invoicekey = '', $consigneekey = ''){
+        
+        $truckingServiceOrder = new TruckingServiceOrder();
+        $consignee = new Consignee();
+       
+        if (!empty($invoicekey)){ 
+            // update berdasarkan invoicekey
+            $arrConsignee = array();
+
+            $rsDetail = $this->getDetailWithRelatedInformation($invoicekey);
+            for($i=0;$i<count($rsDetail);$i++){
+                if(empty($rsDetail[$i]['salesorderkey']))  continue;
+
+                $rsJO = $truckingServiceOrder->getDataRowById($rsDetail[$i]['salesorderkey']);
+                if(!empty($rsJO) && !empty($rsJO[0]['consigneekey'])){ 
+                    $rsConsignee = $consignee->getDataRowById($rsJO[0]['consigneekey']);
+                    if(!empty($rsConsignee) && !in_array($rsConsignee[0]['name'], $arrConsignee))
+                        array_push($arrConsignee,$rsConsignee[0]['name']); 
+                }
+
+            }
+            
+            if(!empty($arrConsignee)){
+                $arrConsignee = implode(', ',$arrConsignee);
+                $sql = 'update '.$this->tableName.' set  consigneenamecache = '.$this->oDbCon->paramString($arrConsignee).' where pkey = ' . $this->oDbCon->paramString($invoicekey); 
+                $this->oDbCon->execute($sql);  
+            }
+            
+        }else if (!empty($consigneekey)){ 
+  		    $rsJO = $truckingServiceOrder->searchData( '','', true,' and '.$truckingServiceOrder->tableName.'.consigneekey = '.$this->oDbCon->paramString($consigneekey).' and '.$truckingServiceOrder->tableName.'.statuskey in (5,6)');
+            if(!empty($rsJO)){
+                $arrJO = array_column($rsJO, 'pkey');
+                $arrJO = implode(',', $arrJO);
+                $sql = 'select distinct refkey from '.$this->tableNameDetail.' where salesorderkey in ('.$arrJO.')';
+                $rsInvoice = $this->oDbCon->doQuery($sql);
+                
+                foreach($rsInvoice as $row) 
+                    $this->updateConsignee($row['refkey']); 
+                 
+            }            
+          
+        }
+              
+    }*/
+    
+    function normalizeParameter($arrParam, $trim=false){
+        
+        $truckingServiceOrder = new TruckingServiceOrder();
+        $termOfPayment = new TermOfPayment();
+        $customCode = new CustomCode();
+        
+        $fromAPI = (isset($arrParam['_mnv-api']) && $arrParam['_mnv-api'] == 1) ? true : false;
+        
+        // kalo invoice void 
+        $rsCustomCode = $customCode->getDataRowById($arrParam['selCustomCode']);  
+        $nogl =  ($rsCustomCode[0]['nogl'] == 1) ? true : false; 
+        
+        if($nogl){
+            $arrParam['selTermOfPayment'] = 1; //tembak system variable
+            $arrParam['hidDetailDownpaymentKey'] = array();
+            $arrParam['downpaymentAmount'] = array();
+            $arrParam['hidDownpaymentKey'] = array();  
+            $arrParam['hidDetailPaymentKey'] = array(); 
+            $arrParam['paymentMethodValue'] = array();  
+            $arrParam['selPaymentMethod'] = array();
+        }
+        
+        $rsTOP = $termOfPayment->getDataRowById($arrParam['selTermOfPayment']);  
+        
+        // kalo dr api, semua detail pasti dicek, kasi nilai default
+        if($fromAPI){ 
+            $item = new Item();
+            
+            $arrSalesOrderKey = $arrParam['hidSalesOrderKey'];
+            
+            $arrParam['amount'] = array(); // minimal harus ad angka, biar masuk ke recount
+            
+            // detail checklist  
+            for($i=0;$i<count($arrParam['hidDetailKey']);$i++) { 
+                $arrParam['chkPick'][$i] = 1;
+                $arrParam['amount'][$i] = 1;  // minimal harus ad angka, biar masuk ke recount
+            }
+            
+            // detail checklist item detail
+             for($i=0;$i<count($arrParam['hidDetailItemKey']);$i++) { 
+                 $arrParam['chkService'][$i] = 1;
+             }
+            
+            
+            if(isset($arrParam['hidRefSODetailKey'])){ // kalo dr sodetailkey langsung 
+                
+            } else if(isset($arrParam['refsorequestid'])){ // kalo dr requestid 
+            
+                $rsJODetail = array();
+                
+                // selling cost
+                $sql = 'select '.$truckingServiceOrder->tableSellingCost.'.pkey,'.$truckingServiceOrder->tableSellingCost.'.costkey as itemkey,'.$truckingServiceOrder->tableSellingCost.'.price,'.$truckingServiceOrder->tableSellingCost.'.requestid 
+                        from '.$truckingServiceOrder->tableSellingCost.' 
+                        where '.$truckingServiceOrder->tableSellingCost.'.requestid in ('. $this->oDbCon->paramString($arrParam['refsorequestid'],',').')';
+                $rs = $this->oDbCon->doQuery($sql);
+                $rs = array_column($rs,null,'requestid');
+                $rsJODetail += $rs;
+                    
+                // services
+                $sql = 'select '.$truckingServiceOrder->tableNameDetail.'.pkey,'.$truckingServiceOrder->tableNameDetail.'.itemkey,'.$truckingServiceOrder->tableNameDetail.'.priceinunit as price,'.$truckingServiceOrder->tableNameDetail.'.requestid
+                        from '.$truckingServiceOrder->tableNameDetail.' 
+                        where '.$truckingServiceOrder->tableNameDetail.'.requestid in ('. $this->oDbCon->paramString($arrParam['refsorequestid'],',').')';
+                $rs = $this->oDbCon->doQuery($sql);
+                $rs = array_column($rs,null,'requestid');
+                $rsJODetail += $rs;
+                
+                
+                $arrParam['hidRefSODetailKey'] = array(); 
+                $arrParam['hidItemDetailKey'] = array(); 
+                $arrParam['chkService'] = array();
+                
+                $hasIncludeTaxDetail = true;
+                if (empty($arrParam['chkIncludeTaxDetail'])) {
+                  $arrParam['chkIncludeTaxDetail'] = array();  
+                  $hasIncludeTaxDetail = false;
+                } 
+                
+                $hasTaxDetail= true;
+                if (empty($arrParam['taxDetail'])){
+                    $arrParam['taxDetail'] = array();
+                    $hasTaxDetail= false;
+                }
+                
+                $hasTax23Detail= true;
+                if (empty($arrParam['chkIsTax23'])){
+                    $arrParam['chkIsTax23'] = array();
+                    $hasTax23Detail= false;
+                } 
+                
+                $arrItem = array_column($rsJODetail,'itemkey');
+                $rsItem = $item->searchDataRow(array($item->tableName.'.pkey',$item->tableName.'.ispriceincludetax', $item->tableName.'.taxpercentage',$item->tableName.'.istax23'),
+                                               ' and '.$item->tableName.'.pkey in ('. $this->oDbCon->paramString($arrItem,',').')' );
+                
+                $rsItem = array_column($rsItem,null,'pkey');
+                
+                foreach($arrParam['refsorequestid'] as $requestRow){  
+                    $costRow = $rsJODetail[$requestRow]; 
+                    $itemkey = $costRow['itemkey'];
+                    // cari berdasarkan requestid ke 2 table
+                    array_push($arrParam['hidRefSODetailKey'],$costRow['pkey']); 
+                    array_push($arrParam['hidItemDetailKey'],$itemkey); 
+                    array_push($arrParam['chkService'],1); // item checklist   
+                    
+                    // default tax
+                    if (!$hasIncludeTaxDetail)
+                        array_push($arrParam['chkIncludeTaxDetail'],$rsItem[$itemkey]['ispriceincludetax']); 
+                    
+                    if (!$hasTaxDetail)
+                        array_push($arrParam['taxDetail'],$rsItem[$itemkey]['taxpercentage']); 
+                        
+                    if (!$hasTax23Detail)
+                        array_push($arrParam['chkIsTax23'],$rsItem[$itemkey]['istax23']); 
+                        
+                   /* if (empty($arrParam['priceInUnitDetail']))
+                        array_push($arrParam['priceInUnitDetail'],$costRow['price']); */
+                        
+                        
+                }
+                 
+            }
+         
+        }
+        
+        $usePPNDetail = $this->loadSetting('usePPNDetail');
+         
+        $arrParam['chkIncludeTax'] = (!empty($arrParam['chkIncludeTax'])) ? 1 : 0;  
+        $arrParam['chkTax23'] = (!empty($arrParam['chkTax23'])) ? 1 : 0;  
+        $arrParam['currencyRate'] = (!isset($arrParam['currencyRate']) || $this->unFormatNumber($arrParam['currencyRate']) <=0 ) ? 1 : $arrParam['currencyRate'];  
+          
+        $itemkey = count($arrParam['hidItemDetailKey'] ?? []); // bisa null kalo dari invoice DP
+        
+        // kalo detail ppn di setiap baris
+        if($usePPNDetail){
+            // header di nol kan
+            $arrParam['chkIncludeTax'] = 0;
+            $arrParam['taxPercentage'] = 0;
+            
+            // salah hitung
+            /*$taxDetail = $this->unFormatNumber($arrParam['taxDetail']);
+            $subTotalDetail = $this->unFormatNumber($arrParam['subtotalDetail']);
+            for($i=0;$i<$itemkey;$i++){
+                $taxTotal = ($subTotalDetail[$i]*$taxDetail[$i])/100;
+                $arrParam['taxValueDetail'][$i] =  $taxTotal;
+            }*/
+        }
+        
+        if ($rsTOP[0]['duedays'] != 0){   
+            for($i=0;$i<count( $arrParam['paymentMethodValue']);$i++){ 
+                $arrParam['paymentMethodValue'][$i] = 0; 
+                $arrParam['hidDetailPaymentKey'][$i] = 0;
+            }
+        }
+
+ 	    $detail = $arrParam['hidDetailKey'];
+        $isPartial = $arrParam['chkDownpayment'];
+        
+        $arrDONumber = array();
+        $arrShipmentNumber = array();
+        $arrJO = array();
+          
+        
+        for($i=0;$i<count($detail);$i++){
+            $arrParam['selInvoiceType'][$i] = ($isPartial) ? 1 : $arrParam['selInvoiceType'][$i]; 
+
+            if($arrParam['chkPick'][$i] == 0 || (empty($arrParam['hidItemKey'][$i]) && empty($arrParam['hidSalesOrderKey'][$i]))){ 
+                $arrParam['selInvoiceType'][$i] = '';
+                continue;
+            }
+
+            if($arrParam['selInvoiceType'][$i] == 1){
+                
+                $rsJO = $truckingServiceOrder->getDataRowById($arrParam['hidSalesOrderKey'][$i]);
+                if(!empty($rsJO)){
+
+                    if(!empty($rsJO[0]['donumber']))
+                        array_push($arrDONumber,$rsJO[0]['donumber']);
+
+                    if(!empty($rsJO[0]['shipmentnumber']))
+                        array_push($arrShipmentNumber,$rsJO[0]['shipmentnumber']); 
+
+                    array_push($arrJO,$rsJO[0]['code']);
+                }
+
+            }
+        } 
+
+            
+        for($i=0;$i<$itemkey;$i++){
+            
+            if ($isPartial) {
+                $arrParam['hidItemDetailKey'][$i] = '';
+                continue;
+            }
+            
+            if($arrParam['chkService'][$i]) continue; 
+            $arrParam['hidItemDetailKey'][$i] = '';
+            
+        }
+        
+        $arrParam['doNumber'] = (!empty($arrDONumber)) ? implode(', ',$arrDONumber) : '';
+        $arrParam['shipmentNumber'] = (!empty($arrShipmentNumber)) ? implode(', ',$arrShipmentNumber) : '';
+        $arrParam['salesordercodecache'] = (!empty($arrJO)) ? implode(', ',$arrJO) : '';
+ 
+        if ($arrParam['chkDownpayment']){
+            $arrParam['finalDiscount'] = 0;
+            $arrParam['selFinalDiscountType'] = 1; 
+        }
+        
+        $details = array();
+        array_push($details,$this->arrItem);
+        
+        $arrParam = $this->prepareMultiLevelDetail($arrParam,$details);
+        
+        $reCountResult = $this->reCountGrandTotal($arrParam); 
+         
+        $arrParam['subtotal'] = $reCountResult['subtotal'];
+        $arrParam['grandTotal'] = $reCountResult['grandTotal'];
+        $arrParam['beforeTaxTotal'] = $reCountResult['beforeTaxTotal'];
+        $arrParam['ispriceincludetax'] = $reCountResult['isPriceIncludeTax'];
+        $arrParam['totalPayment'] = $reCountResult['totalPayment'];
+        $arrParam['totalDownpayment'] = $reCountResult['totalDownpayment'];
+        $arrParam['outstanding'] = $reCountResult['outstanding'];
+        $arrParam['balance'] = $reCountResult['balance'];
+        $arrParam['tax23Value'] = $reCountResult['tax23Value']; 
+        $arrParam['taxValue'] = $reCountResult['taxValue'];
+        
+        $recountDetail = $reCountResult['recountDetail']; 
+        for($i=0;$i<count($recountDetail);$i++){
+            $arrParam['amount'][$i] = $recountDetail[$i]['amount'];
+            $arrParam['salesOrderSubtotal'][$i] = $recountDetail[$i]['salesOrderSubtotal'];
+        }
+        
+        // model logol
+        if($usePPNDetail){
+            
+				for($i=0;$i<count($recountDetail);$i++){
+					$arrDetailValue = $recountDetail[$i]['detailValue'];
+					$countItemDetail = count($arrDetailValue);
+					for($j=0;$j<$countItemDetail;$j++){
+						$arrParam['priceInUnitDetail'][$i][$j] = $arrDetailValue[$j]['priceInUnitDetail'];
+						$arrParam['beforeTaxDetail'][$i][$j] = $arrDetailValue[$j]['beforeTaxDetail'];
+						$arrParam['subtotalDetail'][$i][$j] = $arrDetailValue[$j]['subtotalDetail'];
+						$arrParam['taxValueDetail'][$i][$j] = $arrDetailValue[$j]['taxValueDetail'];
+						$arrParam['afterTaxDetail'][$i][$j] = $arrDetailValue[$j]['afterTaxDetail'];
+					}
+				}
+		}else{
+            // perlu dipisah karena utk XML Vat Out, agar tidak mengganggu field 'total' kalo PPN include / exclude
+            // nilai total kemungkinan berbeda, karena kolom2 dibawah hanya ut ksyarat agar ketarik ke VatOut
+            // harusnya masuk dari loop recount detail, cuma ntah kenapa kalo non ppn dikosongin arraynya di recount.
+            // nanti baru cek ulang jika perlu, sementara loop dari array param
+            
+            //sementara test utk TWJ dulu
+            if(in_array(DOMAIN_NAME,array('twj.wintera.co.id','thomastrans.wintera.co.id','yellowegg.wintera.co.id','praja.wintera.co.id','eti.wintera.co.id'))){
+                $headerTaxPercentage = $this->unformatNumber($arrParam['taxPercentage']); 
+                if($headerTaxPercentage > 0){ 
+                    for($i=0;$i<count($arrParam['chkPick']);$i++){ 
+
+                        for($j=0;$j<count($arrParam['hidItemDetailKey'][$i]);$j++){ 
+
+                            $subtotalDetail = $this->unformatNumber($arrParam['subtotalDetail'][$i][$j]);  
+
+                            $arrParam['taxDetail'][$i][$j] =  $headerTaxPercentage  ;
+                            $arrParam['chkIncludeTaxDetail'][$i][$j] =   $arrParam['ispriceincludetax']  ;
+
+                            if( $arrParam['ispriceincludetax'] == 0){ 
+                                  $arrParam['beforeTaxDetail'][$i][$j] =  $subtotalDetail  ;
+                                  $arrParam['taxValueDetail'][$i][$j] =  $headerTaxPercentage/100 * $subtotalDetail;
+                                  $arrParam['afterTaxDetail'][$i][$j] = $subtotalDetail +  $arrParam['taxValueDetail'][$i][$j];
+                            }else{
+                                  $arrParam['taxValueDetail'][$i][$j] =  ($headerTaxPercentage/(100 + $headerTaxPercentage)) * $subtotalDetail;   
+                                  $arrParam['beforeTaxDetail'][$i][$j] =   $subtotalDetail - $arrParam['taxValueDetail'][$i][$j];
+                                  $arrParam['afterTaxDetail'][$i][$j] = $subtotalDetail;
+                            }
+
+
+                        }
+                    }
+                }
+            }
+                
+        }
+        
+   
+        
+      if($fromAPI){  
+            // kalo jenis paymentnya cash, asumsi selalu dr VA, pasti sama angkanya
+            if ($rsTOP[0]['duedays'] == 0){    
+                $arrParam['paymentMethodValue'][0]= $arrParam['grandTotal']; 
+                $arrParam['balance'] =0;
+            }
+      }
+        
+		//$this->setLog($arrParam,true);
+		
+        $arrParam = parent::normalizeParameter($arrParam,true); 
+        
+        /*$this->setLog('normalize end',true);
+        $this->setLog($arrParam,true);
+        die;*/
+        
+        return $arrParam;
+    }
+
+    function getItemDetail($refkey,$reffield = 'refkey', $orderby = ''){
+        $sql = 'select 
+                '. $this->tableNameItemDetail. '.*, 
+                '.$this->tableItem.'.name as itemname ,
+                '.$this->tableItem.'.servicecost,
+                '.$this->tableItem.'.costcoakey,
+                '.$this->tableItem.'.revenuecoakey,
+                '.$this->tableItem.'.volume
+            from 
+                ' . $this->tableNameItemDetail. ',
+                ' . $this->tableItem. '
+            where 
+                '.$reffield.' in  ('.$this->oDbCon->paramString($refkey,',') . ') and 
+                ' . $this->tableNameItemDetail. '.itemkey = ' . $this->tableItem. '.pkey'; 
+         
+        if(!empty($orderby))
+            $sql .= ' '. $orderby;
+         
+		return  $this->oDbCon->doQuery($sql);
+    } 
+    
+     function getServiceDetail($refkey,$reffield = 'refkey', $orderby = ''){
+        // khusus utk API, dibedakan biar gk ganggu performance
+                       
+        $sql = 'select 
+                '. $this->tableNameItemDetail. '.pkey, 
+                '. $this->tableNameItemDetail. '.refkey, 
+                '. $this->tableNameItemDetail. '.itemkey,  
+                '.$this->tableItem.'.name as itemname ,
+                '.$this->tableItem.'.code as itemcode,
+                '.$this->tableNameItemDetail.'.aliasname ,
+                '.$this->tableNameItemDetail.'.qtyinbaseunit,
+                '.$this->tableNameItemDetail.'.priceinunit,
+                '.$this->tableNameItemDetail.'.taxdetail,
+                '.$this->tableNameItemDetail.'.taxdetailvalue,
+                '.$this->tableNameItemDetail.'.ispriceincludetax,
+                '.$this->tableNameItemDetail.'.istax23 ,
+                '.$this->tableNameItemDetail.'.beforetaxdetailvalue,
+                '.$this->tableNameItemDetail.'.aftertaxdetailvalue,
+                '.$this->tableNameItemDetail.'.discountdetailtype,
+                '.$this->tableNameItemDetail.'.discountdetailvalue  
+            from 
+                ' . $this->tableNameItemDetail. ',
+                ' . $this->tableItem. '
+            where 
+                '.$reffield.' in  ('.$this->oDbCon->paramString($refkey,',') . ') and 
+                ' . $this->tableNameItemDetail. '.itemkey = ' . $this->tableItem. '.pkey'; 
+         
+        if(!empty($orderby))
+            $sql .= ' '. $orderby;
+          
+        return  $this->oDbCon->doQuery($sql);
+    } 
+    
+
+    function updateDetailTablesOnCopy($id,$newPkey, $arrTableDetail){ 
+
+        for($k=0;$k<count($arrTableDetail);$k++){
+            $rsDetail = $this->getDetailById($id,'','',$arrTableDetail[$k]);
+
+            $sql = 'show columns from ' . $arrTableDetail[$k] ;   
+            $rsColumnsName = $this->oDbCon->doQuery ($sql); 
+
+            for ($j=0;$j<count($rsDetail);$j++){
+                $fields = '';
+                $data = ''; 
+                $oldDetailKey = $rsDetail[$j]['pkey'];
+
+                if ($arrTableDetail[$k] == $this->tableNameDetail)  
+                     $rsDetail[$j]['pkey'] = $this->getNextKey($this->tableNameDetail);  
+
+                $rsDetail[$j]['refkey'] = $newPkey; 
+
+                for ($i=1;$i<count($rsColumnsName);$i++){
+
+                    $fields .= $rsColumnsName[$i]['Field'];  
+                    $data .=   $this->oDbCon->paramString($rsDetail[$j][$rsColumnsName[$i]['Field']]);
+
+                    if ($i <> count($rsColumnsName) - 1){
+                      $data .= ',';   
+                      $fields.= ',';    
+                    }
+
+                }
+
+                $sql = 'insert into ' .$arrTableDetail[$k].'  ('.$fields.') values ('.$data.')'; 
+                $this->oDbCon->execute ($sql);	
+
+                if ($arrTableDetail[$k] <> $this->tableNameDetail || empty($rsDetail[$j]['salesorderkey'] ))
+                    continue;
+
+                // ============= update detail SO
+
+                $rsItemDetail = $this->getItemDetail($oldDetailKey);
+                $sql = 'show columns from ' . $this->tableNameItemDetail;   
+                $rsDetailsColumnsName = $this->oDbCon->doQuery($sql); 
+
+               for ($z=0;$z<count($rsItemDetail);$z++){
+                    $fields = '';
+                    $data = ''; 
+
+                    for ($i=1;$i<count($rsDetailsColumnsName);$i++){
+
+                        $fields .= $rsDetailsColumnsName[$i]['Field'];
+
+                        $rsItemDetail[$z]['refheaderkey'] = $newPkey;
+                        $rsItemDetail[$z]['refkey'] = $rsDetail[$j]['pkey']; 
+
+                        $data .= $this->oDbCon->paramString($rsItemDetail[$z][$rsDetailsColumnsName[$i]['Field']]);
+
+                        if ($i <> count($rsDetailsColumnsName) - 1){
+                          $data .= ',';   
+                          $fields.= ',';    
+                        }
+
+                    }
+
+                    $sql = 'insert into ' .$this->tableNameItemDetail.'  ('.$fields.') values ('.$data.')';  
+                    $this->oDbCon->execute ($sql);	 
+               }
+
+
+                // ============= end update detail SO
+
+            }  
+        }  
+
+    }
+
+    function  afterStatusChanged($rsHeader){
+        //update qtyinvoice 
+        $truckingServiceOrder = new TruckingServiceOrder();
+        $rsDetail = $this->getDetailById($rsHeader[0]['pkey']); 
+        
+       // if (!$rsHeader[0]['isdownpayment']){   
+            foreach($rsDetail as $invoiceDetail){  
+               if (empty($invoiceDetail['salesorderkey']))    continue;
+             
+                // $this->setLog("in ===>", true);
+               $truckingServiceOrder->updateQtyInvoiced($invoiceDetail['salesorderkey']); // update jml yg sudah diinvoiced
+               $truckingServiceOrder->updateAmountInvoiced($invoiceDetail['salesorderkey']); // update nilai yg sudah diinvoiced
+                // $this->setLog("out ===>", true);
+            } 
+       // }
+/*        
+        foreach($rsDetail as $invoiceDetail){  
+            if (empty($invoiceDetail['salesorderkey']))    continue;
+            $truckingServiceOrder->updateTotalInvoicedAndOutstandingAmount($invoiceDetail['salesorderkey']); 
+        } */
+        
+        $customerDownpayment = new CustomerDownpayment();
+        $rsDownpayment = $this->getDownpaymentDetail($rsHeader[0]['pkey']);
+        for($i=0;$i<count($rsDownpayment); $i++){  
+           $customerDownpayment->updateOutstanding($rsDownpayment[$i]['downpaymentkey'],true); 
+        }
+         
+        
+        // update tgl Aging AR 
+        // kalo tgl nya 0000-00-00 pake tgl ar  
+        
+        $agingType = $this->loadSetting('arapAgingDate');
+             
+        $tablekey = $this->getTableKeyAndObj($this->tableName, array('key'))['key'];  
+	    $receivedDate = $rsHeader[0]['receiveddate'];
+        
+        if ($receivedDate == '0000-00-00'){
+            $agingdate = 'trdate';
+            $dateField = 'trdate';
+        }else{
+            $agingdate = $this->oDbCon->paramString($rsHeader[0]['receiveddate']); 
+            $dateField = ($agingType == 2) ? $this->tableAR.'.agingdate' : $this->tableAR.'.trdate'; 
+        }
+         
+        
+        $sql = 'update 
+                    '.$this->tableAR.' 
+                set  
+                    '.$this->tableAR.'.agingdate = '.$agingdate.',
+                    '.$this->tableAR.'.duedate = '.$dateField.' + interval  ' .$this->tableAR.'.duedays day 
+                where
+                    '.$this->tableAR.'.statuskey <>  4 and 
+                    '.$this->tableAR.'.reftabletype = '.$this->oDbCon->paramString($tablekey).' and 
+                    '.$this->tableAR.'.refheaderkey = '.$this->oDbCon->paramString($rsHeader[0]['pkey']); 
+         
+        $this->oDbCon->execute($sql);
+        
+    }
+    
+    
+    function afterPrintTransaction($rsHeader){  
+        // dinonaktifkan karena sudah ad modul tanda terima invoice
+        
+/*         parent::afterPrintTransaction($rsHeader);    
+        
+        // retrieve latest status
+        $rsHeader = $this->getDataRowById($rsHeader[0]['pkey']);
+        if ($rsHeader[0]['statuskey'] == 2)
+            $this->changeStatus($rsHeader[0]['pkey'],3); */
+    }
+    
+        
+    function validateConfirm($rsHeader){ 
+        
+   
+        $id = $rsHeader[0]['pkey'];
+        $customerkey = $rsHeader[0]['customerkey'];
+		$currencykey =  $rsHeader[0]['currencykey'];
+        
+        $truckingServiceOrder = new TruckingServiceOrder();
+        $termOfPayment = new TermOfPayment();
+        $customCode = new CustomCode();
+        $truckingServiceWorkOrder = new TruckingServiceWorkOrder();
+    
+        $rsDetail = $this->getDetailById($id); 
+        $rsPayment = $this->getPaymentMethodDetail($id); 
+        $rsDownpayment = $this->getDownpaymentDetail($id);
+  
+        // kalo invoice void, langsung return aj
+        $rsCustomCode = $customCode->getDataRowById($rsHeader[0]['customcodekey']);  
+        $nogl =  ($rsCustomCode[0]['nogl'] == 1) ? true : false; 
+        
+        
+        $balance = 0;
+        $totalPayment = 0;
+        $totalDownpayment = 0;
+
+        for($i=0;$i<count($rsPayment); $i++)
+            $totalPayment += $rsPayment[$i]['amount'];
+        
+        for($i=0;$i<count($rsDownpayment); $i++)
+            $totalDownpayment += $rsDownpayment[$i]['amount'];
+ 
+
+        $rsTOP = $termOfPayment->getDataRowById($rsHeader[0]['termofpaymentkey']);  
+        $isCash = ($rsTOP[0]['duedays'] == 0) ? true : false;  
+
+        $balance = $totalPayment + $totalDownpayment - $rsHeader[0]['grandtotal'];   
+ 
+		$ppnType = $this->loadSetting('companyPPNType');
+		if($ppnType == 1)  $balance += $rsHeader[0]['taxvalue']; // plus karena nilai minus
+		
+        if ( !$nogl && $isCash ){    
+            $thresholdDiscount = abs($this->loadSetting('roundedPaymentThreshold'));
+            if($balance < ($thresholdDiscount * -1)) 
+                $this->addErrorLog(false,'<strong>'.$rsHeader[0]['code'].'</strong>. '.$this->errorMsg[502]);
+            else if ($balance > $thresholdDiscount)
+                $this->addErrorLog(false,'<strong>'.$rsHeader[0]['code'].'</strong>. '.$this->errorMsg[509]); 
+        }
+
+        
+         for($i=0;$i<count($rsDownpayment);$i++) {   
+            
+            // validasi DP masi available gk 
+            if($rsDownpayment[$i]['downpaymentstatuskey'] <> 2){ 
+                $this->addErrorLog(false,$rsDownpayment[$i]['refcode']. '. ' . $this->errorMsg['downpayment'][9]);
+            }else{
+                if ($customerkey <> $rsDownpayment[$i]['downpaymentcustomerkey'])
+                    $this->addErrorLog(false,$rsDownpayment[$i]['refcode']. '. ' . $this->errorMsg['downpayment'][6]); 
+
+		         if ($currencykey <> $rsDownpayment[$i]['downpaymentcurrencykey'])
+                    $this->addErrorLog(false,$rsDownpayment[$i]['refcode']. '. ' . $this->errorMsg['downpayment'][10]);
+                
+                // validasi nilai DP masi mencukupi gk 
+                if ($rsDownpayment[$i]['amount'] > $rsDownpayment[$i]['downpaymentoutstanding'] )
+                    $this->addErrorLog(false,$arrDownpaymentCode[$i]. '. ' . $this->errorMsg['downpayment'][8].' ('.$this->lang['outstanding']. ': ' .$this->formatNumber($rsDownpayment[$i]['downpaymentoutstanding']['outstanding']).')');  
+            }
+                
+        }
+
+        
+         for($i=0;$i<count($rsDetail);$i++){
+            if (empty($rsDetail[$i]['salesorderkey'])) continue;
+            
+            //cek jenis tax
+            $sql = 'select 
+                        '.$this->tableName.'.code,
+                        '.$this->tableName.'.taxpercentage,
+                        '.$this->tableName.'.ispriceincludetax 
+                    from 
+                        '.$this->tablePartialInvoice.',
+                        '.$this->tableName.'
+                    where 
+                        '.$this->tablePartialInvoice.'.refkey = '.$this->oDbCon->paramString($rsDetail[$i]['salesorderkey']).' and
+                        '.$this->tablePartialInvoice.'.customcodekey = '.$this->oDbCon->paramString($rsHeader[0]['customcodekey']).' and
+                        '.$this->tablePartialInvoice.'.refinvoicekey = '.$this->tableName.'.pkey';
+              
+            $rsTax =  $this->oDbCon->doQuery($sql);
+             
+            $hash = md5($rsHeader[0]['taxpercentage'] . $rsHeader[0]['ispriceincludetax']);
+             
+            foreach($rsTax as $row){   
+                if ( md5($row['taxpercentage'].$row['ispriceincludetax']) <> $hash){
+                     $this->addErrorLog(false,'<strong>'.$rsHeader[0]['code'].'</strong>. ' . $this->errorMsg['truckingServiceOrderInvoice'][5]);
+                } 
+            }
+
+        } 
+        
+        
+        // jika jenisnya DP, tidak perlu validasi lebih lanjut
+        if ( $rsHeader[0]['isdownpayment'])  return;
+        
+         
+        for($i=0;$i<count($rsDetail);$i++){
+            if (empty($rsDetail[$i]['salesorderkey']))
+                continue;
+
+            //$rsSO  = $truckingServiceOrder->getDataRowById($rsDetail[$i]['salesorderkey']);
+                  
+            $rsSO  = $truckingServiceOrder->searchDataRow(array($truckingServiceOrder->tableName.'.pkey',$truckingServiceOrder->tableName.'.code',$truckingServiceOrder->tableName.'.statuskey',$truckingServiceOrder->tableName.'.isapi'),
+                                                            ' and ' .$truckingServiceOrder->tableName.'.pkey = ' .  $this->oDbCon->paramString($rsDetail[$i]['salesorderkey'])
+                                                           );
+            
+       /*     $minStatusJOToInvoiced = $this->loadSetting('minimumJOStatusToInvoiced');
+            if(empty($minStatusJOToInvoiced)) $minStatusJOToInvoiced = 5;*/
+            
+            
+            // kalo dr API, minimal konfirmasi JO saja sudah boleh diproses, karena di logol ada gatepass
+            $minStatusJOToInvoiced = ($rsHeader[0]['isapi']) ? 2 : 5;
+             
+            
+            if ($rsSO[0]['statuskey'] < $minStatusJOToInvoiced || $rsSO[0]['statuskey'] > 6){ 
+                 $this->addErrorLog(false,'<strong>'.$rsHeader[0]['code'].' - '.$rsSO[0]['code'].'</strong>. ' . $this->errorMsg['truckingServiceOrderInvoice'][2]);
+            }else if ($rsSO[0]['statuskey'] == 6){ 
+                 $this->addErrorLog(false,'<strong>'.$rsHeader[0]['code'].' - '.$rsSO[0]['code'].'</strong>. ' . $this->errorMsg[507]); 
+            }else{ 
+                // cek qty diinvoice berlebihan ap gk
+                //ambil semua yg blm diinvoiced. kalo ad detail yg tdk dlm array itu, cancel
+
+                $rsUnInvoiced = $truckingServiceOrder->getUnInvoicedItemDetail($rsDetail[$i]['salesorderkey']); 
+                
+				$arrUninvoiced = array_column($rsUnInvoiced,null,'joinkey');
+                //$arrQtyUnInvoiced = array_column($rsUnInvoiced,'outstandingqty','joinkey');  
+
+                $rsItemDetail = $this->getItemDetail($rsDetail[$i]['pkey']);
+                for($j=0;$j<count($rsItemDetail);$j++){ 
+                    $joinkey = $rsItemDetail[$j]['refsodetailkey'].'-'.$rsItemDetail[$j]['itemkey'];
+                    
+					$rsSODetail = isset($arrUninvoiced[$joinkey]) ? $arrUninvoiced[$joinkey] : array();
+                     
+                    if( $rsSODetail['outstandingqty'] - $rsItemDetail[$j]['qtyinbaseunit']  < 0) 
+                        $this->addErrorLog(false,'<strong>'.$rsHeader[0]['code'].' - '.$rsSO[0]['code'].'</strong>. <strong>'.$rsItemDetail[$j]['itemname'].'</strong>, ' . $this->errorMsg[508]);
+                    
+                    // validasi item, detail dan harga harus sama
+					if(empty($rsSODetail) || $rsItemDetail[$j]['itemkey'] <> $rsSODetail['itemkey'] || $rsItemDetail[$j]['priceinunit'] <> $rsSODetail['priceinunit'] || $rsItemDetail[$j]['refsodetailkey'] <> $rsSODetail['pkey']){ 
+							$this->addErrorLog(false,'<strong>'.$rsHeader[0]['code'].' - '.$rsSO[0]['code'].'</strong>. <strong>'.$rsItemDetail[$j]['itemname'].'</strong>, ' . $this->errorMsg[906]);
+					}
+                }
+
+            } 
+ 
+            // buat validasi kalo ada 2 form, dan DP sudah pernah dipakai disalah satu form 
+            $totalInvoiced = $truckingServiceOrder->getTotalInvoicedAndOutstanding($rsDetail[$i]['salesorderkey'], $rsHeader[0]['customcodekey']); 
+            //$this->setLog($totalInvoiced['outstanding']);
+            if($rsDetail[$i]['salesordertotalinvoiced']<>$totalInvoiced['outstanding'])
+                $this->addErrorLog(false,'<strong>'.$rsHeader[0]['code'].' - '.$rsSO[0]['code'].'</strong>. ' . $this->errorMsg['truckingServiceOrderInvoice'][6]);        
+        
+        } 
+
+
+        $useWorkOrderOption = $this->loadSetting('useWorkOrderOptionInInvoice');
+        
+        if($useWorkOrderOption) {
+            //cek spk sama dengan job order enggak
+
+            $arrSOKey = array_column($rsDetail, 'salesorderkey');
+            $rsWorkOrder = $truckingServiceWorkOrder->searchDataRow(array($truckingServiceWorkOrder->tableName.'.pkey',$truckingServiceWorkOrder->tableName.'.code', $truckingServiceWorkOrder->tableName.'.refkey'), ' and ' . $truckingServiceWorkOrder->tableName.'.refkey in ('. $this->oDbCon->paramString($arrSOKey,',') .') and ' . $truckingServiceWorkOrder->tableName.'.statuskey = 3');
+            
+            if(!empty($rsWorkOrder)) {
+
+                $rsWorkOrderCols = $this->reindexDetailCollections($rsWorkOrder, 'refkey');
+                $rsSalesOrder = $truckingServiceOrder->searchDataRow(array($truckingServiceOrder->tableName.'.pkey',$truckingServiceOrder->tableName.'.code'), ' and ' . $truckingServiceOrder->tableName.'.pkey in ('. $this->oDbCon->paramString($arrSOKey,',') .') ');
+                $rsSalesOrderCols = $this->reindexDetailCollections($rsSalesOrder, 'pkey');
+                
+                $arrMsg = array();
+                for($i=0;$i<count($rsDetail);$i++) { 
+                    
+                    $sokey = $rsDetail[$i]['salesorderkey'];
+                    $wokey = $rsDetail[$i]['workorderkey'];
+                    
+                    $rsWorkOrderCol = $rsWorkOrderCols[$sokey];
+                    $arrWOKey = array_column($rsWorkOrderCol, 'pkey');
+                    
+                    
+                    if(($wokey <> 0) && !in_array($wokey, $arrWOKey)) {
+                        $rsSalesOrderCol = $rsSalesOrderCols[$sokey];
+                        array_push($arrMsg, '<strong>'.$rsSalesOrderCol[0]['code'].'.</strong> '.$this->errorMsg['truckingServiceOrderInvoice'][8]);
+                    }
+                    
+                }
+                
+                if(!empty($arrMsg)) {
+                    $this->addErrorLog(false,'<strong>'. $rsHeader[0]['code'] .'. </strong>' . $this->errorMsg[201] . '<br>' . implode('<br>', $arrMsg)); 
+                }
+
+            }
+
+        }
+
+       
+    } 
+
+    function confirmTrans($rsHeader){
+        
+        $termOfPayment = new TermOfPayment();
+        $customCode = new CustomCode();
+        $warehouse = new Warehouse();
+        $truckingServiceOrder = new TruckingServiceOrder(); 
+
+        // kalo invoice void, langsung return aj
+        $rsCustomCode = $customCode->getDataRowById($rsHeader[0]['customcodekey']);  
+        $nogl =  ($rsCustomCode[0]['nogl'] == 1) ? true : false; 
+		$reimburseInvoice = ($rsCustomCode[0]['isreimburse'] == 1) ? true : false; 
+        if($nogl) return;
+        
+        
+        $rsTOP = $termOfPayment->getDataRowById($rsHeader[0]['termofpaymentkey']);  
+        $isCash = ($rsTOP[0]['duedays'] == 0) ? true : false;  
+
+        $tax23Type = $this->loadSetting('tax23GLInInvoice'); 
+		$ppnType = $this->loadSetting('companyPPNType');
+		
+        $tablekey = $this->getTableKeyAndObj($this->tableName, array('key'))['key'];  
+		
+        // balikin dulu grandtotal, tambah dengan tax
+        if($ppnType == 1)
+            $rsHeader[0]['grandtotal'] += $rsHeader[0]['taxvalue'];
+
+        
+        //update ar service
+		
+        if (!$isCash){ 
+            $ar = new AR(); 
+            $customer = new Customer();
+
+            $topkey = $rsHeader[0]['termofpaymentkey']; 
+            $rsTOP = $termOfPayment->getDataRowById($topkey);    
+            $top = (empty($rsTOP)) ? 0 : $rsTOP[0]['duedays'];
+
+			
+			// split, AR Reimburse di split atau gk 
+			$splitARReimburse = $this->loadSetting('splitARReimbursement');
+			$splitARReimburse = ($splitARReimburse == 1) ? true : false ;
+            
+			$arType = AR_TYPE['serviceOrder'];
+			
+			// sementara baru bisa utk Invoice yg PPN di footer
+			// kalo yg PPN nya di detail nanti perlu di break total AR dan AR Reimburse berapa masing2
+			if($splitARReimburse && $reimburseInvoice){
+					$arType = AR_TYPE['reimburse'];
+				
+					// kalo PPN di detail, maka hitung total AR reimburse, lalu nilai AR dipotong dulu dengan nilai reimburse
+				
+					// setelah itu, add AR Reimburse
+				
+			}
+			 
+			$totalAR = $rsHeader[0]['grandtotal'] - $rsHeader[0]['totaldownpayment'];
+			if ($ppnType == 1) $totalAR -= $rsHeader[0]['taxvalue']; 
+				
+			$tax23 = $rsHeader[0]['tax23value'];
+			
+			// kalo tipe pph23 nya potong AR, diakui diawal
+			if($tax23Type == 2){ 
+				$totalAR -= $tax23; 
+				$tax23 = 0;
+			}
+			  
+			$arrParam = array();	
+
+			$arrParam['code'] = 'xxxxxx';
+			$arrParam['hidCustomerKey'] = $rsHeader[0]['customerkey'];
+			$arrParam['hidRefKey'] = $rsHeader[0]['pkey'];
+			$arrParam['hidRefHeaderKey'] = $rsHeader[0]['pkey'];
+			$arrParam['hidRefCode'] =  $rsHeader[0]['code'];
+			$arrParam['hidRefCode2'] =  $rsHeader[0]['donumber'];
+			$arrParam['hidRefDate'] =   $this->formatDBDate($rsHeader[0]['trdate'],'d / m / Y'); 
+			$arrParam['hidRefTable'] = $tablekey;
+			$arrParam['amount'] = $totalAR;
+			$arrParam['trDesc'] = $rsHeader[0]['code'];
+			$arrParam['trDate'] =  $this->formatDBDate($rsHeader[0]['trdate'],'d / m / Y');  
+			$arrParam['dueDays'] = $top;
+
+			$date = new DateTime($rsHeader[0]['trdate']);
+			$date->add(new DateInterval('P'.$top.'D'));
+			$arrParam['dueDate'] = $date->format('d / m / Y');
+			$arrParam['createdBy'] = 0;
+			$arrParam['overwriteGL'] = 1;
+			$arrParam['islinked'] = 1;
+			$arrParam['selARType'] = $arType;
+			$arrParam['selWarehouse'] = $rsHeader[0]['warehousekey'];
+			$arrParam['tax23value'] = $tax23;
+			$arrParam['tax23outstanding'] = $tax23;
+
+            if($totalAR > 0){
+                $returnVal = $ar->addData($arrParam,false); 
+
+                $rsHeader[0]['arKey'] = $returnVal[0]['data']['pkey'];
+                $rsHeader[0]['arCode'] = $returnVal[0]['data']['code']; 
+            } 
+			
+        } 
+		
+		//tax23
+		
+		if($tax23Type == 2)
+			$this->updateAPPrepaid($rsHeader); 
+		
+        // update invoicekey di SPK
+        //cari berapa step utk jenis JO nya  
+        
+        $rsDetail = $this->getDetailById($rsHeader[0]['pkey']);
+          
+        if(!$rsHeader[0]['isdownpayment']){   
+            $this->updateCarTurnOver($rsHeader,$rsDetail); 
+	        $arrShareProfit = $this->updateVendorCommission($rsHeader,$rsDetail); 
+	    }        
+  
+    	//cari dulu setiap detail item untuk nyari taxdetail
+		  
+		if($this->isActiveModule('invoicetax')){
+            $arrTax = $this->getTaxPercentageType($rsHeader[0]['pkey']);
+			 
+            $invoiceTax = new InvoiceTax(); 
+              
+            foreach($arrTax as $row){
+                if($row == 0) continue;
+                
+                $arrInvoiceTax = array();	
+                $arrInvoiceTax['code'] = 'xxxxxx';
+                $arrInvoiceTax['hidRefHeaderKey'] = $rsHeader[0]['pkey'];
+                $arrInvoiceTax['selType'] = $tablekey;
+                $arrInvoiceTax['trDate'] = date('d / m / Y');  
+                $arrInvoiceTax['selWarehouse'] = $rsHeader[0]['warehousekey'];
+                $arrInvoiceTax['selTaxPercentage'] = $row['taxpercentage'];
+
+                $invoiceTax->addData($arrInvoiceTax); 
+                
+            }
+           
+        }     
+ 
+         
+        $this->addPartialInvoice($rsHeader,$rsDetail);
+        
+        //update jurnal umum  
+		
+        $this->updateGL($rsHeader,$arrShareProfit); 
+               
+    } 
+	
+	function updateAPPrepaid($rsHeader){
+
+			$arPrepaidTax23 = new ARPrepaidTax23();  
+		
+			$rate = (isset($rsHeader[0]['rate']) && $rsHeader[0]['rate'] > 0) ? $rsHeader[0]['rate'] : 1;
+  			$apAmount = $rsHeader[0]['tax23value'] * $rate;
+			
+			if($apAmount <= 0) return;
+			
+			$rsARKey = $this->getTableKeyAndObj($this->tableName,array('key'));
+		
+			$arrParam['code'] = 'xxxxxx';
+			$arrParam['hidCustomerKey'] = $rsHeader[0]['customerkey']; 
+			$arrParam['hidRefKey'] =   $rsHeader[0]['pkey'];
+			$arrParam['hidRefHeaderKey'] = $rsHeader[0]['pkey'];
+			$arrParam['hidRefCode'] = $rsHeader[0]['code'];
+			$arrParam['hidRefDate'] =  $this->formatDBDate($rsHeader[0]['trdate'],'d / m / Y'); 
+			$arrParam['hidRefTable'] = $rsARKey['key'];
+			$arrParam['amount'] = $apAmount;
+			$arrParam['trDesc'] = '';
+			$arrParam['trDate'] =  $this->formatDBDate($rsHeader[0]['trdate'],'d / m / Y');  
+			$arrParam['dueDate'] =  $this->formatDBDate($rsHeader[0]['trdate'],'d / m / Y');  
+			$arrParam['createdBy'] = 0;
+			$arrParam['islinked'] = 1;
+			$arrParam['selARType'] = 1;
+			$arrParam['overwriteGL'] = 1;
+			$arrParam['selWarehouse'] = $rsHeader[0]['warehousekey'];
+
+            $returnVal = $arPrepaidTax23->addData($arrParam,false);  
+		
+	}
+    
+    function addPartialInvoice($rsHeader,$rsDetail){ 
+          
+        $truckingServiceOrder = new TruckingServiceOrder();
+        
+        foreach ($rsDetail as $invoiceDetail) { 
+            if (empty($invoiceDetail['salesorderkey']))  continue;
+            
+            if ($rsHeader[0]['isdownpayment']){
+                $amount = $invoiceDetail['amount'];
+            }else{
+                $rsDP = $truckingServiceOrder->getTotalInvoicedAndOutstanding($invoiceDetail['salesorderkey'],$rsHeader[0]['customcodekey']);
+                    
+                $amount = ($invoiceDetail['salesordergrandtotal']  >= $rsDP['outstanding'] ) ? $rsDP['outstanding'] : $invoiceDetail['salesordergrandtotal'];
+                $amount *= -1;
+                
+                //update lock status
+                foreach($rsDP['rsTotalnvoiced'] as $row){
+                    $sql = 'update 
+                                    '.$this->tablePartialInvoice.'  
+                            set 
+                                    reflinkinvoiceheaderkey = '.$this->oDbCon->paramString($rsHeader[0]['pkey']).', 
+                                    reflinkinvoicedetailkey = '.$this->oDbCon->paramString($invoiceDetail['pkey']).' 
+                            where pkey = ' .$row['pkey'].' and reflinkinvoiceheaderkey = 0' ;
+                    $this->oDbCon->execute($sql);
+                }
+                    
+            }
+
+            if ($amount == 0) continue;
+            
+            $sql = 'insert into '.$this->tablePartialInvoice.' 
+                       (refkey,refinvoicekey,customcodekey,amount) 
+                    values(
+                            '.$this->oDbCon->paramString($invoiceDetail['salesorderkey']).',
+                            '.$this->oDbCon->paramString($rsHeader[0]['pkey']).',
+                            '.$this->oDbCon->paramString($rsHeader[0]['customcodekey']).',
+                            '.$this->oDbCon->paramString($amount).' 
+                        )
+                    '; 
+           $this->oDbCon->execute($sql);
+        }
+    }
+       
+    function deletePartialInvoice($id){  
+        
+            //update lock status 
+            $sql = 'update 
+                            '.$this->tablePartialInvoice.'  
+                    set 
+                            reflinkinvoiceheaderkey = 0, 
+                            reflinkinvoicedetailkey = 0
+                    where reflinkinvoiceheaderkey = ' .$this->oDbCon->paramString($id) ;
+            $this->oDbCon->execute($sql);
+        
+           $sql = 'delete from '.$this->tablePartialInvoice.' where refinvoicekey = '.$this->oDbCon->paramString($id); 
+           $this->oDbCon->execute($sql);
+    }
+     
+	/*
+    //cuma dipake di tools
+    function updateSPKANDCarTurnOver(){ 
+		$truckingServiceWorkOrder = new TruckingServiceWorkOrder();
+        $carTurnover = new CarTurnover(); 
+		$tableWo = $truckingServiceWorkOrder->tableName;
+		$tableCarTurnOver = $carTurnover->tableName;
+		$rsObjKey = $this->getTableKeyAndObj($this->tableName);
+		
+		$sql = 'update 
+                            ' . $tableWo.'
+                        set 
+                            invoicekey = 0 
+                        where  
+                            ' . $tableWo.'.statuskey = 3 and
+                            ' . $tableWo.'.isoutsource = 0
+                        ';
+
+                $this->oDbCon->execute($sql);
+		
+        $sql = 'delete from '.$tableCarTurnOver.' where reftabletype = '.$rsObjKey['key'];
+		$this->oDbCon->execute($sql); 
+    
+        
+        $rsInvoice = $this->searchData('','',true, ' and '.$this->tableName.'.statuskey in (2,3) and ' .$this->tableName.'.isdownpayment <> 1 ');
+	     
+        foreach ($rsInvoice as $invoiceHeader){
+            $rsHeader[0] = $invoiceHeader; 
+			$rsDetail = $this->getDetailById($rsHeader[0]['pkey']);
+			$this->updateCarTurnOver($rsHeader,$rsDetail);
+
+
+            $sql = 'delete from ap where refkey = '.$rsHeader[0]['pkey'];
+            $this->oDbCon->execute($sql); 
+	        $this->updateVendorCommission($rsHeader,$rsDetail); 
+
+        }
+         
+    }*/
+
+    function updateCarTurnOver($rsHeader,$rsDetail){
+        
+        $item = new Item();
+        $truckingServiceOrder = new TruckingServiceOrder();
+        $truckingServiceOrderCategory = new TruckingServiceOrderCategory();
+        $truckingServiceWorkOrder = new TruckingServiceWorkOrder();
+        $carTurnover = new CarTurnover(); 
+        $rsObjKey = $this->getTableKeyAndObj($this->tableName); 
+        
+        
+        foreach ($rsDetail as $invoiceDetail) {
+            if (empty($invoiceDetail['salesorderkey']))
+                continue;
+            
+            $jobOrderKey = $invoiceDetail['salesorderkey'];
+                
+            $rsJO = $truckingServiceOrder->getDataRowById($jobOrderKey); 
+            $rsSellingCost = $truckingServiceOrder->getSellingCostDetail($jobOrderKey); 
+            $rsSellingCost = array_column($rsSellingCost, null,'pkey');
+            $rsJobType = $truckingServiceOrderCategory->getDetailById($rsJO[0]['categorykey'],' and jobtypekey <> 0');
+            //$this->setLog($rsJobType,true);
+            
+            // ambil detailnya job order di invoice
+			// JIKA jenis pekerjaan di SPK tdk sama denngan JO, maka tidak akan dihitung
+			
+            $rsItemDetail = $this->getItemDetail($invoiceDetail['pkey']);
+            foreach ($rsItemDetail as $itemDetail) {
+                $itemkey =  $itemDetail['itemkey']; // bisa item layanan, bisa item cost
+                $qty =  intval($itemDetail['qtyinbaseunit']); 
+                $sellingCost = $rsSellingCost[$itemDetail['refsodetailkey']];
+
+                if (!empty($sellingCost) && !empty($sellingCost['carkey'])) {
+                    $arrParam = array();	 
+                    $arrParam['hidRefKey'] = $rsHeader[0]['pkey'];
+                    $arrParam['refCode'] = $rsHeader[0]['code'];
+                    $arrParam['trDate'] =   $this->formatDBDate($rsHeader[0]['trdate'],'d / m / Y'); 
+                    $arrParam['selWarehouse'] = $rsJO[0]['warehousekey'];
+                    $arrParam['hidRefTable'] = $rsObjKey['key'];
+                    $arrParam['hidCarKey'] = $sellingCost['carkey'];  
+                    $arrParam['hidRefKey1'] =  $rsJO[0]['pkey']; 
+                    $arrParam['refCode1'] =  $rsJO[0]['code'];  
+                    $arrParam['hidRefKey2'] =  $rsJO[0]['pkey']; 
+                    $arrParam['refCode2'] =  $rsJO[0]['code'];   
+                    $arrParam['joDate'] =  $this->formatDBDate($rsJO[0]['trdate']);   
+                    $arrParam['amount'] =  $itemDetail['total'];
+                    $arrParam['selStatus'] = 1;
+                    
+                    $arrayToJs =  $carTurnover->addData($arrParam);
+                    
+                    if (!$arrayToJs[0]['valid'])
+                        throw new Exception('<strong>'.$rsHeader[0]['code'] . '</strong>. '.$this->errorMsg[201].' '.$arrayToJs[0]['message']);   
+                }
+                
+                // kalo bkn jenis item, continue ...
+                $rsItem = $item->getDataRowById($itemkey);
+                if ($rsItem[0]['itemtype'] != 2 || $rsItem[0]['servicecost'] != 0)
+                    continue;
+				
+                $totalJobType = count($rsJobType);
+                foreach ($rsJobType as $jobType) {
+                
+                    // '.$truckingServiceWorkOrder->tableName.'.isoutsource = 0   // mobil outsource jg ikut dihitung, gpp 
+                    // PROBLEM kalo jml SO berbeda dengan jml SPK
+                    
+                    
+                    // kurang detail key
+                    $sql = 'update 
+                                '.$truckingServiceWorkOrder->tableName.'
+                            set 
+                                invoicekey = '.$this->oDbCon->paramString($rsHeader[0]['pkey']).',
+                                sellingprice = '.$this->oDbCon->paramString(($itemDetail['priceinunit']/$totalJobType)).'
+                            where
+                                '.$truckingServiceWorkOrder->tableName.'.refdetailkey = '.$this->oDbCon->paramString($itemDetail['refsodetailkey']).' and
+                                '.$truckingServiceWorkOrder->tableName.'.jobtypekey = '.$this->oDbCon->paramString($jobType['jobtypekey']).' and 
+                                '.$truckingServiceWorkOrder->tableName.'.invoicekey = 0 and
+                                '.$truckingServiceWorkOrder->tableName.'.statuskey = 3
+                            order by pkey desc limit '. $qty; 
+					
+                    $this->oDbCon->execute($sql);
+                    
+                    //  '.$truckingServiceWorkOrder->tableName.'.refkey = '.$this->oDbCon->paramString($jobOrderKey).' and
+                }
+                 
+                
+            } 
+        }
+         
+        // add to car turnover
+        $rsWorkOrder = $truckingServiceWorkOrder->searchData($truckingServiceWorkOrder->tableName.'.invoicekey' , $rsHeader[0]['pkey'], true); 
+        
+        foreach($rsWorkOrder as $workOrder){
+			if ($workOrder['sellingprice'] == 0) continue;
+			
+            $rsJO = $truckingServiceOrder->getDataRowById($workOrder['refkey']);
+            
+            //update CarProfitLoss 
+            $arrParam = array();	 
+            $arrParam['hidRefKey'] = $rsHeader[0]['pkey'];
+            $arrParam['refCode'] = $rsHeader[0]['code'];
+            $arrParam['trDate'] =   $this->formatDBDate($rsHeader[0]['trdate'],'d / m / Y'); 
+            $arrParam['selWarehouse'] = $workOrder['warehousekey'];
+            $arrParam['hidRefTable'] = $rsObjKey['key'];
+            $arrParam['hidCarKey'] = $workOrder['carkey'];  
+            $arrParam['hidRefKey1'] =  $workOrder['pkey']; 
+            $arrParam['refCode1'] =  $workOrder['code'];  
+            $arrParam['hidRefKey2'] =  $rsJO[0]['pkey']; 
+            $arrParam['refCode2'] =  $rsJO[0]['code'];   
+            $arrParam['joDate'] =  $this->formatDBDate($rsJO[0]['trdate']);   
+            $arrParam['amount'] =  $workOrder['sellingprice'];
+            $arrParam['selStatus'] = 1;
+
+            $arrayToJs =  $carTurnover->addData($arrParam);
+			
+            if (!$arrayToJs[0]['valid'])
+                throw new Exception('<strong>'.$rsHeader[0]['code'] . '</strong>. '.$this->errorMsg[201].' '.$arrayToJs[0]['message']);   
+
+        }
+    }
+           
+    function getTaxPercentageType($pkey,$ppnDetailType = ''){
+		
+		// kalo gk dikirim jenis detail PPN nya, di search ulang dulu
+		if ($ppnDetailType == '') 
+			 $ppnDetailType = $this->loadSetting('usePPNDetail');
+	    
+		if ($ppnDetailType == 1){
+			$rsDetail = $this->getItemDetail($pkey,'refheaderkey'); 
+			$arrDetail = array_column($rsDetail,'taxdetail'); 
+		}else{
+			$rsDetail = $this->searchDataRow(array($this->tableName.'.taxpercentage'), ' and '.$this->tableName.'.pkey = '.$this->oDbCon->paramString($pkey));
+			$arrDetail = array_column($rsDetail,'taxpercentage');
+		}
+ 
+		
+		 $arrDetail = array_unique($arrDetail);
+		
+         $arrTaxPercentage = array();
+         foreach($arrDetail as  $val){
+                            
+             if($val == 0 ) continue;
+                        
+             $arrValue = array();
+             $arrValue['pkey'] = $this->formatNumber($val,2);
+             $arrValue['taxpercentage'] =  $this->formatNumber($val,2);
+                        
+             array_push($arrTaxPercentage,$arrValue);
+         }
+                            
+        return $arrTaxPercentage;
+    } 
+			
+    function updateVendorCommission($rsHeader,$rsDetail){
+        
+        $item = new Item();
+        $truckingServiceOrder = new TruckingServiceOrder();
+        $truckingServiceOrderCategory = new TruckingServiceOrderCategory();
+        $truckingServiceWorkOrder = new TruckingServiceWorkOrder();
+        $ap = new AP(); 
+        $termOfPayment = new TermOfPayment();
+        $car = new Car();
+        $supplier = new Supplier();
+         
+        $rsWorkOrder = $truckingServiceWorkOrder->searchData($truckingServiceWorkOrder->tableName.'.invoicekey' , $rsHeader[0]['pkey']); 
+        
+        $rsObjKey = $this->getTableKeyAndObj($this->tableName);
+ 
+        $arrReturnForGL = array();
+        
+        foreach($rsWorkOrder as $workOrder){
+            //if($workOrder['isoutsource'] || empty($workOrder['vendorkey']))
+            if($workOrder['isoutsource'])   continue;
+             
+            $rsCar = $car->getDataRowById($workOrder['carkey']);
+            if(empty($rsCar) || empty($rsCar[0]['supplierkey']) || $rsCar[0]['vendorpartnershiptype'] == VEHICLE_PARTNERSHIP_TYPE['contract']) continue; // hanya proses yg mobilnya mobil titipan
+              
+            //$this->setLog($rsCar[0]['policenumber'],true);
+            
+            $adminFee = $rsCar[0]['adminfee'];
+            $vendorkey = $rsCar[0]['supplierkey'];
+            $rsSupplier = $supplier->searchData($supplier->tableName.'.pkey', $vendorkey); 
+            $duedays = $rsSupplier[0]['duedays'];  
+             
+            // blm potong reimburse kah ?
+            $totalcost = 0;
+            $rsCost = $truckingServiceWorkOrder->getCostDetail($workOrder['pkey'],'',' and '.$truckingServiceWorkOrder->tableItem.'.shareprofit = 1');
+             for($i=0;$i<count($rsCost);$i++){
+                if($rsCost[$i]['amount']<=0) continue; 
+                $totalcost += $rsCost[$i]['amount'];
+            }
+            
+            if($workOrder['drivercommission']>0)
+                $totalcost += $workOrder['drivercommission'];
+
+            if($workOrder['codrivercommission']>0)
+                $totalcost += $workOrder['codrivercommission'];
+
+            // jangan lupa kalkulasi diskon di invoice
+            // harusnya suda dikalkukasi di loop di atas (car turn over)
+             
+            //$this->setLog($workOrder['sellingprice'] .'-'. $totalcost,true);
+            $amount = $workOrder['sellingprice'] - $totalcost - $adminFee;
+             
+            if ($amount == 0) continue;
+             
+            $note = $rsCar[0]['policenumber'];
+                
+            $arrParam = array();	 
+            $arrParam['code'] = 'xxxxxx';
+            $arrParam['hidRefHeaderKey'] = $rsHeader[0]['pkey'];
+            $arrParam['hidRefKey'] = $rsHeader[0]['pkey'];
+            $arrParam['hidRefCode'] = $rsHeader[0]['code'];
+            $arrParam['trDate'] =   $this->formatDBDate($rsHeader[0]['trdate'],'d / m / Y'); 
+            $arrParam['selWarehouse'] = $workOrder['warehousekey'];
+            $arrParam['hidRefTable'] = $rsObjKey['key'];
+            $arrParam['hidCarKey'] = $workOrder['carkey'];  
+            $arrParam['hidSupplierKey'] = $vendorkey;  
+            $arrParam['hidRefKey2'] =  $workOrder['pkey']; 
+            $arrParam['hidRefCode2'] =  $workOrder['code'];  
+            $arrParam['hidRefDate'] =   $this->formatDBDate($workOrder['trdate'],'d / m / Y');  
+            $arrParam['amount'] =  $amount;
+            $arrParam['selStatus'] = 1;
+            $arrParam['overwriteGL'] = 1;
+            $arrParam['islinked'] = 1;
+            $arrParam['autoTax'] = 1;
+            $arrParam['trDesc'] = $note; 
+            $arrParam['selAPType'] = AP_TYPE['serviceOutsource'];
+            $date = new DateTime($rsHeader[0]['trdate']);
+            $date->add(new DateInterval('P'.$duedays.'D'));
+            $arrParam['dueDate'] = $date->format('d / m / Y');// date ('d / m / Y', mktime(0, 0, 0, date("m")  , date("d")+$rsTOP[0]['duedays'], date("Y")));
+  
+                
+            $arrayToJs =  $ap->addData($arrParam); 
+            if (!$arrayToJs[0]['valid'])
+                throw new Exception('<strong>'.$rsHeader[0]['code'] . '</strong>. '.$this->errorMsg[201].' '.$arrayToJs[0]['message']);   
+
+            // add utk informasi jurnal
+            array_push(
+                $arrReturnForGL,
+                array(
+                    'coakey' => $supplier->getAPCOAKey($vendorkey,$workOrder['warehousekey']),
+                    'amount' => $amount,
+                )
+            );
+            
+        }
+        
+        return $arrReturnForGL;
+    }   
+
+    function validateCancel($rsHeader,$autoChangeStatus=false){
+        $id = $rsHeader[0]['pkey'];
+         
+        if(!$this->validateAutoReverseGL($id))
+            $this->addErrorLog(false,'<strong>'.$rsHeader[0]['code'].'</strong>. ' . $this->errorMsg[201].' ' .$this->errorMsg['generalJournal'][6],true);
+            
+        $ar = new AR();
+        $rsARKey = $ar->getTableKeyAndObj($this->tableName,array('key')); 
+        
+        // cek invoice partial
+        // cari di partial invoice
+        $sql = 'select * from '.$this->tablePartialInvoice.' where refinvoicekey = '.$rsHeader[0]['pkey'].' and reflinkinvoiceheaderkey <> 0 ';
+        $rsPartial = $this->oDbCon->doQuery($sql); 
+        if(!empty($rsPartial)) 
+			$this->addErrorLog(false,'<strong>'.$rsHeader[0]['code'].'</strong>. ' . $this->errorMsg[201].' ' .$this->errorMsg['truckingServiceOrderInvoice'][4],true);
+        
+        //cek DP
+        $customerDownpayment = new CustomerDownpayment(); 
+        $rsDP = $customerDownpayment->searchData($customerDownpayment->tableName.'.refheaderkey', $id, true, ' and '.$customerDownpayment->tableName.'.statuskey in (2,3) ');
+        if(!empty($rsDP)) 
+			$this->addErrorLog(false,'<strong>'.$rsHeader[0]['code'].'</strong>. ' . $this->errorMsg[201].' ' .$this->errorMsg['downpayment'][6],true);
+        
+		//cek ad AR Service terbayar
+		$rsAR = $ar->searchData('','',true,' and reftabletype = '.$this->oDbCon->paramString($rsARKey['key']).' and refkey = '.$this->oDbCon->paramString($id).' and ('.$ar->tableName.'.statuskey = 2 or '.$ar->tableName.'.statuskey = 3)');
+		if(!empty($rsAR)) 
+			$this->addErrorLog(false,'<strong>'.$rsHeader[0]['code'].'</strong>. ' . $this->errorMsg[201].' ' .$this->errorMsg['ar'][2],true);
+
+
+		//cek ad AP Bagi hasil sudah terbayar blm
+        // ini masalah kalo gk pake CN / DN
+	    $ap = new AP();  
+		$rsAP = $ap->searchData('','',true,' and '.$ap->tableName.'.reftabletype = '.$this->oDbCon->paramString($rsARKey['key']).' and '.$ap->tableName.'.refkey = '.$this->oDbCon->paramString($id).' and ('.$ap->tableName.'.statuskey in (2,3))');
+		if(!empty($rsAP)) 
+			$this->addErrorLog(false,'<strong>'.$rsHeader[0]['code'].'</strong>. ' . $this->errorMsg[201].' ' .$this->errorMsg['ap'][2],true);
+ 
+
+		//cek ad Prepaid yg ad bukti potongnya blm 
+		$arPrepaidTax23 = new ARPrepaidTax23();  
+		$rsAR = $arPrepaidTax23->searchData('','',true,' and '.$arPrepaidTax23->tableName.'.refheaderkey = '.$this->oDbCon->paramString($id).' and  '.$arPrepaidTax23->tableName.'.reftabletype = '.$rsARKey['key'].' and ('.$arPrepaidTax23->tableName.'.statuskey in (2,3) )');
+
+		if(!empty($rsAR)){
+			$arrAR = array_column($rsAR,'code');
+			$this->addErrorLog(false,'<strong>'.$rsHeader[0]['code'].'</strong>. ' . $this->errorMsg[201].'<br><b>' . implode(', ', $arrAR ).'</b>. '.$this->errorMsg['arPrepaid23'][3]); 		
+		} 
+
+        
+        $invoiceTax = new InvoiceTax();
+        $rsInvoiceTax = $invoiceTax->searchDataRow( array($invoiceTax->tableName.'.code'),
+															 ' and '.$invoiceTax->tableName.'.refkey = '.$this->oDbCon->paramString($id).'
+															   and '.$invoiceTax->tableName.'.reftabletype = '.$this->oDbCon->paramString($rsARKey['key']).'
+															   and '.$invoiceTax->tableName.'.statuskey in (2,3) ');       
+ 	
+		if(!empty($rsInvoiceTax)) 
+           $this->addErrorLog( false, '<strong>'.$rsHeader[0]['code'].'</strong> ' .$this->errorMsg[201].'<br><strong>'.$rsInvoiceTax[0]['code'].'</strong>, ' .$this->errorMsg[225] );
+   	   
+		/*
+        // gk perlu validasi, kadang perlu kirim invoice revisian saja
+        
+ 		$salesOrderInvoiceReceipt = new SalesOrderInvoiceReceipt();
+		$rsReceipt = $salesOrderInvoiceReceipt->getInvoiceReceipt($id,' and '.$salesOrderInvoiceReceipt->tableName.'.statuskey in (2,3) ');
+		if(!empty($rsReceipt)) 
+			$this->addErrorLog(false,'<strong>'.$rsHeader[0]['code'].'</strong>. ' . $this->errorMsg[201].'<br><strong>'.$rsReceipt[0]['code'].'</strong>, ' .$this->errorMsg[203],true);
+        */
+	 } 
+     
+	function cancelTrans($rsHeader,$copy){ 
+		 
+        $truckingServiceOrder = new TruckingServiceOrder();
+		$truckingServiceWorkOrder = new TruckingServiceWorkOrder();
+        $carTurnover = new CarTurnover();
+	    $ap = new AP();       
+        
+		$tax23Type = $this->loadSetting('tax23GLInInvoice');
+		
+		$id = $rsHeader[0]['pkey'];
+        $rsDetail = $this->getDetailById($id);
+		 
+		if ($rsHeader[0]['statuskey'] == 1) 
+        	return; 
+        
+		 for($i=0;$i<count($rsDetail);$i++){
+            $soKey = $rsDetail[$i]['salesorderkey']; 
+            $rsSO =  $truckingServiceOrder->getDataRowById($soKey);
+            if ($rsSO[0]['statuskey'] == 6)
+                $truckingServiceOrder->changeStatus($soKey,5,'',false,true); 
+        } 
+        
+        //cancel partialinvoice
+        $this->deletePartialInvoice($id);
+		 
+		if($tax23Type == 2)
+        	$this->deleteAPPrepaidTax($rsHeader);
+        
+        $customerDownpayment = new CustomerDownpayment();  
+        $rsDP = $customerDownpayment->searchData('','',true,' and refheaderkey = '.$this->oDbCon->paramString($id).' and '.$customerDownpayment->tableName.'.statuskey = 1');
+        for($i=0;$i<count($rsDP);$i++) { 
+			$arrayToJs = $customerDownpayment->changeStatus($rsDP[$i]['pkey'],4,'',false, true);
+            if (!$arrayToJs[0]['valid'])
+                throw new Exception('<strong>'.$rsHeader[0]['code'] . '</strong>. '.  $arrayToJs[0]['message']);    
+        }
+        
+        $salesOrderInvoiceReceipt = new SalesOrderInvoiceReceipt();
+		$rsReceipt = $salesOrderInvoiceReceipt->getInvoiceReceipt($id,' and '.$salesOrderInvoiceReceipt->tableName.'.statuskey = 1');
+		for($i=0;$i<count($rsReceipt);$i++) { 
+			$arrayToJs = $salesOrderInvoiceReceipt->changeStatus($rsReceipt[$i]['pkey'],4,'',false, true);
+            if (!$arrayToJs[0]['valid'])
+                throw new Exception('<strong>'.$rsHeader[0]['code'] . '</strong>. '.  $arrayToJs[0]['message']);    
+        }        
+        
+		$ar = new AR();
+        $rsObjKey = $this->getTableKeyAndObj($this->tableName); 
+        
+        $rsAR = $ar->searchData('','',true,' and reftabletype = '.$this->oDbCon->paramString($rsObjKey['key']).' and refkey = '.$this->oDbCon->paramString($id).' and '.$ar->tableName.'.statuskey = 1');
+        for($i=0;$i<count($rsAR);$i++) { 
+			$arrayToJs = $ar->changeStatus($rsAR[$i]['pkey'],4,'',false, true);
+            if (!$arrayToJs[0]['valid'])
+                throw new Exception('<strong>'.$rsHeader[0]['code'] . '</strong>. '.  $arrayToJs[0]['message']);    
+        }
+         
+       $rsAPVendor = $ap->searchData('','',true,' and '.$ap->tableName.'.reftabletype = '.$this->oDbCon->paramString($rsObjKey['key']).' and '.$ap->tableName.'.refkey = '.$this->oDbCon->paramString($id).' and '.$ap->tableName.'.statuskey = 1');
+        for($i=0;$i<count($rsAPVendor);$i++) { 
+			$arrayToJs = $ap->changeStatus($rsAPVendor[$i]['pkey'],4,'',false, true);
+            if (!$arrayToJs[0]['valid'])
+                throw new Exception('<strong>'.$rsHeader[0]['code'] . '</strong>. '.  $arrayToJs[0]['message']);    
+        }
+
+   		$invoiceTax = new InvoiceTax();
+        $rsInvoiceTax = $invoiceTax->searchDataRow( array($invoiceTax->tableName.'.pkey',$invoiceTax->tableName.'.code'),
+												 ' and '.$invoiceTax->tableName.'.refkey = '.$this->oDbCon->paramString($id).'
+												   and '.$invoiceTax->tableName.'.reftabletype = '.$this->oDbCon->paramString($rsObjKey['key']).'
+												   and '.$invoiceTax->tableName.'.statuskey in (1) ');
+		
+        for($i=0;$i<count($rsInvoiceTax);$i++) { 
+			$arrayToJs = $invoiceTax->changeStatus($rsInvoiceTax[$i]['pkey'],4,'',false, true);
+            if (!$arrayToJs[0]['valid'])
+                throw new Exception('<strong>'.$rsHeader[0]['code'] . '</strong>. '.  $arrayToJs[0]['message']);    
+        }        
+
+        // cancel car turnover
+        $sql = 'update '.$truckingServiceWorkOrder->tableName.' set  invoicekey = 0, sellingprice = 0 where  invoicekey = ' . $this->oDbCon->paramString($id); 
+        $this->oDbCon->execute($sql); 
+        $carTurnover->cancelMovement($id, $rsObjKey['key']);
+
+
+		if ($copy)
+			$this->copyDataOnCancel($id);	 
+        
+        $this->cancelGLByRefkey($rsHeader[0]['pkey'],$this->tableName);
+      
+	}
+	
+	function deleteAPPrepaidTax($rsHeader){ 
+        $id =  $rsHeader[0]['pkey'];  
+		
+        $rsARKey = $this->getTableKeyAndObj($this->tableName,array('key'))['key']; 
+		
+        $arPrepaidTax23 = new ARPrepaidTax23();  
+		
+        $rsAR = $arPrepaidTax23->searchData('','',true,' and '.$arPrepaidTax23->tableName.'.refheaderkey = '.$this->oDbCon->paramString($id).' and  '.$arPrepaidTax23->tableName.'.reftabletype = '.$this->oDbCon->paramString($rsARKey).' and '.$arPrepaidTax23->tableName.'.statuskey = 1');
+      
+        for($i=0;$i<count($rsAR);$i++) { 
+            $arrayToJs = $arPrepaidTax23->changeStatus($rsAR[$i]['pkey'],4,'',false, true);
+            if (!$arrayToJs[0]['valid'])
+                throw new Exception('<strong>'.$rsHeader[0]['code'] . '</strong>. '.  $arrayToJs[0]['message']);    
+        }  
+          
+      }
+    
+    function validateBackConfirm($rsHeader){ 
+        $pkey = $rsHeader[0]['pkey'];
+        
+        $salesOrderInvoiceReceipt = new SalesOrderInvoiceReceipt();
+		$rsReceipt = $salesOrderInvoiceReceipt->getInvoiceReceipt($pkey,' and '.$salesOrderInvoiceReceipt->tableName.'.statuskey in (2,3) ');
+		if(!empty($rsReceipt)) 
+			$this->addErrorLog(false,'<strong>'.$rsHeader[0]['code'].'</strong>. ' . $this->errorMsg[201].'<br><strong>'.$rsReceipt[0]['code'].'</strong> ' .$this->errorMsg[203],true);
+	  
+    
+    } 
+    
+    function getInvoiceByMonth($startPeriod, $endPeriod, $warehousekey='' ){
+         $sql = 'select 
+                    month(trdate) as month,  
+                    DATE_FORMAT(trdate, \'%b\')  as monthname, 
+                    year(trdate) as year, 
+                    sum(grandtotal) as total
+                from 
+                    '.$this->tableName.'
+                where (statuskey = 2 or statuskey = 3) and trdate between \''. date("Y-m-d", strtotime($startPeriod)) .'\' and LAST_DAY(\''. date("Y-m-d 23:59", strtotime($endPeriod)) .'\')';
+      
+		 // khusus kalo user pilih warehouse
+		 if (!empty($warehousekey))
+				$sql .= ' and warehousekey in ('. $this->oDbCon->paramString($warehousekey,',').' )';
+		 
+          $sql .=  $this->getWarehouseCriteria() ;             
+          $sql .=  ' group by year(trdate),month(trdate)';
+       
+         return $this->oDbCon->doQuery($sql); 
+    } 
+    
+    function getBestSalesAmountByGroup($groupBy, $startPeriod, $endPeriod, $limit = 5, $warehousekey = ''){
+        // Sales Amount
+        
+        $sql = 'select 
+                  sum('.$this->tableName.'.beforetaxtotal) as amount, 
+                  '.$this->tableCustomer.'.name  as customername
+                from 
+                    '.$this->tableName.', 
+                    '.$this->tableCustomer.' 
+                where 
+                    ('.$this->tableName.'.statuskey = 2 or '.$this->tableName.'.statuskey = 3) and 
+                     '.$this->tableName.'.customerkey = '.$this->tableCustomer.'.pkey and
+                     trdate between \''. date("Y-m-01 00:00", strtotime($startPeriod)) .'\' and LAST_DAY(\''. date("Y-m-d 23:59", strtotime($endPeriod)) .'\')';
+		
+		 if (!empty($warehousekey))
+				$sql .= ' and warehousekey in ('. $this->oDbCon->paramString($warehousekey,',').' )';
+		 
+          $sql .=  $this->getWarehouseCriteria() ;        
+		
+		$sql .= 'group by 
+                    '.$groupBy.'
+                 order by amount desc limit ' . $limit;
+      
+        return $this->oDbCon->doQuery($sql); 
+    }   
+     
+    
+    function getReferenceCode($id){
+        
+        $truckingServiceOrder = new TruckingServiceOrder();
+        
+        $arrDONumber = array();
+        $arrShipmentNumber = array();
+        
+        $rsDetail = $this->getDetailById($id);
+        for($i=0;$i<count($rsDetail);$i++){
+            $rsServiceDetail = $this->getItemDetail($rsDetail[$i]['pkey']);
+            for($j=0;$j<count($rsServiceDetail);$j++){ 
+                if (!empty($rsServiceDetail[$j]['refsodetailkey'])){
+                    $rsSO = $truckingServiceOrder->getDataRowById();
+                    if (!empty($rsSO[0]['donumber'])){ 
+                        array_push($arrDONumber, $rsSO[0]['donumber']);
+                        array_push($arrShipmentNumber, $rsSO[0]['shipmentnumber']);
+                    }
+                }
+            }
+        }
+        
+        
+        return array('donumber' => $arrDONumber, 'shipmentnumber' => $arrShipmentNumber);
+    }
+    
+    function generateDefaultQueryForAutoComplete($returnField){ 
+        $sql = 'select
+                '.$returnField['key'].',
+                '.$returnField['value'].' as value,
+                '.$this->tableName . '.code,
+                '.$this->tableName . '.trdate,
+                '.$this->tableName . '.taxpercentage,
+                '.$this->tableName . '.grandtotal
+            from 
+                '.$this->tableName . ',
+                '.$this->tableStatus.'  
+            where  		
+                '.$this->tableName . '.statuskey = '.$this->tableStatus.'.pkey  
+        ';
+        
+        $sql .=  $this->getCompanyCriteria() ;
+        return $sql;
+        
+    }
+    
+    function getSalesOrderObj() {
+            return new TruckingServiceOrder();
+    }
+    
+    function getPaymentDetail($invoicekey){
+        
+        $objServiceOrder = $this->getSalesOrderObj();
+        
+        // diskon gk perlu dimasukan, jika memang perlu dibuat field terpisah saja
+        $sql = 'select 
+                     '.$this->tableARPaymentHeader.'.pkey as paymentkey, 
+                     '.$this->tableAR.'.refheaderkey as invoicekey, 
+                     '.$this->tableARPaymentHeader.'.code as paymentcode, 
+                     '.$this->tableARPaymentHeader.'.trdate as paymentdate, 
+                     '.$this->tableARPaymentDetail.'.amount, 
+                     '.$this->tableARPaymentDetail.'.taxamount,  
+                     '.$this->tableARPaymentDetail.'.discount 
+                from 
+                    '.$this->tableARPaymentHeader.',
+                    '.$this->tableARPaymentDetail.',
+                    '.$this->tableAR.'
+                where   
+                    '.$this->tableARPaymentDetail.'.refkey = '.$this->tableARPaymentHeader.'.pkey  and
+                    '.$this->tableARPaymentDetail.'.arkey = '.$this->tableAR.'.pkey  and
+                    '.$this->tableAR.'.refheaderkey in ('.$this->oDbCon->paramString($invoicekey,',').') and
+                    '.$this->tableARPaymentHeader.'.statuskey in (2,3) 
+                ';
+        
+        return $this->oDbCon->doQuery($sql);
+    }
+    
+    
+    function getJODetail($invoicekey){
+         
+        $objServiceOrder = $this->getSalesOrderObj();
+        
+        $sql = 'select  
+                     '.$this->tableNameDetail.'.pkey , 
+                     '.$this->tableNameDetail.'.refkey , 
+                     '.$objServiceOrder->tableName.'.pkey as jokey, 
+                     '.$objServiceOrder->tableName.'.code as jocode, 
+                     '.$objServiceOrder->tableName.'.trdate as jodate, 
+                     '.$objServiceOrder->tableName.'.containernumber, 
+                     '.$objServiceOrder->tableName.'.shipmentnumber, 
+                     '.$objServiceOrder->tableName.'.poreference,
+                     '.$objServiceOrder->tableName.'.donumber
+                from 
+                    '.$this->tableName.',
+                    '.$this->tableNameDetail.',
+                    '.$objServiceOrder->tableName.' 
+                where   
+                    '.$this->tableName.'.pkey in ('.$this->oDbCon->paramString($invoicekey,',').') and 
+                    '.$this->tableNameDetail.'.invoicetype = 1 and 
+                    '.$this->tableNameDetail.'.salesorderkey = '.$objServiceOrder->tableName.'.pkey and
+                    '.$this->tableNameDetail.'.refkey = '.$this->tableName.'.pkey   
+                ';
+		
+		//$this->setLog($sql,true);
+		
+        return $this->oDbCon->doQuery($sql);
+    }
+    
+    function getDetailForAPI($arrKey, $arrIndex = array()){ 
+        
+        // kalo memang gk ad detail ? jd keluar semua...
+        
+        $rsDetailsCol = array();
+   
+        if(in_array('job_order_detail',$arrIndex)){  
+            $rsDetails = $this->getJODetail($arrKey);
+            $rsDetails = $this->reindexDetailCollections($rsDetails,'refkey');  
+            $rsDetailsCol['job_order_detail'] = $rsDetails;
+        }
+              
+        if(in_array('payment_detail',$arrIndex)){ 
+            $rsDetails = $this->getPaymentDetail($arrKey);
+            $rsDetails = $this->reindexDetailCollections($rsDetails,'invoicekey');  
+            $rsDetailsCol['payment_detail'] = $rsDetails;
+        }
+		        
+		if(in_array('payment_channel_detail',$arrIndex)){  
+            $rsDetails = $this->getPaymentMethodDetail($arrKey); 
+            $rsDetails = $this->reindexDetailCollections($rsDetails,'refkey'); 
+            $rsDetailsCol['payment_channel_detail'] = $rsDetails;
+        }
+		
+        if(in_array('service_detail',$arrIndex)){  
+            $rsDetails = $this->getServiceDetail($arrKey, 'refkey');    
+            $rsDetails = $this->reindexDetailCollections($rsDetails,'refkey'); 
+            $rsDetailsCol['service_detail'] = $rsDetails;
+        }
+        
+/*        $this->setLog($arrKey,true);
+        $this->setLog($arrIndex,true);*/
+             
+        return $rsDetailsCol;
+    }
+    
+    
+    function afterAddDataOnCopy($pkey, $oldkey){
+        $sql = 'update '.$this->tableName.' set receiptdt = \''.DEFAULT_EMPTY_DATE.'\',receiveddate = \''.DEFAULT_EMPTY_DATE.'\', refvatoutkey = 0 where pkey  = ' . $this->oDbCon->paramString($pkey); 
+        $this->oDbCon->execute($sql); 
+    }
+
+    function getInvoiceItemInformation($pkey){
+        // lupa buat apa
+        
+        $truckingServiceOrderInvoice = new TruckingServiceOrderInvoice();
+      
+        $sql = 'select
+                '.$this->tableNameItemDetail.'.itemkey
+               from 
+                '.$this->tableNameItemDetail.' 
+               where  
+                '. $this->tableNameItemDetail.'.refkey = '.$this->oDbCon->paramString($pkey) .' ';
+        
+        //$this->setLog($sql);
+        return $this->oDbCon->doQuery($sql);
+
+    }
+    
+    function updateVANumber($pkey,$vanumber){
+        $arrayToJs = array();
+        
+        try{		
+	  	 	
+			if (!$this->oDbCon->startTrans())
+				throw new Exception($this->errorMsg[100]);
+            
+            $sql = 'update '.$this->tableName.' set vanumber = '.$this->oDbCon->paramString($vanumber).' where pkey = '. $this->oDbCon->paramString($pkey);
+            $this->oDbCon->execute($sql);
+            
+			//$this->oDbCon->rollback();
+            $this->oDbCon->endTrans(); 
+            $this->addErrorList($arrayToJs,true,$this->lang['dataHasBeenSuccessfullyUpdated']);    
+            
+		}catch(Exception $e){
+			$this->oDbCon->rollback();
+			$this->addErrorList($arrayToJs,false, $e->getMessage());  
+		}			
+		
+		return $arrayToJs; 
+    }
+     
+    function getConsigneeInformation($pkey){
+        
+        $sql  = 'select
+                    '.$this->tableConsignee.'.name,
+                    '.$this->tableNameDetail.'.refkey as invoicekey,
+                    '.$this->tableSalesOrder.'.pkey as salesorderkey
+                from
+                    '.$this->tableNameDetail.',
+                    '.$this->tableSalesOrder.', 
+                    '.$this->tableConsignee.'
+                where
+                     '.$this->tableNameDetail.'.refkey in ('.$this->oDbCon->paramString($pkey,',').') and
+                     '.$this->tableNameDetail.'.salesorderkey = '.$this->tableSalesOrder.'.pkey and
+                     '.$this->tableSalesOrder.'.consigneekey = '.$this->tableConsignee.'.pkey
+                ';
+        
+         //$this->setLog($sql,true);
+        return $this->oDbCon->doQuery($sql); 
+        
+    }     
+    
+    function getInvoiceTax($id){
+        
+        $isActiveModuleTax = $this->isActiveModule('invoicetax');
+        
+         if($isActiveModuleTax){
+             
+             $tablekey = $this->getTableKeyAndObj($this->tableName ,array('key'))['key'];
+    
+            $invoiceTax =  createObjAndAddToCol(new InvoiceTax());
+            $rs = $invoiceTax->searchDataRow(array($invoiceTax->tableName.'.pkey'),
+                                                       ' and '.$invoiceTax->tableName.'.refkey = '.$this->oDbCon->paramString($id).'  
+                                                        and '.$invoiceTax->tableName.'.statuskey in (2,3)    
+                                                         and '.$invoiceTax->tableName.'.reftabletype = '.$this->oDbCon->paramString($tablekey) ); 
+         
+             $totalRs = count($rs);
+             for($i=0;$i<$totalRs;$i++) 
+                $rs[$i]['files'] = $invoiceTax->getFileDetail($rs[$i]['pkey']);
+                 
+             return $rs;
+        }
+        
+        return array();
+        
+    }
+    
+    function getAttachmentToPrint($id){
+            
+        $invoiceTax =  createObjAndAddToCol(new InvoiceTax());
+        $arrReturn = array();
+         
+        $rsInvoiceTax = $this->getInvoiceTax($id); 
+        
+        foreach($rsInvoiceTax as $invoiceTaxRow){
+           $rsFile = $invoiceTaxRow['files']; 
+           foreach($rsFile as $fileRow) 
+              array_push($arrReturn,$this->defaultDocUploadPath. $invoiceTax->uploadFileFolder.$fileRow['refkey'].'/'.$fileRow['file']);
+        }
+             
+        return $arrReturn;
+    }
+    
+    function getDetailItemForSOA($pkey, $groupByItem=0){
+        
+        // gk bisa di group langsung karena kalo alias nya kosong, ambilnya nama item
+        // 1 : group by item
+        // 2 :  group by alias
+        
+        // harus join detail karena masih ad bugs level ketiga gk kedelet kalo level kedua didelete
+        $sql = 'select 
+                    '.$this->tableNameDetail.'.refkey as invoicekey,
+                    '.$this->tableNameItemDetail.'.itemkey,
+                    '.$this->tableNameItemDetail.'.aliasname,
+                    '.$this->tableNameItemDetail.'.aftertaxdetailvalue,
+                    '.$this->tableItem.'.name as itemname';
+              
+        $sql .= ' from 
+                    '.$this->tableNameDetail.','.$this->tableNameItemDetail.','.$this->tableItem.'
+                where 
+                    '.$this->tableNameDetail.'.pkey = '.$this->tableNameItemDetail.'.refkey and
+                    '.$this->tableNameDetail.'.refkey in ('.$this->oDbCon->paramString($pkey,',').') and
+                    '.$this->tableNameItemDetail.'.itemkey = '.$this->tableItem.'.pkey
+                '; 
+        
+//         $this->setLog($sql,true);
+         $rs =  $this->oDbCon->doQuery($sql); 
+  
+        // kalo tdk grouping
+        if ($groupByItem == 0)  return $rs ;
+             
+             
+        $newRS = array();
+        $indexkey =  'itemname'; // pake itemname saja, biar konsisten dibawah
+        if ($groupByItem == 2){
+            $indexkey = 'aliasname'; // harus hati2 kalo dia kosong, ambilnya itemname
+        }
+        
+        foreach($rs as $row){
+             // harus hati2 kalo pake aliasname, dan aliasnya kosong, ambilnya itemname 
+            $itemName = (empty($row[$indexkey])) ? $row['itemname'] :  $row[$indexkey]; 
+            $indexRow = $row['invoicekey'] .'-'.$itemName;
+            
+            //$row['itemkey'] => tidak valid JIKA group by alias name, jd jgn digunakan
+            if(!isset($newRS[$indexRow])) $newRS[$indexRow] = array('invoicekey' => $row['invoicekey'], 'itemkey' => $row['itemkey'],'itemname' => $itemName,  'aftertaxdetailvalue' => 0);
+            
+            $newRS[$indexRow]['aftertaxdetailvalue'] += $row['aftertaxdetailvalue'];
+            
+        }
+        
+        $newRS = array_values($newRS);
+         
+//        $this->setLog($newRS,true);
+        return $newRS ;
+    }
+	
+	function updateDocumentFiles($pkey, $fieldName, $arrFile){
+		
+		  $arrayToJs = array();
+		
+		  try{		
+	  	 	
+			if (!$this->oDbCon->startTrans())
+				throw new Exception($this->errorMsg[100]);
+            
+			  $fileName  = (!empty($arrFile[0]['fileName'])) ? $arrFile[0]['fileName']  : '';
+			   
+			 $this->uploadQueuingFile($pkey,$arrFile); 
+			  
+			 $sql = 'update '.$this->tableName.' set '.$fieldName.' = '.$this->oDbCon->paramString($fileName).' where pkey = '. $this->oDbCon->paramString($pkey);
+             $this->oDbCon->execute($sql);
+            
+			//$this->oDbCon->rollback();
+            $this->oDbCon->endTrans(); 
+            $this->addErrorList($arrayToJs,true,$this->lang['dataHasBeenSuccessfullyUpdated']);    
+            
+		}catch(Exception $e){
+			$this->oDbCon->rollback();
+			$this->addErrorList($arrayToJs,false, $e->getMessage());  
+		}	
+		
+		return $arrayToJs;
+	}
+
+    function generateDataForVatOut($searchOptions)
+    {
+
+        $sql = 'select  
+            ' . $this->tableName . '.code as value,
+            ' . $this->tableName . '.pkey,
+            ' . $this->tableName . '.code,
+            ' . $this->tableName . '.currencykey,
+            ' . $this->tableName . '.trdate, 
+            ' . $this->tableName . '.reftaxinvoicekey, 
+            sum(' . $this->tableNameItemDetail . '.aftertaxdetailvalue) * ' . $this->tableName . '.rate as aftertaxdetailvalue,
+            sum(' . $this->tableNameItemDetail . '.beforetaxdetailvalue) * ' . $this->tableName . '.rate as beforetaxtotal,
+            sum(' . $this->tableNameItemDetail . '.taxdetailvalue) * ' . $this->tableName . '.rate as taxvalue,
+            ' . $this->tableStatus . '.status,
+            ' . $this->tableWarehouse . '.name as warehousename, 
+            ' . $this->tableCustomer . '.taxregistrationname as customername, 
+            ' . $this->tableCustomer . '.taxregistrationaddress as customeraddress, 
+            ' . $this->tableCustomer . '.taxid as npwp, 
+            ' . $this->tableCustomer . '.nik, 
+            ' . $this->tableCustomer . '.passport, 
+            ' . $this->tableCustomCode . '.name as invoicetype,  
+            ' . $this->tableCustomCode . '.pkey as invoicetypekey 
+        from 
+			' . $this->tableName . '
+				left join ' . $this->tableCustomer . ' on ' . $this->tableName . '.customerkey = ' . $this->tableCustomer . '.pkey
+				left join  ' . $this->tableWarehouse . ' on ' . $this->tableName . '.warehousekey = ' . $this->tableWarehouse . '.pkey
+				left join ' . $this->tableCustomCode . ' on ' . $this->tableName . '.customcodekey =  ' . $this->tableCustomCode . '.pkey,
+			' . $this->tableNameDetail . ',
+			' . $this->tableNameItemDetail . ', 
+            ' . $this->tableStatus . '      
+        where 
+            ' . $this->tableNameDetail . '.refkey = ' . $this->tableName . '.pkey and
+            ' . $this->tableNameItemDetail . '.refkey = ' . $this->tableNameDetail . '.pkey  and
+            ' . $this->tableNameItemDetail . '.isreimburse = 0 and
+            ' . $this->tableName . '.statuskey = ' . $this->tableStatus . '.pkey and
+            ' . $this->tableName . '.statuskey in (2,3) and
+            ' . $this->tableName . '.grandtotal > 0  
+        ';
+
+        if ($searchOptions['criteria'] <> '')
+            $sql .= ' ' . $searchOptions['criteria'];
+
+        $sql .= $this->getCompanyCriteria();
+
+        $sql .= ' group by ' . $this->tableName . '.pkey';
+        $sql .= ' order by ' . $this->tableName . '.trdate asc';
+
+        $result = $this->oDbCon->doQuery($sql);
+        return $result;
+    }
+
+     function getTaxPercentageTypeForVatOut($arrInvoiceKey)
+    {
+        $sql = 'select ' . $this->tableNameItemDetail . '.taxdetail
+				from  ' . $this->tableName . ',' . $this->tableNameDetail . ', ' . $this->tableNameItemDetail . ' 
+				where  	
+					' . $this->tableName . '.pkey = ' . $this->tableNameDetail . '.refkey and 
+					' . $this->tableNameDetail . '.pkey = ' . $this->tableNameItemDetail . '.refkey and 
+					' . $this->tableName . '.statuskey in (2,3) and
+                    '.$this->tableNameItemDetail.'.isreimburse = 0 and
+					' . $this->tableName . '.pkey in (' . $this->oDbCon->paramString($arrInvoiceKey, ',') . ')
+				';
+        
+        $rs = $this->oDbCon->doQuery($sql);
+        return array_column($rs, 'taxdetail');
+    }
+    
+    	function getItemDetailByHeaderKey($arrHeaderKey, $criteria = ''){
+          // perlu currecnykey buat narik ke VatOut / XML utk faktor pengali
+		  $sql = 'select 
+                '. $this->tableNameItemDetail. '.*, 
+                '.$this->tableItem.'.name as itemname ,
+                '.$this->tableItem.'.taxalias,
+                '.$this->tableItem.'.servicecost,  
+                '.$this->tableName.'.currencykey as headercurrencykey
+            from 
+                '.$this->tableName.',
+                '.$this->tableNameDetail.',
+                '.$this->tableNameItemDetail.',
+                '.$this->tableItem.' 
+            where 
+                '.$this->tableName.'.pkey in  ('.$this->oDbCon->paramString($arrHeaderKey,',') . ') and 
+                ' . $this->tableNameItemDetail. '.itemkey = ' . $this->tableItem. '.pkey and 
+                ' . $this->tableName. '.pkey = ' . $this->tableNameDetail. '.refkey and 
+                ' . $this->tableNameDetail. '.pkey = ' . $this->tableNameItemDetail. '.refkey'; 
+         
+		$sql .= ' ' .$criteria;
+		
+		//$this->setLog($sql,true);
+        return  $this->oDbCon->doQuery($sql);
+	}
+}
+ 
+?>

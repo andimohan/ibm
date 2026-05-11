@@ -1,0 +1,65 @@
+{% extends "template.html" %}
+{% block JS %}
+<script type="text/javascript"> 
+	jQuery(document).ready(function(){ 
+         
+     /*   
+        setAutoComplete('filterForm', {objName:'customerName', objValue :'hidCustomerKey', url : 'ajax-customer.php?action=searchData' });
+        setAutoComplete('filterForm', {objName:'consigneeName', objValue :'hidConsigneeKey', url : 'ajax-consignee.php?action=searchData' }); 
+     */   
+        $( "[name=trStartStuffingDateTime], [name=trEndStuffingDateTime]" ).change(function() { 
+            var trStartDate = Date.parse(convertDateToStandartFormat($("[name=trStartStuffingDateTime]").val()));
+            var trEndDate = Date.parse(convertDateToStandartFormat($("[name=trEndStuffingDateTime]").val()));
+               
+            if (trStartDate > trEndDate) 
+                $("[name=trEndStuffingDateTime]").val($("[name=trStartStuffingDateTime]").val()); 
+            
+		});
+         
+	}); 
+</script>
+{% endblock %}
+{% block filter %}
+ <div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Kode</label>
+        <div class="col-xs-12"> {{ inputWorkOrderCode|raw }} </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Tgl. SPK</label>
+        <div class="col-xs-6" style="padding-right:5px;"> {{ inputStartDateTime|raw }} </div>
+        <div class="col-xs-6" style="padding-left:5px;"> {{ inputEndDateTime|raw }} </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.warehouse }}</label>
+        <div class="col-xs-12"> {{ inputSelWarehouse|raw }}</div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Kode Job Order</label>
+        <div class="col-xs-12"> {{ inputSalesCode|raw }} </div>
+    </div>  
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >S / I</label>
+        <div class="col-xs-12"> {{ inputDONumber|raw }} </div> 
+    </div>   
+     
+   <!-- <div class="form-group">
+        <label class="col-xs-12 control-label" >Booking Pelayaran</label>
+        <div class="col-xs-12"> {{ inputShipmentNumber|raw }} </div> 
+    </div>  
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >No. Container</label>
+        <div class="col-xs-12"> {{ inputContainerNumber|raw }} </div> 
+    </div>   -->
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Status</label>
+        <div class="col-xs-12"> {{ inputSelStatus|raw }} </div> 
+    </div>  
+     
+     
+     <div class="form-group">  
+        <label class="col-xs-12 control-label" >Opsi Lainnya</label>
+        <label class="col-xs-12" >{{ inputChkIsOutsource|raw }} <span style="margin-left: 5px">Tampilkan outsource trucking</span></label> 
+    </div> 
+ </div>	 
+{% endblock %}

@@ -1,0 +1,141 @@
+{% extends "template.html" %}  
+{% block pagetitle %}{% if not categoryPath is empty %} {{ categoryPath[0].name|raw }} {% else %} {{ LANG.allDownloads }} {% endif %} | {{ parent() }}{% endblock %} 
+ 
+{% set categoryKey = 0 %} 
+{% if not categoryPath is empty %}
+    {% set categoryName = categoryPath[0].name %}
+    {% set categoryKey = categoryPath[0].pkey %}
+{% endif %} 
+
+{% block contenttitle %}               
+<div class="content-wrapper"> 
+<div style="clear:both; height: 2em"></div>
+    <div class=" title" >
+         <h1>
+        {% if not categoryPath is empty %}
+            {{ categoryName|raw }}
+        {% else %}
+           {{ LANG.download|upper }}
+        {% endif %} 
+        </h1> 
+        <div class="line"></div>
+    </div>	 
+</div>	 
+{% endblock %} 
+
+
+{% block JSOnLoad %}
+
+    {{ parent() }} 
+ 
+    {% set categoryKey = 0 %} 
+    {% if not categoryPath is empty %}
+        {% set categoryName = categoryPath[0].name %}
+        {% set categoryKey = categoryPath[0].pkey %}
+    {% endif %} 
+
+    var varParam = Array(); 
+    var basicUrl = '/download-list/{{ categoryKey }}';
+    var paramUrl = '';
+
+    {% if categoryKey != 0 %} basicUrl +=  '/{{ categoryName|urlfilter }}'; {% endif %} 
+    basicUrl += '/page=0'; 
+ 
+{% endblock %}
+{% block JS %}
+<script type="text/javascript">
+    function onChangeCategory(obj){
+            var categorykey =  $(obj).val();
+            if (categorykey == 0){ 
+                  location.replace("/download-list/");
+                    return;
+            }
+        
+            $.ajax({
+				type: "GET",
+				url:  '/ajax-download-category.php',
+				data: "action=searchData&parentkey=" +  categorykey,   
+				success: function(data){ 
+                    
+                        data = JSON.parse(data);   
+						if (data.length == 0){
+                            location.replace("/download-list/" + categorykey + "/" + convertToSlug($(obj).find('option:selected').text()));
+                        }else{   
+                            var selector = 'template-category-select';
+                            var subcategoryClass = "subcategory-" + categorykey; 
+                            $(obj).closest('li').nextUntil('li.template-category-select').remove();
+                            
+                            var $template = $('.' + selector),
+                            $newRow   = $template.clone().removeClass(selector).addClass('sub-' + subcategoryClass).insertBefore($template.first()).show();  
+                            
+                            var select = $('.multicategory-select .sub-' + subcategoryClass + ' [name=selCategory]');
+                            var newOptions = {};
+                            
+                            if(select.prop)  
+                              var options = select.prop('options'); 
+                            else  
+                              var options = select.attr('options');
+                           
+                            $('option', select).remove();
+                            
+                            newOptions[0] =  '- {{ LANG.chooseCategory }} -';  // akan ad problem kalo ad 3 level
+                            for(i=0;i<data.length; i++) { 
+                                newOptions[data[i].pkey] = data[i].leafname ;  
+                            }
+                            
+                            $.each(newOptions, function(val, text) {
+                                options[options.length] = new Option(text, val);
+                            }); 
+                            
+                            //select.find('option:eq('+selectedIndex+')').prop('selected', true).change();  
+                        }
+				} 
+			}).done(function( data ) {   
+					//if (data != "")
+					//	targetContent.slideToggle();
+			}); 
+    }
+</script>
+{% endblock %} 
+
+{% block content %} 
+<div class="content-wrapper">  
+<div style="height:2em;"></div>  
+<div class="div-table" style="width:100%">
+    <div class="div-table-row">
+        <div class="div-table-col-5" style="line-height: 2.2em; width: 6em">{{ LANG.category }}</div>
+        <div class="div-table-col-5">
+        <ul class="multicategory-select"> 
+            {% for selectbox in inputCategory|reverse %}   
+                <li {% if loop.last %} class="template-category-select" style="display:none" {% endif %}>{{ selectbox|raw }}</li> 
+            {% endfor %}     
+        </ul>    
+        </div>
+    </div>
+</div>     
+<div style="height:2em;"></div> 
+{{ macro.buildDownloadPageList(_context) }} 
+    
+{% if rsDownload is empty %}
+<div style="text-align:center">{{ LANG.noDataFound }}</div>
+{% endif %}
+  
+{{ inputHidAction|raw }}       
+<ul class="download-list div-table" style="width:100%">          
+{% for item in rsDownload %}  
+<li>
+{% if item.file is empty %}
+    {% set link = item.externallink %} 
+{% else %}
+    {% set link = '/download.php?filename=download/' ~ item.pkey ~ '/' ~  item.file %} 
+{% endif %} 
+<div class="title"><a href="{{ link }}" target="_blank">{{ item.name }}</a></div>    
+<div class="category-name">{{ item.categoryname }}</div>     
+<div class="description">{{ item.shortdesc|replace({"\n":"<br>"})|raw }}</div>    
+</li>
+{% endfor %}    
+</ul>    
+ {{ macro.buildDownloadPageList(_context) }} 
+ <div style="clear:both"></div> 
+</div>    
+{% endblock %}

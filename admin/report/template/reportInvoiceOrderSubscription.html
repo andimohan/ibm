@@ -1,0 +1,60 @@
+{% extends "template.html" %}
+{% block JS %}
+
+<script type="text/javascript">
+
+	jQuery(document).ready(function(){  
+          $( "[name=trStartDate], [name=trEndDate]" ).change(function() { 
+            var trStartDate = Date.parse(convertDateToStandartFormat($("[name=trStartDate]").val()));
+            var trEndDate = Date.parse(convertDateToStandartFormat($("[name=trEndDate]").val()));
+               
+            if (trStartDate > trEndDate) 
+                $("[name=trEndDate]").val($("[name=trStartDate]").val()); 
+            
+		});
+	});
+
+</script>
+{% endblock %}
+{% block filter %}
+
+ <div>   
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.code }}</label>
+        <div class="col-xs-12">  {{ inputTransactionCode|raw }} </div>
+    </div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.code }}</label>
+        <div class="col-xs-12">  {{ inputSalesRefCode|raw }} </div>
+    </div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.period }}</label>
+        <div class="col-xs-6" style="padding-right:5px;"> {{ inputStartDate|raw }} </div>
+        <div class="col-xs-6" style="padding-left:5px;"> {{ inputEndDate|raw }} </div>
+    </div>    
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.warehouse }}</label>
+        <div class="col-xs-12">  {{ inputSelWarehouse|raw }} </div>
+    </div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.sid }}</label>
+        <div class="col-xs-12">  {{ inputSID|raw }} </div>
+    </div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.customer }}</label>
+        <div class="col-xs-12">  {{ inputSelCustomer|raw }} </div>
+    </div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.media }}</label>
+        <div class="col-xs-12">  {{ inputSelMedia|raw }} </div>
+    </div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.location }}</label>
+        <div class="col-xs-12">  {{ inputSelLocation|raw }} </div>
+    </div> 
+	 <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.status }}</label>
+        <div class="col-xs-12"> {{ inputSelStatus|raw }}  </div>
+    </div>    
+ </div>  
+{% endblock %} 

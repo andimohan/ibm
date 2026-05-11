@@ -1,0 +1,158 @@
+{% if not code is empty %}
+<div class="div-table" style="margin-bottom:1em">
+    <div class="div-table-row">
+        <div class="div-table-col-5" style="font-weight:bold">Kode Invoice</div>
+        <div class="div-table-col-5" style="font-weight:bold">:</div>
+        <div class="div-table-col-5">{{ code }}</div>
+    </div>
+    <div class="div-table-row">
+        <div class="div-table-col-5" style="font-weight:bold">Tgl. Invoice</div>
+        <div class="div-table-col-5" style="font-weight:bold">:</div>
+        <div class="div-table-col-5">{{ trdate }}</div>
+    </div>
+    <div class="div-table-row">
+        <div class="div-table-col-5" style="font-weight:bold">Status</div>
+        <div class="div-table-col-5" style="font-weight:bold">:</div>
+        <div class="div-table-col-5">{{ statusname }}</div>
+    </div>
+</div>
+{% endif %}
+<div class="invoice-table">
+<div class="div-table hide-mobile" style="width:100%"> 
+    <div class="div-table-row" >
+    <div class="div-table-col-5 div-table-col-header" style="text-align:right; width:10px" >#</div>
+    <div class="div-table-col-5 div-table-col-header" style="text-align:left;" >{{ LANG.itemName }}</div>
+    <div class="div-table-col-5 div-table-col-header" style="text-align:right; width:100px" >{{ LANG.qty }}</div>   
+    <div class="div-table-col-5 div-table-col-header" style="text-align:left; width:60px" >{{ LANG.unit }}</div>   
+    <div class="div-table-col-5 div-table-col-header" style="text-align:right; width:100px" >{{ LANG.price }} @</div>  
+    <div class="div-table-col-5 div-table-col-header" style="text-align:right; width:100px" >{{ LANG.discount }} @</div>  
+    <div class="div-table-col-5 div-table-col-header" style="text-align:right; width:150px;">{{ LANG.subtotal }} (IDR)</div> 
+    </div>   
+     {% for item in rsItem %} 
+        	<div class="div-table-row">
+            <div class="div-table-col-5" style="text-align:right; vertical-align:top" >{{ loop.index }}.</div>  
+            <div class="div-table-col-5" style="vertical-align:top; text-align:left;" ><a href="{{ HTTP_HOST }}products-detail/{{ item.pkey }}/{{ item.linkname }}" target="_blank">{{ item.name|raw }}</a></div>
+            <div class="div-table-col-5" style="text-align:right; vertical-align:top" >{{ item.qty|number_format }}</div>
+            <div class="div-table-col-5" style=" vertical-align:top" >{{ item.unitname }}</div>  
+            <div class="div-table-col-5" style="text-align:right; vertical-align:top; " >{{ item.sellingprice|number_format }}</div>
+            <div class="div-table-col-5" style="text-align:right; vertical-align:top; " >{{ item.discount|number_format }}</div> 
+            <div class="div-table-col-5" style="text-align:right; vertical-align:top;">{{ item.subtotal|number_format }}</div>    
+            </div>   
+     {% endfor %}
+        
+</div>
+
+<div class="mobile-table show-mobile" style="width:100%">  
+     {% for item in rsItem %}   
+        <div class="group">
+            <div class="item-name"><a href="{{ HTTP_HOST }}products-detail/{{ item.pkey }}/{{ item.linkname }}" target="_blank">{{ item.name|raw }}</a></div>
+            <div class="div-table">
+                <div class="div-table-row">
+                    <div class="div-table-col-3 col-header">{{ LANG.qty }}</div>
+                    <div class="div-table-col-3">{{ item.qty|number_format }} {{ item.unitname }}</div>
+                </div>
+                <div class="div-table-row">
+                    <div class="div-table-col-3 col-header">{{ LANG.price }} @</div>
+                    <div class="div-table-col-3">{{ item.sellingprice|number_format }} IDR</div>
+                </div>
+                {% if item.discount != 0 %}
+                <div class="div-table-row">
+                    <div class="div-table-col-3 col-header">{{ LANG.discount }} @</div>
+                    <div class="div-table-col-3">{{ item.discount|number_format }} IDR</div>
+                </div>
+                {% endif %}
+                <div class="div-table-row">
+                    <div class="div-table-col-3 col-header">{{ LANG.subtotal }}</div>
+                    <div class="div-table-col-3">{{ item.subtotal|number_format }} IDR</div>
+                </div>
+            </div>   
+       </div> 
+     {% endfor %} 
+</div> 
+
+<div class="div-table" style="width:100%">  
+    <div class="div-table-row">
+        <div class="div-table-col-5 mobile-footer-subtotal-label col-footer-t" style="text-align:right;font-weight:bold" >{{ LANG.subtotal|upper }}</div>
+        <div class="div-table-col-5 mobile-footer-subtotal-value col-footer-t " style="width:150px; text-align:right; font-weight:bold;">{{ grandSubtotal|number_format }}</div>
+        <div class="show-mobile row-break"></div>
+    </div>
+    <div class="div-table-row">
+        <div class="div-table-col-5 mobile-footer-subtotal-label col-footer-t" style="text-align:right;font-weight:bold" >{{ LANG.discount|upper }}</div>
+        <div class="div-table-col-5 mobile-footer-subtotal-value col-footer-t " style="width:150px; text-align:right; font-weight:bold;">{{ finalDiscountValue|number_format }}</div>
+        <div class="show-mobile row-break"></div>
+    </div>
+    
+    {% if taxValue != 0 %}
+    <div class="div-table-row">
+        <div class="div-table-col-5 mobile-footer-subtotal-label col-footer-t" style="text-align:right;font-weight:bold" >{{ LANG.dpp|upper }}</div>
+        <div class="div-table-col-5 mobile-footer-subtotal-value col-footer-t " style="width:150px; text-align:right; font-weight:bold;">{{ beforeTax|number_format }}</div>
+        <div class="show-mobile row-break"></div>
+    </div>
+    <div class="div-table-row">
+        <div class="div-table-col-5 mobile-footer-subtotal-label col-footer-t" style="text-align:right;font-weight:bold" >{{ LANG.tax|upper }}</div>
+        <div class="div-table-col-5 mobile-footer-subtotal-value col-footer-t " style="width:150px; text-align:right; font-weight:bold;">{{ taxValue|number_format }}</div>
+        <div class="show-mobile row-break"></div>
+    </div>
+    {% endif %} 
+    
+    {% if shipmentFee != 0 %}
+    <div class="div-table-row">
+        <div class="div-table-col-5 mobile-footer-subtotal-label col-footer-t" style="text-align:right;font-weight:bold" >{{ LANG.shipmentFee|upper }}<div style="font-size:0.9em; font-weight:normal">{{ recipientCourier|raw }}</div></div>
+        <div class="div-table-col-5 mobile-footer-subtotal-value col-footer-t " style="width:150px; text-align:right; font-weight:bold;">{{ shipmentFee|number_format }}</div>
+        <div class="show-mobile row-break"></div>
+    </div>
+    {% endif %} 
+    
+    {% if etcCost != 0 %}
+    <div class="div-table-row">
+        <div class="div-table-col-5 mobile-footer-subtotal-label col-footer-t" style="text-align:right;font-weight:bold" >{{ LANG.etccost|upper }}</div>
+        <div class="div-table-col-5 mobile-footer-subtotal-value col-footer-t " style="width:150px; text-align:right; font-weight:bold;">{{ etcCost|number_format }}</div>
+        <div class="show-mobile row-break"></div>
+    </div>
+    {% endif %}  
+    
+    <div class="div-table-row">
+        <div class="div-table-col-5 mobile-footer-subtotal-label col-footer-t  col-footer-b" style="text-align:right;font-weight:bold" >{{ LANG.total|upper }}</div>
+        <div class="div-table-col-5 mobile-footer-subtotal-value col-footer-t  col-footer-b" style="width:150px; text-align:right; font-weight:bold;">{{ grandTotal|number_format }}</div>
+        <div class="show-mobile row-break"></div>
+    </div>
+</div>
+
+</div>
+
+<div class="content-title" style="margin-top:3em; border-left-color:#568203"> 
+    <div class="title" >
+        <h1>{{ LANG.shippingInformation|upper }}</h1> 
+    </div>	  
+</div> 
+
+
+<div class="shipping-information" >  
+        <h2>{{ LANG.recipient }}</h2> 
+        
+    <div class="div-table">
+        <div class="div-table-row">
+            <div class="div-table-col-5" style="width: 6em; font-weight: bold">{{ LANG.name }}</div>
+            <div class="div-table-col-5">:</div>
+            <div class="div-table-col-5">{{ recipientName|raw }}</div>
+        </div>
+        <div class="div-table-row">
+            <div class="div-table-col-5" style="font-weight: bold">{{ LANG.phone }}</div>
+            <div class="div-table-col-5">:</div>
+            <div class="div-table-col-5">{{ recipientPhone|raw }}</div>
+        </div>
+        <div class="div-table-row">
+            <div class="div-table-col-5" style="font-weight: bold">{{ LANG.email }}</div>
+            <div class="div-table-col-5">:</div>
+            <div class="div-table-col-5">{{ recipientEmail|raw }}</div>
+        </div>
+        <div class="div-table-row">
+            <div class="div-table-col-5" style="font-weight: bold">{{ LANG.address }}</div>
+            <div class="div-table-col-5">:</div>
+            <div class="div-table-col-5">{{ recipientAddress|raw }}</div>
+        </div>
+        
+    </div>
+        
+
+</div> 

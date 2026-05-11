@@ -1,0 +1,217 @@
+{% extends "template.html" %}
+{% block pagetitle %}Sistem Keuangan dan Omnichannel Terintegrasi | {{ parent() }}{% endblock %}
+{% block CSS %}
+<link rel="stylesheet" type="text/css" href="{{ TEMPLATE_CSS_PATH }}slick-all.css">
+{% endblock %} 
+
+{% block JS %}
+<script type="text/javascript" src="{{ TEMPLATE_JS_PAGE_PATH }}index.min.js"></script> 
+<script type="text/javascript" src="{{ TEMPLATE_JS_PATH }}slick.min.js"></script> 
+
+<script type="text/javascript">
+jQuery(document).ready(function(){   
+ var opt = new Array();
+ var index = new Index(opt);
+ index.loadOnReady();   
+});
+    
+</script> 
+{% endblock %}
+{% block headerBannerContent %} 
+        <div class="banner-header-panel"> 
+            <div class="content-wrapper"> 
+                <div class="flex flex-start">
+                    <div class="consume">
+                        <h1 >Solusi Terintegrasi untuk Mengelola Usaha Anda.</h1>
+                        <div class="tag-line">Optimalkan seluruh sumber daya perusahaan Anda dengan sistem yang terintegrasi dari hulu ke hilir dengan WINTERA</div>
+                        <div class="btn-panel" style="">
+                            <ul class="content-list">
+                                <li ><a class="button btn-white" href="/contact-us">{{ LANG.contactUs }}</a></li>
+                                <li class="btn-learn-more"><a class="button btn-transparent" href="#">{{ LANG.learnMore }}</a></li>
+                            </ul>
+                        </div> 
+                    </div>
+                    <div class="content-image" > 
+                        <img alt="Solusi Terintegrasi untuk Mengelola Usaha Anda" src="{{ TEMPLATE_IMG_PATH }}banner-header.png" style="position: absolute; top: 2.5em; left: 0"> 
+                    </div>
+                </div>
+            </div> 
+        </div> 
+{% endblock %} 
+
+{% block content %} 
+
+<!-- banner -->
+
+<!-- about-us --> 
+<div class="section-panel about-us">
+<div class="content-wrapper">
+    <h2>WINTERA sangat meyakini bahwa</h2>   
+    <div class="desc">Setiap perusahaan adalah unik dan memiliki kebutuhan yang berbeda satu dengan yang lainnya. Kami menangani setiap kebutuhan sistem informasi dengan cara yang berbeda untuk setiap proses bisnis dan selalu berusaha memberikan nilai tambah pada keseluruhan komponen yang ada.</div>
+    </div>
+
+    <div style="clear: both; height: 3em"></div>
+    <a class="button btn-purple" href="/about-us">{{ LANG.aboutus}}</a>
+</div>   
+<!-- about-us -->
+<div style="position: relative;  transform: skewY(0.001deg); padding: 1.5em; background-color: #F2F8FF; clip-path: polygon(0% 100%, 100% 0%, 100% 100%);"></div>
+
+<!-- product -->
+<div class="section-panel product"> 
+
+<div class="content-wrapper">
+
+    <h2>{{ LANG.ourProducts }}</h2>  
+    <div class="desc">Kendalikan bisnis Anda dengan produk yang kami miliki.</div>
+    <div style="clear: both; height: 1em"></div>
+
+    <div class="product-list">
+        <div class="item tms-item">
+            <a href="/transportation-management-system.html">
+            <div class="content-panel  auto-height"> 
+                <div class="image tms-icon" ></div>
+                <div style="clear: both; height: 1em"></div>
+                <h3>Transportation Management System</h3>
+                <div style="clear: both; height: 1em"></div>
+                <div class="description">Pantau penjualan, biaya operasional, kasbon hingga perawatan kendaraan Anda dalam satu platform.</div>
+            </div>
+            </a>
+        </div>
+        <div class="item fms-item">
+            <a href="/freight-forwarding-system.html">
+            <div class="content-panel  auto-height"> 
+                <div class="image fms-icon" ></div>
+                <div style="clear: both; height: 1em"></div>
+                <h3>Freight Forwarding System</h3>
+                <div style="clear: both; height: 1em"></div>
+                <div class="description">Pantau penjualan, pembelian hingga tutupan kasbon Anda dalam satu platform.</div>
+            </div>
+            </a>
+        </div>
+        <div class="item winstock-item">
+            <a href="/winstock.html">
+            <div class="content-panel  auto-height">
+                <div class="image winstock-icon" ></div>
+                <div style="clear: both; height: 1em"></div>
+                <h3><span>WinStock</span></h3>
+                <div style="clear: both; height: 1em"></div>
+                <div class="description">Memberikan kemudahan untuk⁣ memantau stok dan penjualan Anda secara real time dan flexible⁣ dimana pun dan kapan pun.⁣</div>
+            </div>
+            </a>
+        </div>
+        <div class="item webdev-item">
+            <a href="/website-development.html">
+            <div class="content-panel  auto-height">
+                <div class="image webdev-icon"  ></div>
+                <div style="clear: both; height: 1em"></div>    
+                <h3>Website Development</h3>
+                <div style="clear: both; height: 1em"></div>
+                <div class="description">Layanan pembangunan website mulai dari tahap design, pengembangan, implementasi hingga  optimasi website.⁣</div>
+            </div>
+            </a>
+        </div>
+    </div>
+    <div style="clear: both; height: 3em"></div>
+
+<!--    <a class="button btn-purple" href="/services">{{ LANG.learnMore }}</a>-->
+ 
+</div> 
+<!-- product --> 
+
+</div> 
+<div style="background-color: #F2F8FF">
+<div style="position: relative; transform: skewY(0.001deg);  padding: 1.5em; background-color: #330963; clip-path: polygon(0% 100%, 100% 0%, 100% 100%);"></div>
+</div>
+<div class="section-panel learn-more center-mobile"> 
+    <div class="content-wrapper"> 
+        <div class="flex flex-stretch">
+            <div class="learn-image hide-mobile"></div>
+            <div class="consume content-panel"> 
+                <h2>Satu Platform untuk Berbagai Kemudahan</h2> 
+                <div class="desc">Dengan WINTERA Anda akan mendapatkan pengalaman kemudahan mengelola bisnis dalam satu platform yang terintegrasi.</div>
+                <div style="clear: both; height: 4em"></div>
+                <a class="button btn-transparent" href="/contact-us">{{ LANG.learnMore }}</a>   
+            </div>  
+        </div>
+    </div>  
+        <div style="clear: both"></div>
+</div>
+<div style="position: relative;  transform: skewY(0.001deg); padding: 1.5em; background-color: #330963; clip-path: polygon(0% 0%, 100% 0%, 0% 100%);"></div>
+
+<!--portfolio-->
+<div class="section-panel portfolio">
+        <div class="content-wrapper">
+
+        <h2>Klien Kami</h2>
+        <div class="desc">Merupakan suatu kehormatan bagi kami dapat bekerja sama dengan klien kami.<br>Setiap klien adalah penting bagi kami, apapun ukuran dan sektor usahanya.</div>
+        <div style="clear: both; height: 3em"></div>
+        <div style="text-align: center">
+            <ul class="portfolio-list">
+                {% for data in rsPortfolio %} 
+                <li ><div class="image" style="background-image:url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}portfolio/{{ data.pkey }}/{{ data.mainimage }}&f=png&hash={{ getPHPThumbHash(data.mainimage) }}')"></div></li>
+                {% endfor %}   
+            </ul>
+        </div>  
+</div>
+</div>
+
+<!--portfolio-->
+<div style="clear: both; height: 2em"></div>
+
+<div class="article-panel">
+<div style="clear: both; height: 2em"></div>
+ <div class="content-wrapper "> 
+          <ul class="article-list">
+           {% for data in rsLatestArticles|slice(0,3) %}  
+            <li>
+                <div class="content-panel">
+                <a href="/article-detail/{{ data.title|urlfilter|raw }}/{{ data.pkey }}" title="{{ data.title }}">
+				<div class="img-panel" style="background-image:url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}article/{{ data.pkey }}/{{ data.image }}&hash={{ getPHPThumbHash(data.image) }}')">
+                     <div class="title"> {{ data.title|raw }} </div>    
+                </div>
+                 <div class="auto-height"> 
+                    <div class="shortdesc">{{ data.shortdesc|nl2br|raw }}</div>
+                </div> 
+                </a> 
+				</div>
+            </li>
+            {% endfor %}  
+
+        </ul>
+     
+       <div style="clear: both"></div>
+ </div> 
+</div>
+
+
+<!--company-->
+<!--<div class="testimonial">
+    <div style="clear: both; height: 4em"></div>
+    <div class="sign-2" style="background-image:url('{{ TEMPLATE_IMG_PATH }}sign-2.png')"></div>
+    <div style="clear: both; height: 2em"></div>
+    <div class="content-wrapper">
+        <ul class="testimonial-list">
+           {% for data in rsRandTestimonial %} 
+
+            <li>
+                <div class="content-panel">
+                    <div class="auto-height testimonial-name">{{ data.name }}</div>
+                    <div style="clear: both; height:1em;"></div>
+                    <div class="auto-height testimonial-company">{{ data.position }} - {{ data.company }}</div>
+                    <div style="clear: both; height:1em;"></div>
+                    <div class="auto-height review">"{{ data.review }}"</div>
+          
+                </div>
+            </li>
+          {% endfor %}  
+            
+        </ul>
+    </div>
+    <div style="clear: both; height: 2em"></div>
+    <div class="sign" style="background-image:url('{{ TEMPLATE_IMG_PATH }}sign.png')"></div>
+    <div style="clear: both; height: 4em"></div>
+
+</div>-->
+<!--company-->
+
+{% endblock %}

@@ -1,0 +1,136 @@
+{% extends "template.html" %}
+{% block pagetitle %}{{ LANG.contactUs }} | {{ parent() }}{% endblock %} 
+{% import "twigMacro.html" as macro %}  
+
+{% block clientcontent %} {% endblock %}
+
+{% block JS %}
+<script type="text/javascript" src="{{ TEMPLATE_JS_PAGE_PATH }}contact-us.min.js"></script>
+<script type="text/javascript">
+jQuery(document).ready(function(){   
+  var opt = new Array();    
+ var errMsg = new Array();  
+ var lang = new Array();     
+
+ errMsg['name'] = {{ ERRORMSG.name|json_encode()|raw }}; 
+ errMsg['phone'] = {{ ERRORMSG.phone|json_encode()|raw }}; 
+ errMsg['email'] = {{ ERRORMSG.email|json_encode()|raw }}; 
+ errMsg['subject'] = {{ ERRORMSG.subject|json_encode()|raw }}; 
+ errMsg['message'] = {{ ERRORMSG.message|json_encode()|raw }}; 
+ lang['contactUsSuccessful'] = "{{ LANG.contactUsSuccessful|raw }}";
+
+ opt['errMsg'] = errMsg;
+ opt['lang'] = lang;
+
+ var contactUs = new ContactUs(opt);
+ contactUs.loadOnReady(); 
+})
+    
+</script>
+<script  type="text/javascript"  src='https://www.google.com/recaptcha/api.js'></script>  
+{% endblock %}
+
+{% block headerBannerContent %}  
+ <div style="clear: both; height: 4em"></div>
+ <div class="content-wrapper">
+     <div class="contact-information">
+      <h1>{{LANG.contactUs}}</h1>  
+        <div class="div-table">
+
+            <div class="div-table-row" > 
+                <div class="div-table-col tag-line" style="padding-bottom: 2em;">Apakah Anda membutuhkan bantuan atau memiliki pertanyaan tentang layanan kami? Jangan ragu untuk menghubungi tim kami yang ramah dan ahli di bidangnya. Jangan ragu untuk menghubungi kami kapan saja, kami siap membantu Anda!</div>
+            </div>
+
+         {% for item in settings.companyPhone %}   
+            <div class="div-table-row" > 
+                <div class="div-table-col"  style="padding-bottom: 1em">{{ item.value }}</div>
+            </div>
+          {% endfor %} 
+          {% for item in settings.companyEmail %}   
+            <div class="div-table-row"> 
+                <div class="div-table-col"  style="padding-bottom: 1em"><a href="mailto:{{ item.value }}">{{ item.value }}</a></div>
+            </div>
+          {% endfor %}  
+
+       </div>
+
+       <div class="medsos-panel" >
+          {% for item in settings.companyMedsos %} 
+                    {% if item.label|lower == "fb" or item.label|lower == "facebook" %}  
+                        {% set FA_ICON = "fab fa-facebook-square" %}
+                    {% elseif item.label|lower == "instagram" %}  
+                        {% set FA_ICON = "fab fa-instagram" %}
+                    {% elseif item.label|lower == "twitter" %}  
+                        {% set FA_ICON = "fab fa-twitter" %}
+                    {% elseif item.label|lower == "youtube" %}  
+                        {% set FA_ICON = "fab fa-youtube" %}
+                    {% elseif item.label|lower == "linkedin" %}  
+                        {% set FA_ICON = "fab fa-linkedin-in" %}
+                    {% endif %}  
+               <div> <a href="{{ item.value }}" target="_blank"><li class="{{ FA_ICON }}"></li></a></div>
+              {% endfor %}  
+               
+        </div>  
+     </div>
+    </div> 
+    <div style="clear: both; height: 8em"></div>
+{% endblock %} 
+
+{% block content %}    
+ <div class="contact-us-table div-table" >
+             <div class="div-table-row"> 
+                  <div class="div-table-col">
+                    <form id="form-contactus" method="post"  class="form-horizontal form-default prevent-form-submit" action="/ajax-contact-us.php">  
+                        <div class="notification-msg"></div> 
+                        <div class="form-group">
+                            <div class="col-lg-12">
+                              {{ inputNamePlaceholder|raw }}
+                            </div>
+                        </div>
+
+                         <div class="form-group">
+                            <div class="col-lg-12">
+                              {{ inputEmailPlaceholder|raw }}
+                            </div>
+                        </div>
+
+                         <div class="form-group">
+                            <div class="col-lg-12">
+                              {{ inputPhonePlaceholder|raw }}
+                            </div>
+                        </div>
+
+                         <div class="form-group">
+                            <div class="col-lg-12">
+                              {{ inputSubjectPlaceholder|raw }}
+                            </div>
+                        </div>
+
+                         <div class="form-group">
+                            <div class="col-lg-12">
+                              {{ inputMessagePlaceholder|raw }}
+                            </div>
+                        </div>
+                        <div class="form-group"> 
+                            <div class="col-lg-12"></div>
+                        </div> 
+                        <div class="form-group"> 
+                            <div class="col-lg-12"></div>
+                        </div>
+                        <div class="form-group"> 
+                            <div class="col-lg-12">
+                                <div class="g-recaptcha" data-sitekey="{{ settings.reCaptchaSiteKey }}"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-lg-12" style="text-align: center">
+                              {{ btnSubmit|raw }}
+                            </div>
+                        </div>
+                    </form>  
+                  </div> 
+             </div>
+         </div>	
+ <div style="clear: both; height: 15em"></div> 
+{% endblock %}

@@ -1,0 +1,161 @@
+{% extends "template.html" %}
+{% import "twigMacro.html" as macro %}
+{% block pagetitle %}{{ LANG.mediaAndInformation}}{% endblock %}
+{% block JS %}
+<script type="text/javascript" src="{{ TEMPLATE_JS_PAGE_PATH }}news.min.js"></script>  
+<script type="text/javascript">
+jQuery(document).ready(function(){   
+ var opt = new Array();   
+ var news = new News(opt);
+ news.loadOnReady();   
+});
+</script> 
+{% endblock %}
+{% block content %}
+<div class="content-wrapper">  
+<div class="section-break-4"></div>
+     
+<div class="main-table-panel flex align-items-start">
+    <div class="side-menu-panel hide-mobile"></div>
+    <div class="content-panel consume">
+        <h1 class="page-title">{% block subcontentTitle %}{{ LANG.mediaAndInformation|raw }}{% endblock %}.</h1>
+        <h2>{{ LANG.newsTagline|raw }}</h2>    
+    </div>
+</div>  
+    
+    
+<div class="section-break-4"></div>
+    
+{% for data in rsFeaturedNews|slice(0,1) %}    
+<div class="page-hero mnv-proportion" rel-proportion="2">
+         {% set class = '' %} 
+         {% set target = '' %}
+         {% set rel = '' %}
+
+         {% if not data.file is empty %} 
+            {% set url = '/download/?filename=news-file/'~data.pkey~'/'~data.file %} 
+            {% set target = '_blank' %} 
+        {% elseif not data.videourl is empty %} 
+            {% set url = '#' %}
+            {% set class = 'vid-popup' %}
+            {% set rel = data.videourl %}
+         {% else %} 
+            {% set url = '/news-detail/' ~ data.title|urlfilter|raw ~ '/' ~ data.pkey %}
+            {% set target = '_self' %}
+         {% endif %}
+    
+    <a href="{{ url }}" class="{{ class }}"  rel="{{ rel }}" target="{{ target }}">
+        <div class="short-description hide-mobile"> 
+            <h3 class="title">{{ data.title|raw }}</h3> 
+            {{ data.shortdesc|raw }}
+            <div class="publish-date">{{ data.publishdate|date('d M Y')|date_local }}</div>
+        </div> 
+    </a>    
+        <div class="banner img-bg" style="width:100%; background-image: url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}news/{{ data.pkey }}/{{  data.image }}&hash={{  getPHPThumbHash(data.image) }}'); "></div> 
+  
+</div> 
+<div class="mobile-short-description show-mobile"> 
+    <h3 class="title">{{ data.title|raw }}</h3> 
+    {{ data.shortdesc|raw }}
+    <div class="publish-date">{{ data.publishdate|date('d M Y')|date_local }}</div>
+</div> 
+{% endfor %}    
+    
+<div class="section-break-4"></div>    
+
+<h3>{{ LANG.featuredArticles }}</h3>    
+
+ <ul class="ul-list">
+       {% for data in rsFeaturedNews|slice(0,3) %}  
+     
+         {% set class = '' %} 
+         {% set target = '' %}
+         {% set rel = '' %}
+
+         {% if not data.file is empty %} 
+            {% set url = '/download/?filename=news-file/'~data.pkey~'/'~data.file %} 
+            {% set target = '_blank' %} 
+        {% elseif not data.videourl is empty %} 
+            {% set url = '#' %}
+            {% set class = 'vid-popup' %}
+            {% set rel = data.videourl %}
+         {% else %} 
+            {% set url = '/news-detail/' ~ data.title|urlfilter|raw ~ '/' ~ data.pkey %}
+            {% set target = '_self' %}
+         {% endif %}
+
+
+        <li class="col-3-panel">
+            <div class="content-panel">
+             <div class="img-panel img-bg" style="background-image: url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}news/{{ data.pkey }}/{{ data.image }}&f=png&far=C&hash={{  getPHPThumbHash(data.image) }}');">&nbsp;</div>
+             <div class="auto-height">
+                <a href="{{ url }}" title="{{ data.title }}" class="{{ class }}"  rel="{{ rel }}" target="{{ target }}"> 
+                    {{ data.title|raw }}
+                </a>
+             </div>
+            <div style="clear: both; height: 1em"></div>
+            <div class="publish-date">{{ data.categoryname }} &bull; {{ data.publishdate|date("d M Y") }}</div>
+            </div>
+        </li>
+        {% endfor %} 
+</ul>
+
+<div class="section-break-2"></div>    
+<div class="hor-bar-5"></div> 
+	
+<ul class="menu-pills hide-mobile">
+     <a href="/news"><li class="{% if selectedCategory == data.pkey %}selected{% endif %}">{{ LANG.all }}</li></a>
+    {% for data in rsCategory %}   
+        <a href="/news/{{ data.name|urlfilter }}/cat={{ data.pkey }}"><li class="{% if selectedCategory == data.pkey %}selected{% endif %}">{{ data.name }}</li></a>
+    {% endfor %}   
+</ul>   
+    
+<div class="section-break-2"></div>    
+    
+ <ul class="ul-list">
+       {% for data in rsNews %}  
+        <li class="col-3-panel">
+            <div class="content-panel">
+             <div class="img-panel img-bg" style="background-image: url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}news/{{ data.pkey }}/{{ data.image }}&f=png&far=C&hash={{  getPHPThumbHash(data.image) }}');">&nbsp;</div>
+             <div class="auto-height">
+                 
+                 {% set class = '' %} 
+                 {% set target = '' %}
+                 {% set rel = '' %}
+                 
+                 {% if not data.file is empty %} 
+                    {% set url = '/download/?filename=news-file/'~data.pkey~'/'~data.file %} 
+                    {% set target = '_blank' %} 
+                {% elseif not data.videourl is empty %} 
+                    {% set url = '#' %}
+                    {% set class = 'vid-popup' %}
+                    {% set rel = data.videourl %}
+                 {% else %} 
+                    {% set url = '/news-detail/' ~ data.title|urlfilter|raw ~ '/' ~ data.pkey %}
+                    {% set target = '_self' %}
+                 {% endif %}
+                <a href="{{ url }}" class="{{ class }}" title="{{ data.title|urlfilter|raw }}" target="{{ target }}" rel="{{ rel }}"> 
+                    {{ data.title|raw }}
+                </a>
+             </div>
+            <div style="clear: both; height: 1em"></div>
+            <div class="publish-date text-gold">{{ data.categoryname }} &bull; {{ data.publishdate|date("d M Y") }}</div>
+            </div>
+        </li>
+        {% endfor %}  
+        {{ addDummyCol(3,rsNews|length,'<li class="col-3-panel dummy-empty-col"></li>')|raw }}
+     <div style="clear: both"></div>
+</ul>
+    
+<div class="hor-bar-2"></div>
+
+{% set path = 'news/' %}
+{% if not categoryPath is empty  %}
+{% set path = path ~ categoryPath[0]['name']|urlfilter ~ '/cat=' ~ categoryPath[0]['pkey']  %}
+{% endif %}
+    
+{{ macro.buildPageList(_context,path) }}
+	
+<div class="section-break-4"></div>
+</div>
+{% endblock %}

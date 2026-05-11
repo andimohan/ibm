@@ -1,0 +1,56 @@
+{% extends "template.html" %}
+{% block JS %}
+
+<script type="text/javascript">
+
+	jQuery(document).ready(function(){   
+     //setAutoComplete('filterForm', {objName:'customerName', objValue :'hidCustomerKey', url : 'ajax-customer.php?action=searchData' });
+    })
+
+</script>
+{% endblock %}
+{% block filter %}
+ <div > 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.code|raw }}</label>
+        <div class="col-xs-12"> {{ inputCode|raw }} </div>
+    </div> 
+    <div class="form-group mnv-date-range">
+        <label class="col-xs-12 control-label" >{{ LANG.period|raw }}</label>
+        <div class="col-xs-6" style="padding-right:5px;"> {{ inputStartDate|raw }} </div>
+        <div class="col-xs-6" style="padding-left:5px;"> {{ inputEndDate|raw }} </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.invoiceCode|raw }}</label>
+        <div class="col-xs-12"> {{ inputRefCode|raw }} </div>
+    </div> 
+    <!--<div class="form-group">
+        <label class="col-xs-12 control-label" >Pelanggan</label>
+        <div class="col-xs-12">{{ inputCustomerName|raw }}</div>
+    </div>-->
+     <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.customer|raw }}</label>
+        <div class="col-xs-12"> {{ inputSelCustomer|raw }} </div>
+    </div>
+<!--    <div class="form-group">
+        <label class="col-xs-12 control-label" >Aging Piutang</label>
+        <div class="col-xs-12">{{ inputChkDueDate|raw }}<span style="margin-left: 5px">Tampilkan hanya yang jatuh tempo</span></div> 
+    </div> -->
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.warehouse|raw }}</label>
+        <div class="col-xs-12"> {{ inputSelWarehouse|raw }} </div>
+    </div> 
+	 <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.status|raw }}</label>
+        <div class="col-xs-12"> {{ inputSelStatus|raw }}  </div>
+    </div>  
+    <div class="form-group" style="margin-bottom:0">
+        <label class="col-xs-12 control-label" >{{ LANG.others }}</label> 
+    </div>   
+	<div class="form-group"> 
+        <div class="col-xs-12">{{ inputShowDetail|raw }} <span style="margin-left: 5px">{{ LANG.showDetail|raw }}</span></div> 
+        <div class="col-xs-12">{{ inputIsDetailInHeader|raw }} <span style="margin-left: 5px">Tampilkan Bukti Potong di Header</span></div> 
+    </div> 
+    
+ </div>	 
+{% endblock %}

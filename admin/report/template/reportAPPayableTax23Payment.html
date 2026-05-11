@@ -1,0 +1,66 @@
+{% extends "template.html" %}
+{% block JS %}
+
+<script type="text/javascript">
+
+	jQuery(document).ready(function(){   
+        
+        $("[name=selDateType]").change(function() {    
+            $(".tax-date").hide();
+            $(".tax-date-" + $(this).val()).show();
+        });
+     //setAutoComplete('filterForm', {objName:'customerName', objValue :'hidCustomerKey', url : 'ajax-customer.php?action=searchData' });
+    })
+
+</script>
+
+{% endblock %} 
+{% block filter %}
+ <div > 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Kode</label>
+        <div class="col-xs-12"> {{ inputCode|raw }} </div>
+    </div> 
+    <!-- <div class="form-group mnv-date-range">
+        <label class="col-xs-12 control-label" >Periode</label>
+        <div class="col-xs-6" style="padding-right:5px;"> {{ inputStartDate|raw }} </div>
+        <div class="col-xs-6" style="padding-left:5px;"> {{ inputEndDate|raw }} </div>
+    </div>       -->
+    <div class="form-group mnv-date-range">
+        <label class="col-xs-12 control-label" >Periode</label>
+        <div class="col-xs-12" style="margin-bottom: 0.3em">{{ inputSelDateType|raw }}</div>
+        <div class="tax-date tax-date-1">
+            <div class="col-xs-6" style="padding-right:5px;"> {{ inputStartDate|raw }} </div>
+            <div class="col-xs-6" style="padding-left:5px;"> {{ inputEndDate|raw }} </div>
+        </div>
+        <div class="tax-date tax-date-2" style="display: none"> 
+            <div class="col-xs-6" style="padding-right:5px;"> {{ inputStartTaxPeriod|raw }} </div>
+            <div class="col-xs-6" style="padding-left:5px;"> {{ inputEndTaxPeriod|raw }} </div>
+        </div>
+        
+    </div>  
+	<!--<div class="form-group">
+        <label class="col-xs-12 control-label" >Pemasok</label>
+        <div class="col-xs-12"> {{ inputSupplierName|raw }} </div>
+    </div>-->
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Pemasok</label>
+        <div class="col-xs-12"> {{ inputSelSupplier|raw }} </div>
+    </div> 
+	<div class="form-group">
+        <label class="col-xs-12 control-label" >Gudang</label>
+        <div class="col-xs-12">{{ inputSelWarehouse|raw }}</div>
+    </div> 
+<!--
+	<div class="form-group">
+        <label class="col-xs-12 control-label" >Unit Bisnis</label>
+        <div class="col-xs-12">{{ inputSelBusinessUnit|raw }}</div>
+    </div> 
+-->
+	<div class="form-group">
+        <label class="col-xs-12 control-label" >Status</label>
+        <div class="col-xs-12">{{ inputSelStatus|raw }}</div>
+    </div>  
+        
+ </div>	 
+{% endblock %} 

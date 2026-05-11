@@ -1,0 +1,121 @@
+{% extends "template.html" %}  
+{% block JSOnLoad %}
+    {{ parent() }} 
+    reportOnLoad(); 
+{% endblock %}  
+{% block pagetitle %}{{ arrTemplate.reportTitle }} | {{ parent() }}{% endblock %}  
+{% block contenttitle %}  
+<div class="title">
+<h1>{{ arrTemplate.reportTitle }}</h1>
+<div class="line"></div>
+</div> 
+{% endblock %}
+{% block content %}     
+<form id="form-criteria" method="post"  class="form-horizontal form-default prevent-form-submit">  
+{{ hidAction|raw }}{{ hidExportExcel|raw }}{{ hidOrderBy|raw }}{{ hidOrderType|raw }}
+<div class="filter-information">
+    <div class="div-table"> 
+        {% for filterRow in arrFilterInformation %}  
+        <div class="div-table-row">
+               <div class="div-table-col-3 row-header">{{ filterRow.label }}</div>
+               <div class="div-table-col-3"></div>
+               <div class="div-table-col-3">{{ filterRow.filter }}</div>
+        </div>
+         {% endfor %}     
+    </div>
+</div>  
+<div style="clear:both; height:1em"></div>    
+<div class="filter-panel" style="display: none; border-bottom:0">  
+    {% block criteriaPanel %} {% endblock %} 
+</div>  
+
+{{ btnShowFilter|raw }}{{ btnUpdateFilter|raw }} {{ btnExportExcel|raw }} 
+<div style="height:2em;"></div>  
+<div class="report">
+    <div class="data-panel"> 
+        <div class="report-container" style="min-width:100%">
+             <div class="dummy-col-header hide-on-print">
+             {% for el in arrTemplate.dataStructure|slice(0,2) %}  
+                {% set width = not el.width is empty ? 'width:'  ~  el.width ~ ';' : '' %}
+
+                {% set align = "" %}
+                {% if el.format == 'number' or  el.format == 'decimal' %}
+                    {% set align = "text-align:right;" %} 
+                {% elseif el.format == 'date' %}
+                    {% set align = "text-align:center;" %} 
+                {% endif %} 
+
+                {% set align = not el.align is empty ? 'text-align:'  ~ el.align ~ ';' : align %} 
+                {% set sortable = el.sortable is defined and not el.sortable  ? '' : 'sortable' %}   
+                 
+                {% set sortableActive = '' %}
+                {% set orderType = 1 %}
+                {% set orderIcon = '' %}
+
+                {% if not sortable is empty  %} 
+                    {% if el.dbfield == order.orderBy  %}
+                        {% set sortableActive = 'sortable-active' %} 
+                        {% set orderType = order.orderType %}
+                        {% set arrowIcon = orderType == 1 ? 'arrow-down' : 'arrow-up' %}
+                        {% set orderIcon = '<div class="order-type ' ~ arrowIcon ~ '"></div>' %} 
+                    {% endif %}
+                {% endif %}
+
+                {% set freezePaneClass = "" %} 
+                {% if loop.index == 2 %}
+                    {% set freezePaneClass = "freeze-pane-border" %} 
+                {% endif %}
+                <div style="float:left; {{ width }} {{ align }}" class="{{ sortable }} {{ sortableActive }} {{ freezePaneClass }} dummy-td" relcol="{{ el.dbfield }}" reltype="{{ orderType }}">{{ el.title|raw }} {{ orderIcon|raw }}</div>
+             {% endfor %}     
+            </div>
+            <table class="main-table" style="width: 100%;"> 
+                <thead>
+               
+                {% set totalCol = arrTemplate|length %}     
+         
+                 <tr class="table-header">  
+                      
+                    {% for el in arrTemplate.dataStructure %} 
+                    {% set width = not el.width is empty ? 'width:'  ~  el.width ~ ';' : '' %} 
+
+                    {% set align = "" %}
+                    {% if el.format == 'number' or  el.format == 'decimal' %}
+                        {% set align = "text-align:right;" %} 
+                    {% elseif el.format == 'date' %}
+                        {% set align = "text-align:center;" %} 
+                    {% endif %} 
+
+                    {% set align = not el.align is empty ? 'text-align:'  ~ el.align ~ ';' : align %} 
+                    {% set sortable = el.sortable is defined and not el.sortable  ? '' : 'sortable' %}     
+                     
+                    {% set sortableActive = '' %}
+                    {% set orderType = 1 %}
+                    {% set orderIcon = '' %}
+                    
+                    {% if not sortable is empty  %} 
+                        {% if el.dbfield == order.orderBy  %}
+                            {% set sortableActive = 'sortable-active' %}  
+                            {% set orderType = order.orderType %}
+                            {% set arrowIcon = orderType == 1 ? 'arrow-down' : 'arrow-up' %}
+                            {% set orderIcon = '<div class="order-type ' ~ arrowIcon ~ '"></div>' %} 
+                        {% endif %}
+                    {% endif %}
+               
+                    <th style="{{ width }} {{ align }}" class="{{ sortable }} {{ sortableActive }}" relcol="{{ el.dbfield }}" reltype="{{ orderType }}">{{ el.title|raw }} {{ orderIcon|raw }}</th>
+                    {% endfor %}      
+                     
+                    <th style="" class=""></th> <!-- dummy --> 
+                 </tr>  
+       
+                </thead>
+                <tbody>
+                    {{ reportContent|raw }}
+                </tbody>
+            </table>      
+            <div class="hide-on-print"  style="width:100%; text-align:center; margin-top:3em;" ><span class="loading-icon fas fa-spinner fa-spin"></span></div>
+        </div>   
+    </div>
+</div>
+ <div style="clear:both"></div> 
+</form>
+{% endblock %}

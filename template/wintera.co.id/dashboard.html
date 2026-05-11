@@ -1,0 +1,46 @@
+{% extends "template-portal.html" %}
+{% block contenttitle %}{{ LANG.dashboard|upper }}{% endblock %}
+{% block JS %}
+{{ parent() }}
+<script type="text/javascript">
+jQuery(document).ready(function(){ 
+	 $(".search-panel").hide();
+}); 
+</script>
+{% endblock %}
+{% block listcontent %} 
+
+<div class="news">
+	<h2>{{ LANG.latestInformation }}</h2>
+	{% if not rsCustomerNews is empty %}
+	<ul>
+	{% for newsRow in rsCustomerNews %}
+		<li>
+			<h3>{{ newsRow.title }}</h3>
+			<div class="publish-date">{{ newsRow.publishdate|date('d M Y') }}</div>
+			<div>{{ newsRow.shortdesc }}</div>
+		</li>
+	{% endfor %} 
+	</ul>
+	<div><a href="/customer-news">{{ LANG.viewAll }} &raquo;</a></div>
+	{% else %}
+		{{ LANG.noNewInformation }}
+	{% endif %} 	
+</div>
+<div style="width:90%; height:1em; margin: auto; border-top:1px solid #dedede; margin-top: 3em"></div>
+<div class="shortcut-menu flex justify-flex-center" style="margin-top:2em">
+	{% for menuItem in  portalMenu %}
+		{% if not menuItem.icon is empty %}
+			<a href="{{ menuItem.url }}">
+				<div class="shortcut-menu-item">
+					<div class="icon-panel">
+					<div class="icon" style="background-image:url('{{ TEMPLATE_IMG_PATH }}{{ menuItem.icon }}"></div>
+					</div>			
+					<div>{{ menuItem.title }}</div>
+				</div>
+				</a>
+
+		{% endif %} 	
+	{% endfor %}
+</div> 
+{% endblock %}

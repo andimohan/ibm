@@ -1,0 +1,58 @@
+{% extends "template.html" %}
+{% block pagetitle %}Laporan Item Filter{% endblock %}
+{% block reporttitle %}Laporan Item Filter{% endblock %}
+{% block JS %}
+<script type="text/javascript">
+
+	jQuery(document).ready(function(){  
+		$( "[name=itemName]" ).autocomplete({
+		  source: "../ajax-item.php?action=searchData",
+		  minLength: 1,
+		  select: function( event, ui ) {      
+				$("[name=hidItemKey]" ).val(ui.item.pkey); 
+			},  
+		  search: function( event, ui ) {  $("[name=hidItemKey]" ).val("");},
+		  change: function( event, ui ) {   
+				 if (ui.item == null) 
+					clearAutoCompleteInput(this,'hidItemKey');
+				 
+			}, 
+		}).change(function() {
+		   if ($(this).val() == "") 
+					clearAutoCompleteInput(this,'hidItemKey'); 
+		});
+		 
+	});
+
+</script>
+{% endblock %}
+{% block filter %}
+{{ inputHidItemKey|raw }}
+ <div class="div-table" > 
+    <div class="form-group">
+        <label class="col-lg-3 control-label" >Kode</label>
+        <div class="col-lg-9">
+            {{ inputItemCode|raw }}
+        </div>
+    </div>
+	<div class="form-group">
+        <label class="col-lg-3 control-label" >Nama</label>
+        <div class="col-lg-9">
+            {{ inputItemName|raw }}
+        </div>
+    </div>
+ </div>	 
+{% endblock %} 
+{% block reportContent %}
+<table class="main-table" >
+    <tr class="table-header"> 
+        <td style="width:40px; text-align:right;">No.</td> 
+        <td style="width:70px;" class="sortable" relcol="code">Kode</td> 
+        <td style="width:300px;" class="sortable" relcol="name">Nama</td> 
+		{% for itemFilter in rsItemFilter %}
+			<td style="width:100px; text-align:center">{{ itemFilter.name }}</td>
+		{% endfor %}
+	</tr>  
+</table>
+{% endblock %}
+

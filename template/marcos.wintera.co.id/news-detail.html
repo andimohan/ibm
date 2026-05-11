@@ -1,0 +1,73 @@
+{% extends "template.html" %}
+{% set ACTIVE_MENU = ACTIVE_MENU|merge(['/news']) %}
+{% set rsNews = rsNews[0] %}
+{% block pagetitle %}{{ rsNews[0].title|raw }}{% endblock %}
+{% block content %} 
+
+<div class="content-wrapper"> 
+<div class="section-break-4"></div>
+
+<!-- <div class="main-table-panel flex align-items-start">
+    <div class="side-menu-panel hide-mobile">
+        <a href="/news"><i class="fas fa-arrow-left" style="font-size: 3em; position: absolute; right: 1em; top : 1.7em; color: #fff;"></i></a> 
+    </div>
+    <div class="content-panel consume">
+    <div class="section-break-2"></div>
+    <div class="page-path"><span class="text-red-cardinal"><a href="/news">{{ LANG.mediaAndInformation|raw }} News</a> /</span> {{ rsNews.title|raw }}</div>
+        
+    <div class="section-break-2"></div>
+    <div class="news-category">{{ rsNewsCategory[0].name|raw }} &bull; {{ rsNews.publishdate|date("d M Y")|date_local }}</div>
+</div>
+</div>   -->
+<h2 class="text-center" style="margin-top:.5em; font-size: 3rem;">{{ rsNews.title|raw }}</h2>
+    
+<div class="main-table-panel flex" style="justify-content: center; align-items: center;">
+    <!-- <div class="side-menu-panel hide-mobile" style="position: relative; top:0 ">
+          <div class="img-desc">{{ rsNews.shortdesc|nl2br }}</div>
+    </div> -->
+    <div class="content-panel consume" style="text-align: center;"> 
+        <img src="/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}news/{{ rsNews.pkey }}/{{ rsNews.image }}&hash={{  getPHPThumbHash(rsNews.image) }}" style="max-width: 100%; height: auto;">    
+    </div>
+</div>
+<div class="hor-bar-5"></div>
+
+<div class="main-table-panel flex" style="align-items: stretch;">
+    <div class="side-menu-panel hide-mobile" > 
+    </div>
+    <div class="content-panel consume"> 
+      {{ rsNews.detail|raw }}
+    </div>
+</div>
+ 
+<div class="section-break-2"></div>
+<div class="hor-bar-5"></div>
+
+<div class="main-table-panel flex" style="align-items: stretch;">
+    <div class="side-menu-panel hide-mobile" > 
+        <h2>{{ LANG.relatedMedia }}</h2>
+    </div>
+    <div class="content-panel consume"> 
+         <ul class="ul-list">
+       {% for data in rsRelatedNews|slice(0,3) %}  
+        <li class="col-3-panel">
+             <div class="content-panel">
+             <div class="img-panel img-bg" style="background-image: url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}news/{{ data.pkey }}/{{ data.image }}&f=png&far=C&hash={{  getPHPThumbHash(data.image) }}');">&nbsp;</div>
+             <div style="margin: 5px 0 5px;">
+                <a href="/news-detail/{{ data.title|urlfilter|raw }}/{{ data.pkey }}" title="{{ data.title }}" class="text-white">
+                    {{ data.title|raw }}
+                </a>
+             </div>
+            <div style="clear: both; height: 1em"></div>
+            <!-- <div class="publish-date text-red-cardinal">{{ data.categoryname }} &bull; {{ data.publishdate|date("d M Y") }}</div> -->
+            </div>
+        </li>
+        {% endfor %}  
+
+</ul>
+    </div>
+</div>
+     
+<div class="section-break-4"></div>
+    
+</div>
+{% endblock %}

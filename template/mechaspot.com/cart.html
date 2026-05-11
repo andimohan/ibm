@@ -1,0 +1,158 @@
+{% extends "template.html" %}
+{% block JS %}
+<script type=text/javascript src='https://www.google.com/recaptcha/api.js'></script>
+<script type=text/javascript>/*<![CDATA[*/function rewriteCartList(){var temp="";$.ajax({type:"POST",url:"/ajax-cart.php",data:"id="+$(this).attr("rel")+"&action=cartlist",success:function(data){var html="";var total=0;var data=JSON.parse(data);temp=data.cartlist;html+='<div class="div-table-row hide-mobile" > ';html+='<div class="div-table-col-5 div-table-col-header" style="text-align:right; width:1%" >#</div>  ';html+='<div class="div-table-col-5 div-table-col-header" style="text-align:left;" >{{ LANG.itemName }}</div> ';html+='<div class="div-table-col-5 div-table-col-header" style="text-align:right; width:20%;" >{{ LANG.qty }}</div>';html+='<div class="div-table-col-5 div-table-col-header" style="text-align:right; width:13%;" >@ {{ LANG.price }}</div> ';html+='<div class="div-table-col-5 div-table-col-header" style="text-align:right; width:18%;  padding-right:2em">{{ LANG.subtotal }} (IDR)</div>';html+='<div class="div-table-col-5 div-table-col-header" style="text-align:right; width:5%" ></div> ';html+='</div> ';if(temp.length==0){html+='<div class="div-table-row  hide-mobile" >';html+='<div class="div-table-col-5"></div>  ';html+='<div class="div-table-col-5"></div>  ';html+='<div class="div-table-col-5"></div>  ';html+='<div class="div-table-col-5"></div>  ';html+='<div class="div-table-col-5"></div>  ';html+='<div class="div-table-col-5"></div>  ';html+='</div> ';}
+for(i=0;i<temp.length;i++){var subtotal=temp[i][0].qty*temp[i][0].sellingprice;var editdesc='<img class="edit" style="margin-left:1em" rel="-1" src="{{ TEMPLATE_IMG_PATH }}icon-edit.jpg" />';html+='<input type="hidden" name="hidItemKey[]" value="'+temp[i][0].pkey+'">';html+='<div class="div-table-row">';html+='<div class="div-table-col-5 hide-mobile" style="text-align:right; vertical-align:top" >'+(i+1)+'.</div>  ';html+='<div class="div-table-col-5 name-col" style="vertical-align:top; text-align:left;" ><a href="/products-detail/'+temp[i][0].linkkey+'/'+temp[i][0].linkname+'" target="_blank">'+temp[i][0].name+'</a></div>';html+='<div class="div-table-col-5 qty-col" style="text-align:right;vertical-align:top" ><img class="edit" style="margin-left:1em; float:right;" rel="-1" src="{{ TEMPLATE_IMG_PATH }}icon-edit.jpg" /><div class="label-data formatNumber" style="float:right;">'+temp[i][0].qty+'</div><input type="text" class="form-control input-data" name="qty[]" value="'+temp[i][0].qty+'" style="text-align: right; float: right; width:60%; display:none;"><div style="clear:both"></div></div> ';html+='<div class="div-table-col-5 price-col formatNumber" style="text-align:right;vertical-align:top; " >'+temp[i][0].sellingprice+'</div>';html+='<div class="div-table-col-5 subtotal-col formatNumber" style="text-align:right;vertical-align:top;  padding-right:2em">'+subtotal+'</div>  ';html+='<div class="div-table-col-5 delete-col" style="text-align:right;vertical-align:top" ><div class="btn-delete" rel="'+temp[i][0].pkey+'">delete</div></div> ';html+='</div> ';total+=subtotal;}
+{%if not loginName is empty%}
+html+='<div class="div-table-row">';html+='<div class="div-table-col-5 hide-mobile col-footer-t"></div>';html+='<div class="div-table-col-5 hide-mobile col-footer-t"></div>';html+='<div class="div-table-col-5 hide-mobile col-footer-t"></div>';html+='<div class="div-table-col-5 mobile-footer-subtotal-label col-footer-t" style="text-align:right;font-weight:bold" >{{ LANG.subtotal|upper }}</div>';html+='<div class="div-table-col-5 mobile-footer-subtotal-value formatNumber col-footer-t " style="text-align:right; font-weight:bold; padding-right:2em">'+total+'</div>';html+='<div class="div-table-col-5 hide-mobile col-footer-t"></div>';html+='<div class="show-mobile row-break"></div>';html+='</div>';html+='<div class="div-table-row">';html+='<div class="div-table-col-5 hide-mobile col-footer-t"></div>';html+='<div class="div-table-col-5 hide-mobile col-footer-t"></div>';html+='<div class="div-table-col-5 hide-mobile col-footer-t"></div>';html+='<div class="div-table-col-5 mobile-footer-subtotal-label  col-footer-t" style="text-align:right;font-weight:bold; vertical-align:middle" >{{ LANG.point|upper }}<div style="font-weight:normal" class="text-green-avocado">{{ LANG.totalPoint }}</div></div>';html+='<div class="div-table-col-5 mobile-footer-subtotal-value  col-footer-t" style="text-align:right;font-weight:bold"><span class="label-data formatNumber">'+data.pointValue+'</span><img class="edit" style="float:right; margin-left:0.4em;" rel="-1" src="{{ TEMPLATE_IMG_PATH }}icon-edit.jpg" /><input type="text" class="form-control input-data formatNumber" name="pointValue" value="'+data.pointValue+'" style="text-align: right; width:7em; float:right;  display:none;"><div style="padding-right:1.5em; font-weight:normal; clear:both;" class="text-green-avocado">{{ totalPoint|number_format }}</div></div>';html+='<div class="div-table-col-5 hide-mobile col-footer-t"></div>';html+='<div class="show-mobile row-break"></div>';html+='</div>';{%endif%}
+html+='<div class="div-table-row">';html+='<div class="div-table-col-5 hide-mobile col-footer-t col-footer-b"></div>';html+='<div class="div-table-col-5 hide-mobile col-footer-t col-footer-b"></div>';html+='<div class="div-table-col-5 hide-mobile col-footer-t col-footer-b"></div>';html+='<div class="div-table-col-5 mobile-footer-subtotal-label  col-footer-t col-footer-b" style="text-align:right;font-weight:bold" >{{ LANG.total|upper }}</div>';html+='<div class="div-table-col-5 mobile-footer-subtotal-value formatNumber col-footer-t col-footer-b" style="text-align:right; font-weight:bold;  padding-right:2em">'+(total-data.pointValue)+'</div>';html+='<div class="div-table-col-5 hide-mobile col-footer-t col-footer-b"></div>';html+='<div class="show-mobile row-break"></div>';html+='</div>';$("#cart-table").html(html);updateCartStatus();$(".formatNumber").formatCurrency({roundToDecimalPlace:DECIMAL});$("#cart-table .btn-delete").unbind("click").click(function(){$.ajax({type:"POST",url:"/ajax-cart.php",data:"id="+$(this).attr("rel")+"&action=delete",success:function(data){rewriteCartList();}});});$(".edit").unbind("click").click(function(){var onSave=$(this).attr("rel");$(this).closest(".div-table-col-5").find(".label-data").first().toggle();$(this).closest(".div-table-col-5").find(".input-data").first().toggle();if(onSave!=1){$(this).attr("src","{{ TEMPLATE_IMG_PATH }}icon-save.jpg");}else{$(this).attr("src","{{ TEMPLATE_IMG_PATH }}icon-edit.jpg");}
+onSave*=-1;$(this).attr("rel",onSave);});$("#cart-table .input-data").unbind("change").change(function(){var serialized=$("#form-cart").serialize()+"&action=update";$.ajax({type:"POST",url:"/ajax-cart.php",data:serialized,success:function(data){rewriteCartList();}});});}});}/*]]>*/</script>
+{% endblock %}
+{% block JSOnLoad %}
+{{ parent() }}
+rewriteCartList();
+$('#form-cart')
+.bootstrapValidator({
+feedbackIcons: {
+valid: 'glyphicon glyphicon-ok',
+invalid: 'glyphicon glyphicon-remove',
+validating: 'glyphicon glyphicon-refresh'
+},
+fields: {
+recipientName: {
+validators: {
+notEmpty: {
+message: '{{ ERRORMSG.name[1] }}'
+},
+}
+},
+recipientPhone: {
+validators: {
+notEmpty: {
+message: '{{ ERRORMSG.phone[1] }}'
+},
+}
+},
+recipientEmail: {
+validators: {
+notEmpty: {
+message: '{{ ERRORMSG.email[1] }}'
+},
+emailAddress: {
+message: '{{ ERRORMSG.email[3] }}'
+}
+}
+},
+recipientAddress: {
+validators: {
+notEmpty: {
+message: '{{ ERRORMSG.address[1] }}'
+},
+}
+},
+}
+})
+.on('success.form.bv', function(e) {
+$("[name=btnSave]").prop('disabled', true).addClass("btn-primary-loading");
+// Prevent form submission
+e.preventDefault();
+// Get the form instance
+var $form = $(e.target);
+// Get the BootstrapValidator instance
+var bv = $form.data('bootstrapValidator');
+// Use Ajax to submit form data
+$.post($form.attr('action'), $form.serialize(), function(result) {
+$("[name=btnSave]").removeClass("btn-primary-loading");
+var error = "";
+for (i=0;i<result.length;i++) error=error + "<li>" + result[i].message + "</li>";
+if (error != "")
+error = "<ul class=\"message-dialog-ul\">" + error + "</ul>";
+$(".notification-msg").html(error).hide().fadeToggle("fast");
+if (!result[0].valid){
+$(".notification-msg").removeClass("bg-green-avocado").addClass("bg-red-cardinal");
+$form.data('bootstrapValidator').resetForm();
+scrollToTopForm($form);
+grecaptcha.reset();
+}else{
+$(".notification-msg").removeClass("bg-red-cardinal").addClass("bg-green-avocado");
+alert("{{ LANG.cartSubmitSuccessful }}");
+location.href="/";
+}
+}, 'json');
+});
+$("#form-cart").bind('keyup keypress', function(e) {
+var code = e.keyCode || e.which;
+if (code == 13) {
+var tagName = $(e.target);
+if (!tagName.is("textarea")) {
+e.preventDefault();
+return false;
+}
+}
+});
+{% endblock %}
+{% block pagetitle %}{{ LANG.cart }} | {{ parent() }}{% endblock %}
+{% block contenttitle %}
+<div class="title">
+<h1>{{ LANG.orderList }}</h1>
+</div>
+{% endblock %}
+{% block content %}
+<form id="form-cart" class="form-horizontal prevent-form-submit" action="/ajax-cart.php">
+{{ inputHidAction|raw }}
+<div class="notification-msg" style="display:none;margin-bottom:1em"></div>
+<div id="cart-table" class="div-table"><img src="{{ TEMPLATE_IMG_PATH }}loading.gif"/></div>
+<div style="clear:both"></div>
+<div style="clear:both"></div>
+<div class="content-title" style="margin-top:3em;border-left-color:#568203">
+<div class="title">
+<h1>{{ LANG.shippingInformation }}</h1>
+</div>
+</div>
+<div class="shipping-information" style="width:94%;margin:auto">
+<div class="div-table" style="width:50%;float:left">
+<div class="form-group">
+<label class="col-lg-3 control-label">{{ LANG.name }}</label>
+<div class="col-lg-9">
+{{ inputName|raw }}
+</div>
+</div>
+<div class="form-group">
+<label class="col-lg-3 control-label">{{ LANG.phone }}</label>
+<div class="col-lg-9">
+{{ inputPhone|raw }}
+</div>
+</div>
+<div class="form-group">
+<label class="col-lg-3 control-label">{{ LANG.email }}</label>
+<div class="col-lg-9">
+{{ inputEmail|raw }}
+</div>
+</div>
+<div class="form-group" style="margin-top:2em">
+<label class="col-lg-3 control-label">{{ LANG.shipment }}</label>
+<div class="col-lg-9">
+{{ inputShipment|raw }}
+</div>
+</div>
+<div class="form-group">
+<label class="col-lg-3 control-label"></label>
+<div class="col-lg-9">
+{{ inputInsurance|raw }} <span style="margin-left:0.5em">{{ LANG.useInsurance }} </span>
+</div>
+</div>
+</div>
+<div class="div-table" style="width:48%;float:right">
+<div class="form-group">
+<label class="col-lg-3 control-label">{{ LANG.address }}</label>
+<div class="col-lg-9">
+{{ inputAddress|raw }}
+</div>
+</div>
+</div>
+<div style="clear:both"></div>
+</div>
+<div style="text-align:center;margin-top:3em"><div class="g-recaptcha" data-sitekey="{{ settings.reCaptchaSiteKey }}" style="display:inline-block"></div> </div>
+<div style="text-align:center;margin-top:2em">{{ btnSubmit|raw }}</div>
+</form>
+{% endblock %}

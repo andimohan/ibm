@@ -1,0 +1,65 @@
+{% extends "template.html" %}
+{% block pagetitle %}{{ rsArticle[0].title|raw }} | {{ parent() }}{% endblock %}
+{% block content %} 
+
+{% if rsPrevArticle is empty %}
+    {% set rsPrevArticle = rsLatestArticles %}
+{% endif %}
+
+<div class="content-wrapper">  
+<div style="clear: both; height: 4em"></div>
+<div class="flex flex-start">
+    <div class="consume">
+        <h1>{{ rsArticle[0].title|raw }}</h1>   
+        <div class="section-break-1"></div> 
+        <div class="main-image"></div>
+
+        <div class="article-detail">{{ rsArticle[0].detail|raw }}</div>
+        <div style="clear: both; height: 2em"></div>
+        <div class="source">
+            {{ LANG.source }}:<br>
+            {{ rsArticle[0].source|nl2br|raw }}
+        </div>
+        <div style="clear: both; height: 2em"></div>
+        <div class="back"><i class="fas fa-arrow-left"></i> <a href="/articles">{{ LANG.back }}</a></div>
+    </div>
+    <div class="right-article">
+        <div class="next-btn"><a href="article-detail/{{ rsPrevArticle[0].title|urlfilter|raw }}/{{ rsPrevArticle[0].pkey }}" title="{{ rsPrevArticle[0].title }}">{{ LANG.nextArticle }} <i class="fas fa-arrow-right"></i></a></div>
+     
+        <div style="clear: both; height: 1em"></div>
+        <div class="next-panel">
+            <div class="img-panel" alt="{{ rsPrevArticle[0].title }}" style="background-image:url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}article/{{ rsPrevArticle[0].pkey }}/{{ rsPrevArticle[0].image }}&hash={{ getPHPThumbHash(rsPrevArticle[0].image) }}')"></div>
+            <div style="clear: both; height: 1em"></div>
+            <h2>{{ rsPrevArticle[0].title|raw }}</h2> 
+            <div class="short-desc">{{ rsPrevArticle[0].shortdesc|nl2br }}</div>
+            <div style="clear: both; height: 2em"></div> 
+            <div><a class="button btn-purple" href="/article-detail/{{ rsPrevArticle[0].title|urlfilter|raw }}/{{ rsPrevArticle[0].pkey }}" title="{{ rsPrevArticle[0].title }}" >{{ LANG.readMore }}</a></div>
+        </div>
+    </div>
+</div>
+<div style="clear: both; height: 4em"></div>
+    
+<div class="article-related">
+    <h3>{{ LANG.otherArticles }}</h3>
+    <ul class="article-list">    
+    {% for data in rsRelatedarticles %}   
+        <li>
+                <div class="content-panel">
+                <a href="/article-detail/{{ data.title|urlfilter|raw }}/{{ data.pkey }}" title="{{ data.title }}">
+                    <div class="img-panel" style="background-image:url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}article/{{ data.pkey }}/{{ data.image }}&hash={{ getPHPThumbHash(data.image) }}')">
+                         <div class="title">{{ data.title|raw }} </div>
+                        </div>
+                        <div class="auto-height">
+
+                        <div class="shortdesc"> {{ data.shortdesc|nl2br|raw }}</div>
+                    </div> 
+                </a>
+                </div>
+        </li>
+    {% endfor %}   
+    </ul>    
+</div>
+    
+<div style="clear: both; height: 4em"></div>
+</div>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "template.html" %}
+{% block pagetitle %}{{ title }} | {{ parent() }}{% endblock %}
+{% block content %}
+<div class="content-wrapper">
+<div class="title">
+<h1>{{ title }}</h1>
+</div>
+<div class="free-page">
+{{ content|raw }}
+</div>
+</div>
+{% endblock %}

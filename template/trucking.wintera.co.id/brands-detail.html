@@ -1,0 +1,19 @@
+{% extends "template.html" %}
+{% block pagetitle %}{{ rsBrand[0].name|raw }} | {{ parent() }}{% endblock %}
+{% block contenttitle %} 
+<div class="content-wrapper"> 
+<div style="clear:both; height: 2em"></div>
+    <div class=" title" > 
+         <h1>{{ rsBrand[0].name|raw }}</h1>  
+        <div class="line"></div>
+    </div>	   
+</div>
+{% endblock %}
+{% block content %}
+<div class="content-wrapper"> 
+<div style="height:3em;"></div>  
+<img src="/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}brand/{{ rsBrand[0].pkey }}/{{ rsBrand[0].file }}&f=png&w=200&h=200&hash={{ rsBrand[0].phpThumbHash }}" />
+<div style="height:2em;"></div> 
+{{ rsBrand[0].description|raw }} 
+</div>
+{% endblock %}

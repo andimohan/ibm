@@ -1,0 +1,114 @@
+{% extends "template.html" %} 
+{% set ACTIVE_MENU = ['/services.php'] %}  
+ 
+{% block pagetitle %}Freight Forwarding System | {{ parent() }}{% endblock %}
+{% block meta %}
+<meta name="title" content="Freight Forwarding System Terintegrasi | FMS Wintera untuk Bisnis Forwarding">
+<meta name="description"  content="FMS Wintera adalah aplikasi freight forwarding terintegrasi untuk mengelola kasbon, HBL otomatis, invoice multi pihak, serta analisis profit & loss per pengiriman secara real-time">
+<meta name="keywords" content="freight forwarding system, aplikasi freight forwarding, software freight forwarding, sistem freight forwarding, forwarding management system, aplikasi forwarding, sistem kasbon forwarding, software logistik forwarding, freight forwarding indonesia, sistem invoice forwarding, FMS, software forwarding terintegrasi">
+<meta name="author" content="{{ settings.companyName }}"> 
+<meta property=og:url content="{{ CANONICAL }}" />
+<meta property=og:site_name content="{{ settings.companyName }}" /> 
+<meta property="og:type" content="{{ META_TYPE }}" />
+<meta property="og:title" content="Freight Forwarding System Terintegrasi | FMS Wintera untuk Bisnis Forwarding" />
+<meta property="og:description" content="FMS Wintera adalah aplikasi freight forwarding terintegrasi untuk mengelola kasbon, HBL otomatis, invoice multi pihak, serta analisis profit & loss per pengiriman secara real-time" /> 
+<meta property="og:image" content="{{ META_IMAGE }}" /> 
+<meta property="fb:app_id" content="{{ settings.FBAppID }}" /> 
+{% endblock %} 
+{% block headerBannerContent %}   
+<div class="service-banner banner-header-panel"> 
+<div class="content-wrapper">
+        <div class="flex  flex-start">
+            <div class="content-desc consume"> 
+                <h1 class="flex flex-center">
+                     <div class="icon-image" style="background-image:url('{{ TEMPLATE_IMG_PATH }}icon-fms-white.png')"></div>
+                     <div>Freight Forwarding System</div> 
+                </h1>
+                 <h2>Aplikasi Terintegrasi untuk Bisnis <i>Freight Forwarding</i></h2>
+                <div class="tag-line">
+                   Kami membangun sistem yang berfokus pada perusahaan <i>freight forwarding</i> agar proses bisnis dapat berjalan lebih efisien dan efektif dengan memudahkan proses operasional dan pengawasan perusahaan.
+
+                </div>
+                <div class="advantage-panel">
+                    <ul class="advantage-list">
+                        <li>Pantau biaya dan tagihan secara realtime</li>
+                        <li>Kontrol kasbon dan realisasi kasbon</li>
+                        <li>Penerbitan HBL secara otomatis</li>
+                    </ul>
+                </div>
+                 <div class="btn-panel" style="">
+                        <ul class="content-list">
+                            <li ><a class="button btn-white" href="/contact-us">{{ LANG.subscribeNow }}</a></li>
+                        </ul>
+                </div> 
+
+            </div>
+            <div class="content-image" style="margin-top: 3em;">
+                <img src="{{ TEMPLATE_IMG_PATH }}fms-banner.png"> 
+            </div>
+        </div>
+    </div>
+    </div> 
+{% endblock %}
+
+{% block content %} 
+
+<div id="services" class="forwarding"> 
+<div class="content-wrapper">
+        <div style="clear: both; height:3em;"></div>
+       
+        <div class="feature flex">
+            <div class="consume">
+                <h2>Penerbitan HBL</h2>
+                <div class="desc">
+                   <span class="brand-color">FMS Wintera</span> dilengkapi fitur penerbitan otomatis <i>House Bill of Lading</i> (HBL), dokumen penting dalam pengiriman kargo. Dengan penerbitan otomatis, kami memastikan HBL diterbitkan cepat dan akurat sehingga dapat meningkatkan efisiensi operasional serta mengurangi risiko kesalahan manusia.
+                </div>
+            </div>  
+            <div class="img-panel">
+             <img src="{{ TEMPLATE_IMG_PATH }}fms-hbl.png">
+            </div>
+        </div> 
+        <div class="feature flex">
+            <div class="img-panel">
+             <img src="{{ TEMPLATE_IMG_PATH }}fms-kasbon.png">
+            </div>
+            <div class="consume">
+                <h2>Kasbon</h2>
+                <div class="desc">
+                  Kasbon dan Realisasi Kasbon sering kali menjadi masalah di perusahaan <i>freight forwarding</i>. Dari lambatnya realisasi kasbon, hingga pengeluaran kasbon yang tidak terkontrol yang mengakibatkan kerugian bagi perusahaan.
+                  <br> <br> Fitur Kasbon dalam <span class="brand-color">FMS Wintera</span> memungkinkan perusahaan mencatat dan melacak kasbon yang diberikan kepada setiap individu dan memastikan setiap kasbon yang dikeluarkan memiliki pertanggungjawaban / realisasi. Dengan demikian perusahaan dapt memastikan pengelolaan keuangan yang lebih akurat dan kontrol yang lebih baik terhadap sumber daya.
+                </div>
+            </div>  
+        </div>
+       <div class="feature flex">
+            <div class="consume">
+                <h2>Multiple Invoice Parties</h2>
+                <div class="desc">
+                   <span class="brand-color">FMS Wintera</span> memungkinkan perusahaan untuk menerbitkan faktur penjualan ke beberapa pihak yang terlibat dalam satu pengiriman / <i>Job Order</i>, selain itu Anda juga dapat dengan mudah memantau pekerjaan mana yang belum difaktur sehingga tidak ada lagi pekerjan yang lupa tertagih. 
+                    
+                </div>
+            </div>  
+            <div class="img-panel">
+             <img src="{{ TEMPLATE_IMG_PATH }}fms-invoice.png">
+            </div>
+        </div> 
+    
+        <div class="feature flex">
+            <div class="img-panel">
+             <img src="{{ TEMPLATE_IMG_PATH }}fms-profit.png">
+            </div>
+            <div class="consume">
+                <h2>Profit / Loss per Pekerjaan</h2>
+                <div class="desc">
+                  Dengan data yang terintegrasi dari sisi biaya dan penjualan, <span class="brand-color">FMS Wintera</span> memungkinkan perusahaan untuk menganalisa keuntungan dan kerugian dari setiap pekerjaan/pengiriman.<br><br>
+                  Informasi ini dapat membantu manajemen mengevaluasi kinerja finansial proyek dan meningkatkan pengambilan keputusan serta alokasi sumber daya yang efisien.
+                </div>
+            </div>  
+        </div>
+    
+        <div style="clear: both; height:5em;"></div>
+</div> 
+    
+</div> 
+        
+{% endblock %}

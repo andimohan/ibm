@@ -1,0 +1,38 @@
+RewriteEngine Off
+RewriteEngine On
+Options -Indexes
+ 
+RewriteCond %{HTTP:Authorization} ^(.*)
+RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
+
+RewriteCond %{SERVER_PORT} 443
+ 
+RewriteBase /api/v2/
+   
+RewriteRule ^customers/([0-9]+)/(.*)$ customers.php?_userkey=$1&$2 [NC,L] 
+RewriteRule ^customers/([0-9]+)$ customers.php?_userkey=$1 [NC,L]    
+
+RewriteRule ^suppliers/([0-9]+)/(.*)$ suppliers.php?_userkey=$1&$2 [NC,L] 
+RewriteRule ^suppliers/([0-9]+)$ suppliers.php?_userkey=$1 [NC,L]    
+
+RewriteRule ^locations/([0-9]+)/(.*)$ locations.php?_userkey=$1&$2 [NC,L] 
+RewriteRule ^locations/([0-9]+)$ locations.php?_userkey=$1 [NC,L]    
+
+RewriteRule ^cities/([0-9]+)/(.*)$ cities.php?_userkey=$1&$2 [NC,L] 
+RewriteRule ^cities/([0-9]+)$ cities.php?_userkey=$1 [NC,L]    
+
+RewriteRule ^trucking-services/([0-9]+)/(.*)$ trucking-services.php?_userkey=$1&$2 [NC,L] 
+RewriteRule ^trucking-services/([0-9]+)$ trucking-services.php?_userkey=$1 [NC,L]    
+
+RewriteRule ^trucking-costs/([0-9]+)/(.*)$ trucking-costs.php?_userkey=$1&$2 [NC,L] 
+RewriteRule ^trucking-costs/([0-9]+)$ trucking-costs.php?_userkey=$1 [NC,L]
+
+RewriteRule ^trucking-service-order/([0-9]+)/(.*)$ trucking-service-order.php?_userkey=$1&$2 [NC,L]    
+RewriteRule ^trucking-service-order/(.*)$ trucking-service-order.php?$1 [NC,L]     
+RewriteRule ^print/([0-9]+)/(.*)/([0-9]+)/(.*)$ print.php?_userkey=$1&file_name=$2&id=$3&auth=$4 [NC,L]
+ 
+# nanti akan dihapus, karena semua mungkin perlu _userkey
+#Removing file extensions 
+RewriteCond %{REQUEST_FILENAME} !-d 
+RewriteCond %{REQUEST_FILENAME}\.php -f 
+RewriteRule ^(.*)$ $1.php

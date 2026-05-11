@@ -1,0 +1,206 @@
+{% extends "template.html" %}
+
+{% block content %}
+
+    <section class="banner-inside">
+    <img class="hero-img-inside" src="{{ TEMPLATE_IMG_PATH }}hero-img.jpg" alt="Our Services" />
+    
+    <div class="banner-overlay">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center text-white">
+                    <h1 class="display-4 font-weight-bold">Our Services</h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb justify-content-center bg-transparent p-0">
+                            <li class="breadcrumb-item"><a href="#" class="text-white">Home</a></li>
+                            <li class="breadcrumb-item active text-white-50" aria-current="page">Our Services</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    </section>   
+
+     <section class="about-invetex bg-grey">
+      <div class="container">
+        <div class="section-header text-center">
+          <h2>Our Main Services</h2>
+          <p>
+            Aenean massa. Cum sociis natoque penatibus et magnis dis parturient
+            montes, nascetur ridiculus mus.
+          </p>
+        </div>
+
+        <div class="row text-center">
+          <div class="col-md-4">
+            <div class="about-box">
+              <div class="icon">
+                <i class="fas fa-briefcase"></i>
+              </div>
+              <h5>Business Advisory</h5>
+              <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+                eiusmod tempor.
+              </p>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="about-box">
+              <div class="icon">
+                <i class="fas fa-chart-line"></i>
+              </div>
+              <h5>Finance Consulting</h5>
+              <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+                eiusmod tempor.
+              </p>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="about-box">
+              <div class="icon">
+                <i class="fas fa-handshake"></i>
+              </div>
+              <h5>Market Research</h5>
+              <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+                eiusmod tempor.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="professional-solutions">
+  <div class="container-fluid">
+    <div class="row no-gutters">
+
+      <!-- LEFT IMAGE -->
+      <div class="col-md-6 solution-image">
+        <div class="image-overlay">
+          <a href="#" class="play-btn">
+            <i class="fas fa-play"></i>
+          </a>
+          <p>Watch our story</p>
+        </div>
+      </div>
+
+      <!-- RIGHT CONTENT -->
+      <div class="col-md-6 solution-content text-center">
+        <span class="subtitle">We are always ahead</span>
+        <h2>Professional solutions for your business</h2>
+        <p class="desc">
+          Aenean massa. Cum sociis natoque penatibus et magnis dis parturient
+          montes, nascetur ridiculus mus.
+        </p>
+
+        <!-- COUNTERS -->
+        <div class="row counters">
+          <div class="col-4">
+            <h3>856</h3>
+            <p>Investments<br>Successfully Done</p>
+          </div>
+          <div class="col-4">
+            <h3>238</h3>
+            <p>Trusted<br>Business Clients</p>
+          </div>
+          <div class="col-4">
+            <h3>341</h3>
+            <p>Professional<br>Consultants</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SERVICE BOXES -->
+    <div class="row no-gutters services-bottom">
+      <div class="col-md-3 service-box light">
+        <i class="fas fa-file-alt"></i>
+        <h5>Financial Planning</h5>
+        <p>Professional planning for business growth.</p>
+      </div>
+
+      <div class="col-md-3 service-box beige">
+        <i class="fas fa-chart-pie"></i>
+        <h5>Market Analysis</h5>
+        <p>Accurate analysis for strategic decisions.</p>
+      </div>
+
+      <div class="col-md-3 service-box dark">
+        <i class="fas fa-cogs"></i>
+        <h5>Investment Management</h5>
+        <p>Optimized investment management system.</p>
+      </div>
+
+      <div class="col-md-3 service-box darker">
+        <i class="fas fa-briefcase"></i>
+        <h5>Business Consulting</h5>
+        <p>Expert consulting for sustainable growth.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+    <section class="testimonials py-5 text-center">
+    <div class="container">
+        <h2 class="section-title">Testimonials</h2>
+        <p class="section-desc mx-auto">
+            Testimonials from customers who are satisfied with services that have been effectively used in marketing for as long as marketing exists.
+        </p>
+        <div class="title-divider mb-5"></div>
+
+        <div id="testimonialCarousel" class="carousel slide" data-ride="carousel">
+            
+            <ol class="carousel-indicators custom-dots">
+                <li data-target="#testimonialCarousel" data-slide-to="0" class="active"></li>
+                <li data-target="#testimonialCarousel" data-slide-to="1"></li>
+                <li data-target="#testimonialCarousel" data-slide-to="2"></li>
+            </ol>
+
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <div class="testimonial-wrapper">
+                        <img src="{{ TEMPLATE_IMG_PATH }}avatar.jpg" class="rounded-circle mb-4 testimonial-img" alt="Lisa Larson">
+                        <p class="testimonial-text mx-auto">
+                            "Being a company's director requires maximum attention and devotion. This was exactly what I felt when turned to your products and services. All our questions and inquiries were answered effectively and right away."
+                        </p>
+                        <div class="quote-icon my-3"><i class="fas fa-quote-right"></i></div>
+                        <h5 class="author-name mb-0">Lisa Larson</h5>
+                        <small class="author-role text-muted">Company Director</small>
+                    </div>
+                </div>
+
+                <div class="carousel-item">
+                    <div class="testimonial-wrapper">
+                        <img src="{{ TEMPLATE_IMG_PATH }}avatar.jpg" class="rounded-circle mb-4 testimonial-img" alt="John Doe">
+                        <p class="testimonial-text mx-auto">
+                            "Excellent support and professional team. They helped our business scale effectively with their innovative solutions."
+                        </p>
+                        <div class="quote-icon my-3"><i class="fas fa-quote-right"></i></div>
+                        <h5 class="author-name mb-0">John Doe</h5>
+                        <small class="author-role text-muted">Marketing Manager</small>
+                    </div>
+                </div>
+
+                <div class="carousel-item">
+                    <div class="testimonial-wrapper">
+                        <img src="{{ TEMPLATE_IMG_PATH }}avatar.jpg" class="rounded-circle mb-4 testimonial-img" alt="Sarah Smith">
+                        <p class="testimonial-text mx-auto">
+                            "The best investment we've made this year. The consulting services are top-notch and the results speak for themselves."
+                        </p>
+                        <div class="quote-icon my-3"><i class="fas fa-quote-right"></i></div>
+                        <h5 class="author-name mb-0">Sarah Smith</h5>
+                        <small class="author-role text-muted">Operations Head</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

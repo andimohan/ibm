@@ -1,0 +1,28 @@
+{% extends "template.html" %} {% block filter %}
+<div>
+  <div class="form-group">
+    <label class="col-xs-12 control-label">{{ LANG.code }}</label>
+    <div class="col-xs-12">{{ inputCode|raw }}</div>
+  </div>
+  <div class="form-group">
+    <label class="col-xs-12 control-label">{{ LANG.block }}</label>
+    <div class="col-xs-12">{{ inputBlock|raw }}</div>
+  </div>
+  <div class="form-group">
+    <label class="col-xs-12 control-label">{{ LANG.unit }}</label>
+    <div class="col-xs-12">{{ inputUnit|raw }}</div>
+  </div>
+  <div class="form-group">
+    <label class="col-xs-12 control-label">{{ LANG.owner }}</label>
+    <div class="col-xs-12">{{ inputSelOwner|raw }}</div>
+  </div> 
+  <div class="form-group">
+    <label class="col-xs-12 control-label">{{ LANG.tenant }}</label>
+    <div class="col-xs-12">{{ inputSelTenant|raw }}</div>
+  </div> 
+  <div class="form-group">
+    <label class="col-xs-12 control-label">{{ LANG.status }}</label>
+    <div class="col-xs-12">{{ inputSelStatus|raw }}</div>
+  </div>
+</div>
+{% endblock %}

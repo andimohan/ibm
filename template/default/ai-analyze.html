@@ -1,0 +1,38 @@
+{% extends "template.html" %}
+{% block pagetitle %}{{ LANG.AIAnalysis }} | {{ parent() }}{% endblock %} 
+{% block JSOnLoad %} 
+
+  var postData = $(this).serialize();
+  $.ajax({
+        url: "/ajax-ai.php",
+        type: "POST",
+        data: {'domain' : $("[name=\"domain\"]").val(), 
+                'fileData'  : $("[name=\"fileData\"]").val(), 
+                },
+        success: function (response) {
+        console.log(response);
+            $(".ai-response").html(response);
+        },
+        error: function (xhr) {
+        console.log(gagal);   
+        }
+    });
+    
+{% endblock %}
+{% block content %}
+
+<div class="content-wrapper">
+<div style="clear: both; height: 4em"></div>
+{{ inputHidFileData|raw }}{{ inputHidDomain|raw }}
+<div class="ai-response">
+<span class="loading-icon fas fa-spinner fa-spin"></span> Mohon menunggu, AI nya sedang berpikir keras ...
+</div>
+<div style="clear: both; height: 2em"></div>
+
+<div style="font-size:0.9em; color:#666;" >
+<i>Disclaimer: Halaman analisa ini dihasilkan dengan bantuan kecerdasan buatan (Artificial Intelligence/AI) berdasarkan data dan informasi yang tersedia pada saat pembuatan. Meskipun telah diupayakan untuk menyajikan analisa yang akurat dan relevan, hasil yang ditampilkan tidak menjamin ketepatan, kelengkapan, maupun kesesuaian untuk tujuan tertentu. Pengguna diharapkan melakukan verifikasi tambahan dan menggunakan pertimbangan profesional sebelum mengambil keputusan berdasarkan informasi pada halaman ini.</i>
+</div>
+
+<div style="clear: both; height: 4em"></div>
+</div>
+{% endblock %}

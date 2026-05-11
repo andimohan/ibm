@@ -1,0 +1,382 @@
+<!doctype html>
+{% set TEMPLATE_JS_PAGE_PATH = TEMPLATE_JS_PAGE_PATH ~ 'formJS-1.3/' %}
+{% import "twigMacro.html" as macro %}
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head> 
+	
+{{ settings.googleAnalytics|raw }} 
+	
+<meta name="google-site-verification" content="{{ settings.googleSiteVerification|raw }}" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+{% block meta %}
+<meta name="title" content="{{ META_TITLE }}">
+<meta name="description"  content="{{ META_DESCRIPTION }}">
+<meta name="keywords" content="{{ META_KEYWORDS }}">
+<meta name="author" content="{{ settings.companyName }}"> 
+<meta property=og:url content="{{ CANONICAL }}" />
+<meta property=og:site_name content="{{ settings.companyName }}" />
+<meta property="og:url" content="{{ META_URL }}" />
+<meta property="og:type" content="{{ META_TYPE }}" />
+<meta property="og:title" content="{{ META_TITLE }}" />
+<meta property="og:description" content="{{ META_DESCRIPTION }}" /> 
+<meta property="og:image" content="{{ META_IMAGE }}" /> 
+<meta property="fb:app_id" content="{{ settings.FBAppID }}" /> 
+{% endblock %} 
+    
+<link rel=apple-touch-icon sizes=180x180 href="{{ TEMPLATE_IMG_PATH }}favicon/apple-touch-icon.png">
+<link rel=icon type=image/png sizes=32x32 href="{{ TEMPLATE_IMG_PATH }}favicon/favicon-32x32.png">
+<link rel=icon type=image/png sizes=16x16 href="{{ TEMPLATE_IMG_PATH }}favicon/favicon-16x16.png">
+    
+<link rel="canonical" href="{{ CANONICAL }}" />  
+     
+{% set categoryKey = 0 %} 
+{% if not categoryPath is empty %}
+    {% set categoryName = categoryPath[0].name %}
+    {% set categoryKey = categoryPath[0].pkey %}
+{% endif %} 
+ 
+{% block structureData %}{{ STRUCTURE_DATA|raw }}{% endblock %}
+{% if not settings.FBPluginScript is empty %} 
+     {{ settings.FBPluginScript|replace({'{{ FB_APP_ID }}': settings.FBAppID })|raw }}
+{% endif %}     
+    
+<script>
+ var quickContactErrMsg = new Array();  
+ var lang = new Array();  
+
+ quickContactErrMsg['name'] = {{ ERRORMSG.name|json_encode()|raw }}; 
+ quickContactErrMsg['phone'] = {{ ERRORMSG.phone|json_encode()|raw }}; 
+ quickContactErrMsg['email'] = {{ ERRORMSG.email|json_encode()|raw }}; 
+ quickContactErrMsg['subject'] = {{ ERRORMSG.subject|json_encode()|raw }}; 
+ quickContactErrMsg['message'] = {{ ERRORMSG.message|json_encode()|raw }}; 
+    
+ lang['contactUsSuccessful'] = "{{ LANG.contactUsSuccessful|raw }}";
+
+    
+</script>    
+    
+<title>{% block pagetitle %} {{ settings.websiteTitle }} {% endblock %}</title>  
+</head>
+<body>
+<div id="popup-panel" class="align-items-center"></div>
+<form name="parameter-form" class="prevent-form-submit" method="post">
+{{ hidLayout|raw }} 
+{{ hidTotalItemPerPage|raw }}
+{{ hidSearchCategoryKey|raw }}
+</form>
+<div class="mobile-menu-bar show-mobile">
+    <a href="#side-menu" id="btn-side-menu"><div class="burger" ><span></span><span></span><span></span><span></span></div> </a>
+    <div class="flex align-items-center justify-content-center">
+        <div class="company-logo-panel">
+            <a href="/">
+                <img src="/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}setting/companyLogo/{{ settings.companyLogo }}&f=png&hash={{ getPHPThumbHash(settings.companyLogo) }}" alt="logo" class="company-logo">
+            </a>
+        </div>
+        <div class="consume search-header-panel">
+            {{ inputQuickSearch|raw }}  
+        </div>
+        <div style="width: 4em;"></div>
+    </div>
+</div>
+          
+<div class="header-menu hide-mobile user-select-none">
+<div class="menu-bar content-wrapper">
+    <div class="flex align-items-center">
+        <div class="flex flex-direction-column justify-content-start consume">
+            <div style="width: 100%;" class="flex align-items-center justify-content-between">
+                <!-- MAIN MENU START -->
+                <ul class="main-menu flex align-items-center">
+                    <li name="/about-us" ><a href="/about-us" title="{{ LANG.aboutUs }}">{{ LANG.aboutus }}</a> </li>
+                    <li name="/collections" ><a href="/products" title="{{ LANG.collections }}">{{ LANG.collections }}</a> </li>
+                    <li name="/contact-us" ><a href="/contact-us" title="{{ LANG.contactUs }}">{{ LANG.contactUs }}</a> </li>
+                    <!-- MAIN MENU END -->
+                </ul>
+                <!-- COMPANY LOGO START -->
+                <div class="home-menu">
+                    <a href="/">
+                        <img src="/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}setting/companyLogo/{{ settings.companyLogo }}&f=png&hash={{ getPHPThumbHash(settings.companyLogo) }}" alt="logo" class="company-logo">
+                    </a>
+                </div>
+                <!-- COMPANY LOGO END -->
+                <div class="flex search-bar"> 
+                    <div>
+                        {{ inputQuickSearch|raw }}   
+                    </div>
+                    <div>
+                        <ul class="user-menu flex align-items-center">    
+                            {% if loginName is empty %}
+                                <li><a href="/login">{{ LANG.login }}</a></li>
+                                <li>|</li>
+                                <li><a href="/registration">{{ LANG.registration }}</a></li>
+                            {% else %}
+                                <li name="/like" class="icon-container" ><a href="/products/fav=1" title="{{ LANG.wishlist }}"><i class="far fa-heart fa-lg"></i></a> </li>
+                                <li name="/cart" ><a href="/cart" title="{{ LANG.cart }}"><i class="fa-regular fa-cart-shopping fa-lg"></i></a> </li>
+                                <li name="/profile" ><a href="/profile" title="{{ LANG.profile }}"><i class="fa-regular fa-circle-user fa-lg"></i></a> </li>
+                            {% endif %}
+                                <!-- MAIN MENU END -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> 
+</div>
+<div style="clear: both" ></div>
+</div>  
+
+<div class="dummy-header"></div>    
+<div style="clear:both"></div>    
+<!--</div>-->
+<div id="{{ PAGE_ID }}"> 
+    <!-- <div id="floating-wa" class="static-whatsapp">
+    <a href="https://api.whatsapp.com/" target="_blank" class="wa-floating-button">
+        <img src="{{ TEMPLATE_IMG_PATH }}wa-icon.svg" alt="wa">
+        <span>Chat</span>
+    </a>
+    </div> -->
+        
+    <div id="back-to-top" class="back-to-top">
+        <a href="#">
+            <i class="far fa-arrow-up fa-xs"></i>
+            <span class="back-to-top-text">{{ LANG.backToTop }}</span>
+        </a>
+    </div>
+    <div class="min-page-height">
+        <div id="popup-wrapper" style="display:none;"></div>
+        {% block content %}{% endblock %}
+    </div>
+</div>    
+<div class="footer bg-blue-sbox text-white"> 
+    <div class="section-break-4"></div>
+    <div class="flex content-footer-panel content-wrapper">
+        <div class="section-1">
+            <div class="flex align-items-start logo-address-panel">
+                <div class="logo-panel">
+                    <img src="/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}setting/companyLogo/{{ settings.companyLogo }}&f=png&hash={{ getPHPThumbHash(settings.companyLogo) }}" alt="logo">
+                </div>
+                <div class="flex align-items-start flex-direction-column justify-content-between address-panel">
+                    <div class="company-address"> {{ settings.companyAddress|raw }} </div>
+                    <div class="flex flex-direction-column align-items-start company-contact">
+                        {% for item in settings.companyPhone %}
+                            <div style="text-decoration: underline; text-underline-offset: 5px;"> {{ item.value }}</div>
+                        {% endfor %}
+                        {% for item in settings.companyEmail %}
+                            <div style="text-decoration: underline; text-underline-offset: 5px; text-align: start;">{{ item.value }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content-footer flex align-items-start flex-direction-column">
+            <div class="flex align-items-start menu-footer">
+                <ul class="list-none">
+                    <li><a href="/about-us">{{ LANG.aboutus }}</a></li>
+                    <li><a href="/products">{{ LANG.collections }}</a></li>
+                    <li><a href="/contact-us">{{ LANG.contactUs }}</a></li>
+                    <li><a href="/products/fav=1">{{ LANG.wishlist }}</a></li>
+                </ul>
+                <div class="medsos-panel">
+                    {% if not settings.companyMedsos is empty %} {% endif %}
+                    <ul class="list-none">   
+                    {% for item in settings.companyMedsos %} 
+                        {% if item.label|lower == "fb" or item.label|lower == "facebook" %}  
+                            {% set FA_ICON = "fab fa-facebook-square" %}
+                        {% elseif item.label|lower == "instagram" %}  
+                            {% set FA_ICON = "fab fa-instagram" %}
+                        {% elseif item.label|lower == "twitter" %}  
+                            {% set FA_ICON = "fab fa-twitter" %}
+                        {% elseif item.label|lower == "youtube" %}  
+                            {% set FA_ICON = "fab fa-youtube" %}
+                        {% elseif item.label|lower == "tiktok" %}  
+                            {% set FA_ICON = "fa-brands fa-tiktok" %}
+                        {% elseif item.label|lower == "linkedin" %}  
+                            {% set FA_ICON = "fa-brands fa-linkedin" %}
+                        {% elseif item.label|lower == "threads" %}  
+                            {% set FA_ICON = "fa-brands fa-threads" %}
+                        {% endif %}  
+                        <li><a href="{{ item.value }}" title="{{ LANG.linkto }} {{ item.label }}" target="_blank"><i style="margin-right: 0.5em;"></i>{{ item.label }}</a></li>
+                        {% endfor %}  
+                    </ul>   
+                </div>
+            </div>
+            <div class="content-wrapper font-poppins" style="padding: 0; width: 100%; border-bottom: 0; border-left: 0; border-right: 0; margin-bottom: 0; opacity: 0.65;" >&copy; 2025 {{ settings.companyName|raw }}. All rights reserved.</div>  
+        </div>
+    </div>
+    <div class="section-break-4"></div>
+</div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const backToTop = document.getElementById("back-to-top");
+
+        window.addEventListener("scroll", function () {
+            if (window.scrollY > 300) {
+                backToTop.style.display = "block";
+            } else {
+                backToTop.style.display = "none";
+            }
+        });
+
+        backToTop.addEventListener("click", function (e) {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+    });
+</script>
+    
+<nav id="side-menu" class="hide">    
+    <ul>
+        <li name="/about-us" ><a href="/about-us" title="{{ LANG.aboutUs }}">{{ LANG.aboutus }}</a> </li>
+        <li name="/products" class="mm-fullsubopen"> 
+             <span>{{ LANG.collections }}</span>  
+             {{ macro.buildProductsCategoriesSidemenu(_context, 0,compiledItemCategory) }}  
+        </li>
+        <li name="/contact-us"><a href="/contact-us" title="{{ LANG.contactUs }}">{{ LANG.contactUs }}</a></li>
+        <li class="divider"></li>
+        <li name="/cart" ><a href="/cart" title="{{ LANG.cart }}" ><span><i class="fa-regular fa-cart-shopping" style="margin-right: 0.5em;"></i></span> {{ LANG.cart }}</a> </li>
+         
+        {% if loginName is empty %} 
+            <li name="/login" ><a href="/login" title="{{ LANG.login }}" >{{ LANG.login }}</a> </li>
+            <li name="/registration" ><a href="/registration" title="{{ LANG.registration }}" >{{ LANG.registration }}</a> </li>
+        {% else %} 
+           
+            <li  class="mm-fullsubopen"> 
+                <span>{{ LANG.profile }}</span> 
+                        <ul>
+                            <li name="/profile"><a href="/profile" title="{{ LANG.profile }}">{{ LANG.profile }}</a></li> 
+                            <li name="/update-password"><a href="/update-password" title="{{ LANG.updatePassword }}">{{ LANG.updatePassword }}</a></li> 
+                            <li name="/shipping-address"><a href="/shipping-address" title="{{ LANG.address }}">{{ LANG.address }}</a></li> 
+                            <li name="/transaction-history"><a href="/transaction-history" title="{{ LANG.purchaseHistory }}">{{ LANG.myOrders }}</a></li> 
+                        </ul>  
+                </li>
+        
+            <li name="/logout" ><a href="/logout" title="{{ LANG.logout }}" >{{ LANG.logout }}</a> </li>
+        {% endif %} 
+    </ul>	  
+</nav>  
+<!-- set constant first -->
+<link rel="stylesheet" type="text/css" href="{{ TEMPLATE_CSS_PATH }}bootstrap.min.css"> 
+<link rel="stylesheet" type="text/css" href="{{ TEMPLATE_CSS_PATH }}mmenu.min.css">
+<link rel="stylesheet" type="text/css" href="{{ TEMPLATE_CSS_PATH }}slick-all.css">   
+    
+{% block CSS %}
+{% endblock %}   <!-- harus sebelum webstyle agar bisa dioverwrite -->
+<link rel="stylesheet" type="text/css" href="{{ TEMPLATE_CSS_PATH }}webStyle.1.27.min.css"> 
+{% block CSSInline %}{% endblock %}    
+     
+<script type="text/javascript" src="{{ TEMPLATE_JS_PATH }}jquery-3.3.1.min.js"></script>  
+<script type="text/javascript" src="{{ TEMPLATE_JS_PATH }}mmenu.min.js"></script>   
+<script type="text/javascript" src="{{ TEMPLATE_JS_PATH }}jquery-ui.min.js"></script>   
+<script type="text/javascript" src="{{ TEMPLATE_JS_PATH }}bootstrap.min.js"></script>  
+<script type="text/javascript" src="{{ TEMPLATE_JS_PATH }}slick.min.js"></script>
+    
+{% block JS %}{% endblock %}    
+    
+<script type="text/javascript">
+// onload CSS
+function loadCSS(a,d,f,g){var b=window.document.createElement("link");var c=d||window.document.getElementsByTagName("script")[0];var e=window.document.styleSheets;b.rel="stylesheet";b.href=a;b.media="only x";if(g){b.onload=g}c.parentNode.insertBefore(b,c);b.onloadcssdefined=function(h){var k;for(var j=0;j<e.length;j++){if(e[j].href&&e[j].href===b.href){k=true}}if(k){h()}else{setTimeout(function(){b.onloadcssdefined(h)})}};b.onloadcssdefined(function(){b.media=f||"all"});return b};
+
+loadCSS( "{{ TEMPLATE_CSS_PATH }}fontawesome6.min.css" );   
+    
+</script> 
+<script type="text/javascript">
+    
+var $phpConfig = new Array();
+$phpConfig['uploadTempDocShort']  = "{{ UPLOAD_TEMP_DOC_SHORT }}";
+$phpConfig['uploadTempURL']  = "{{ UPLOAD_TEMP_URL }}";
+const  PHP_CONFIG = $phpConfig; 
+</script>    
+<script type="text/javascript" src="{{ TEMPLATE_JS_PATH }}critical-js.min.js"></script>
+    
+<script type="text/javascript">
+    
+    var sideMenu = '';
+    var sideLang = '';
+    var mmenuAPI = '';
+    
+    document.addEventListener(
+            "DOMContentLoaded", () => {
+                
+                sideMenu = new Mmenu( "#side-menu" , {
+                   "offCanvas": {
+                      "position": "right"
+                   }, 
+                     
+                    "hooks" : {  "open:before": ( panel ) => {  document.querySelector(".burger").classList.toggle('open');  document.querySelector("#side-menu").classList.remove('hide'); },
+                                 "close:before": ( panel ) => { document.querySelector(".burger").classList.toggle('open');  }, 
+                            }
+                });
+ 
+                  mmenuAPI = sideMenu.API;
+                  mmenuAPI.open();
+                  mmenuAPI.close(); // buat benerin bugs utk positif fixed di body (wa floating button) 
+      
+            }
+        );
+    
+
+        
+    var cssLoaded = false;
+    
+    var dfLoadStatus = 0;
+    var dfLoadFiles = [ 
+      //["{{ TEMPLATE_JS_PATH }}jquery.formatCurrency-1.4.0.min.js"],   
+      {% block dfLoadFiles %}{% endblock %} // ntah knp gk bisa ditaro di bwh template.min
+      [ 
+       "{{ TEMPLATE_JS_PATH }}jquery.easing.1.3.min.js",  
+       "{{ TEMPLATE_JS_PATH }}template-1.6.min.js"
+      ]
+     ];
+      
+    function downloadJSAtOnload() {
+        
+        //load css first
+        if (!cssLoaded){ 
+            //loadCSS( "{{ TEMPLATE_CSS_PATH }}webStyle.1.0.min.css" );
+            cssLoaded = true;
+        }
+        
+        if (!dfLoadFiles.length) return;
+
+        var dfGroup = dfLoadFiles.shift();
+        dfLoadStatus = 0;
+ 
+        for(var i = 0; i<dfGroup.length; i++) {
+            dfLoadStatus++;
+            var element = document.createElement('script');
+            element.src = dfGroup[i];
+            element.onload = element.onreadystatechange = function() {
+                if ( ! this.readyState || this.readyState == 'complete') {
+                    dfLoadStatus--;
+                    if (dfLoadStatus==0) downloadJSAtOnload();
+                }
+            };
+            document.body.appendChild(element); 
+      } 
+    }
+     
+    if (window.addEventListener)
+        window.addEventListener("load", downloadJSAtOnload, false);
+    else if (window.attachEvent)
+        window.attachEvent("onload", downloadJSAtOnload);
+    else window.onload = downloadJSAtOnload;
+    
+    
+    function onLoadScript(){
+        
+        {% for activeMenuItem in ACTIVE_MENU %}
+            $("[name='{{ activeMenuItem }}']").addClass("selected");    
+        {% endfor %} 
+         
+          
+        {% block JSOnLoad %}{% endblock %}
+     }
+         
+
+</script>
+     
+</body> 
+</html>
+{{ settings.chatSupport|raw }}

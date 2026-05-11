@@ -1,0 +1,30 @@
+{% set TEMPLATE_JS_PAGE_PATH = TEMPLATE_JS_PAGE_PATH ~ 'formJS-1.5/' %}
+<html>
+  <head>
+    <title>{{ rsSPK.code }}</title>
+ 	<style> 
+		#map {  height: 100%; } 
+		html,body { height: 100%; margin: 0; padding: 0;}  
+		.gm-style-iw-chr button { width: 26px !important; height: 26px !important;}
+		.gm-style-iw-chr span {margin: 0.2 !important}
+		.gm-style-iw-d h1 {margin: 0; font-size:1.5em}
+/*		.information-table {font-size: 0.9em}*/
+/*		.information-table .row-header{font-weight: bold}*/
+		
+	 </style>
+	  
+	<script type="text/javascript" src="{{ TEMPLATE_JS_PATH }}jquery-3.3.1.min.js"></script>   
+	<script>
+     var wokey = "{{ rsSPK.pkey }}";  
+	 var registrationNumber = "{{ rsSPK.vehiclenumber }}"; 
+	</script>  
+    <script type="module" src="{{ TEMPLATE_JS_PAGE_PATH }}work-order-map.js"></script>   
+  
+  </head>
+  <body>
+    <div id="map"></div> 
+    <!-- prettier-ignore -->
+    <script>(g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})
+        ({key: "AIzaSyDU279CJVLdg3hukSbRQpVqhJ9yQ8BSB6U", v: "weekly"});</script>
+  </body>
+</html>

@@ -1,0 +1,76 @@
+{% extends "template.html" %}
+{% block pagetitle %}{{ rsEvent[0].title|raw }} | {{ parent() }}{% endblock %}
+{% block contenttitle %} 
+<div class="content-wrapper"> 
+<div style="clear:both; height: 2em"></div>
+    <div class=" title" > 
+         <h1>{{ rsEvent[0].title|raw }}</h1>  
+        <div class="line"></div>
+    </div>	   
+</div>
+{% endblock %} 
+{% block JSLoadFiles %}  
+["{{ TEMPLATE_JS_PATH }}ekko-lightbox.min.js"], 
+{% endblock %}
+
+{% block CSS %}   
+<link rel="stylesheet" type="text/css" href="{{ TEMPLATE_CSS_PATH }}ekko-lightbox.min.css">
+{% endblock %}
+{% block JSOnLoad %}
+{{ parent() }}
+
+$(document).on('click', '[data-toggle="lightbox"]', function(event) {
+    event.preventDefault(); 
+    $(this).ekkoLightbox(); 
+});
+ 
+{% endblock %}
+{% block content %}
+<div class="content-wrapper"> 
+<div style="height:2em;"></div> 
+<div class="news-detail"> 
+<div class="div-table"> 
+<div class="div-table-row">
+<div class="div-table-col" style="font-weight: bold; padding-right: 1em">{{ LANG.venue }}</div>   
+<div class="div-table-col">{{ rsEvent[0].venue|replace({"\n":"<br>"})|raw }}</div>     
+</div>    
+<div class="div-table-row">
+<div class="div-table-col" style="font-weight: bold; padding-right: 1em">{{ LANG.eventTime }}</div>   
+<div class="div-table-col">{{ rsEvent[0].eventdatefrom|date("d M Y") }} {% if rsEvent[0].eventdatefrom|date("H:i") != "00:00" %} {{ rsEvent[0].eventdatefrom|date("H:i") }}{% endif %} - {{ rsEvent[0].eventdateto|date("d M Y") }} {% if rsEvent[0].eventdateto|date("H:i") != "00:00" %} {{ rsEvent[0].eventdateto|date("H:i") }}{% endif %}</div>    
+</div>    
+<div class="div-table-row">
+<div class="div-table-col" style="font-weight: bold; padding-right: 1em">{{ LANG.speaker }}</div>   
+<div class="div-table-col">{{ rsEvent[0].speakers|replace({"\n":"<br>"})|raw }}</div>    
+</div>    
+</div>     
+    
+{% if not rsEvent[0].url is empty %}
+<div style="clear:both; height: 2em"></div>
+<a href="{{ rsEvent[0].url }}" target="_blank"><div class="btn btn-primary btn-princeton-orange">{{ LANG.register }}</div></a>
+{% endif %}
+<div style="clear:both; height: 2em"></div>
+<div class="detail">{{ rsEvent[0].detail|raw }}</div> 
+{% if not rsEvent[0].url is empty %}
+<div style="margin-top:2em; text-align: center">
+<a href="{{ rsEvent[0].url }}" target="_blank"><div class="btn btn-primary btn-princeton-orange">{{ LANG.register }}</div></a> 
+</div>
+{% endif %}
+    
+{% if not rsEvent[0].gallery is empty %}
+<div class="section-break"></div>  
+<div class="section-title">Check Out Our Events!</div>   
+<div style="clear:both; height: 2em"></div>
+    
+<ul class="gallery-image">
+{% for image in rsEvent[0].gallery %} 
+<li>
+    <a href="/download.php?filename=gallery-event/{{ rsEvent[0].pkey }}/{{ image.file }}" data-toggle="lightbox" data-title="{{ rsEvent[0].title|raw }}" data-gallery="{{ rsEvent[0].pkey }}"> 
+    <div class="image-panel" style="background-image:url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}gallery-event/{{ rsEvent[0].pkey }}/{{ image.file }}&hash={{ image.phpThumbHash }}')"></div>
+    </a>
+</li> 
+{% endfor %}
+</ul> 
+{% endif %}
+</div>
+</div>
+{% endblock %}

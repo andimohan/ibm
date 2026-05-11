@@ -1,0 +1,122 @@
+<body style="font-family:arial">
+<table style="border:1px solid #ccc;width:100%;max-width:800px;color:#333">
+<tr>
+<td style="text-align:center;padding:10px">
+<div style="width:300px;height:70px;margin:auto;background-image:url('{{ HTTP_HOST }}download.php?filename={{ companyLogoDocPath }}');background-position:center;background-repeat:no-repeat;background-size:contain"></div>
+</td>
+</tr>
+<tr>
+<td>
+</td>
+</tr>
+<tr>
+<td style="padding:10px">
+{% if not code is empty %}
+<table style="font-size:.9em">
+<tr>
+<td style="font-weight:bold;padding:.5em">Kode Invoice</td>
+<td style="font-weight:bold;padding:.5em">:</td>
+<td style="padding:.5em">{{ code }}</td>
+</tr>
+<tr>
+<td style="font-weight:bold;padding:.5em">Tgl. Invoice</td>
+<td style="font-weight:bold;padding:.5em">:</td>
+<td style="padding:.5em">{{ trdate }}</td>
+</tr>
+<tr>
+<td style="font-weight:bold;padding:.5em">Status</td>
+<td style="font-weight:bold;padding:.5em">:</td>
+<td style="padding:.5em">{{ statusname }}</td>
+</tr>
+</table>
+{% endif %}
+<table style="width:900px;font-size:.9em" cellspacing="0">
+<tr>
+<td style="border:1px solid #333;border-left:0;border-right:0;font-weight:bold;padding:.5em;text-align:right;width:10px">#</td>
+<td style="border:1px solid #333;border-left:0;border-right:0;font-weight:bold;padding:.5em">{{ LANG.itemName }}</td>
+<td style="border:1px solid #333;border-left:0;border-right:0;font-weight:bold;padding:.5em;text-align:right;width:100px">{{ LANG.qty }}</td>
+<td style="border:1px solid #333;border-left:0;border-right:0;font-weight:bold;padding:.5em;width:60px">{{ LANG.unit }}</td>
+<td style="border:1px solid #333;border-left:0;border-right:0;font-weight:bold;padding:.5em;text-align:right;width:100px">{{ LANG.price }} @</td>
+<td style="border:1px solid #333;border-left:0;border-right:0;font-weight:bold;padding:.5em;text-align:right;width:100px">{{ LANG.discount }} @</td>
+<td style="border:1px solid #333;border-left:0;border-right:0;font-weight:bold;padding:.5em;text-align:right;width:130px">{{ LANG.subtotal }} (IDR)</td>
+</tr>
+{% for item in rsItem %}
+<tr>
+<td style="padding:.5em;text-align:right;vertical-align:top">{{ loop.index }}.</td>
+<td style="padding:.5em;vertical-align:top"><a href="{{ HTTP_HOST }}products-detail/{{ item.pkey }}/{{ item.linkname }}" target="_blank">{{ item.name|raw }}</a></td>
+<td style="padding:.5em;text-align:right;vertical-align:top">{{ item.qty|number_format }}</td>
+<td style="padding:.5em;vertical-align:top">{{ item.unitname }}</td>
+<td style="padding:.5em;text-align:right;vertical-align:top">{{ item.sellingprice|number_format }}</td>
+<td style="padding:.5em;text-align:right;vertical-align:top">{{ item.discount|number_format }}</td>
+<td style="padding:.5em;text-align:right;vertical-align:top">{{ item.subtotal|number_format }}</td>
+</tr>
+{% endfor %}
+<tr>
+<td colspan="6" style="border-top:1px solid #333;font-weight:bold;padding:.5em;text-align:right">{{ LANG.subtotal }}</td>
+<td style="border-top:1px solid #333;padding:.5em;text-align:right">{{ grandSubtotal|number_format }}</td>
+</tr>
+<tr>
+<td colspan="6" style="font-weight:bold;padding:.5em;text-align:right">{{ LANG.discount }}</td>
+<td style="padding:.5em;text-align:right">{{ finalDiscountValue|number_format }}</td>
+</tr>
+{% if taxValue != 0 %}
+<tr>
+<td colspan="6" style="font-weight:bold;padding:.5em;text-align:right">{{ LANG.dpp }}</td>
+<td style="padding:.5em;text-align:right">{{ beforeTax|number_format }}</td>
+</tr>
+<tr>
+<td colspan="6" style="font-weight:bold;padding:.5em;text-align:right">{{ LANG.tax }}</td>
+<td style="padding:.5em;text-align:right">{{ taxValue|number_format }}</td>
+</tr>
+{% endif %}
+{% if shipmentFee != 0 %}
+<tr>
+<td colspan="6" style="font-weight:bold;padding:.5em;text-align:right">{{ LANG.shipmentFee }}<div style="font-size:.9em;font-weight:normal">{{ recipientCourier|raw }}</div></td>
+<td style="padding:.5em;text-align:right">{{ shipmentFee|number_format }}</td>
+</tr>
+{% endif %}
+{% if etcCost != 0 %}
+<tr>
+<td colspan="6" style="font-weight:bold;padding:.5em;text-align:right">{{ LANG.etccost }}</td>
+<td style="padding:.5em;text-align:right">{{ etcCost|number_format }}</td>
+</tr>
+{% endif %}
+<tr>
+<td colspan="6" style="font-weight:bold;padding:.5em;text-align:right">{{ LANG.total }}</td>
+<td style="padding:.5em;text-align:right">{{ grandTotal|number_format }}</td>
+</tr>
+</table>
+<div style="clear:both;height:2em"></div>
+<div>{{ LANG.shippingInformation|upper }}</div>
+<div style="line-height:2em;padding-top:1em">{{ LANG.recipient|upper }}</div>
+<table style="font-size:.9em">
+<tr>
+<td style="padding:.3em;width:6em;vertical-align:top;font-weight:bold">{{ LANG.name }}</td>
+<td style="padding:.3em;vertical-align:top">:</td>
+<td style="padding:.3em;vertical-align:top">{{ recipientName|raw }}</td>
+</tr>
+<tr>
+<td style="padding:.3em;vertical-align:top;font-weight:bold">{{ LANG.phone }}</td>
+<td style="padding:.3em;vertical-align:top">:</td>
+<td style="padding:.3em;vertical-align:top">{{ recipientPhone|raw }}</td>
+</tr>
+<tr>
+<td style="padding:.3em;vertical-align:top;font-weight:bold">{{ LANG.email }}</td>
+<td style="padding:.3em;vertical-align:top">:</td>
+<td style="padding:.3em;vertical-align:top">{{ recipientEmail|raw }}</td>
+</tr>
+<tr>
+<td style="padding:.3em;vertical-align:top;font-weight:bold">{{ LANG.address }}</td>
+<td style="padding:.3em;vertical-align:top">:</td>
+<td style="padding:.3em;vertical-align:top">{{ recipientAddress|raw }}</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td style="text-align:center;font-size:.9em;padding:10px;border-top:1px solid #ccc">
+<a href="{{ HTTP_HOST }}" target="_blank" style="color:#999">{{ settings.companyName }}</a>
+</td>
+</tr>
+</table>
+</body>

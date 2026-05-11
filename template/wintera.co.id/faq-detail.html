@@ -1,0 +1,18 @@
+{% extends "template.html" %}
+{% block pagetitle %}{{ rsFAQ[0].question|raw }} | {{ parent() }}{% endblock %}
+{% block content %} 
+
+<div class="content-wrapper">  
+<div style="clear: both; height: 4em"></div>
+
+<h1>{{ LANG.faq }}</h1> 
+<h2>{{ rsFAQ[0].question|raw }}</h2>   
+<div class="section-break-1"></div> 
+<div class="main-image"></div>
+
+<div class="article-detail">{{ rsFAQ[0].answer|raw }}</div>
+<div style="clear: both; height: 4em"></div>  
+<div class="back"><i class="fas fa-arrow-left"></i> <a href="/faq">{{ LANG.back }}</a></div>
+<div style="clear: both; height:6em"></div>  
+</div>
+{% endblock %}

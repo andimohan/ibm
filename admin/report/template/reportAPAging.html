@@ -1,0 +1,53 @@
+{% extends "template.html" %} 
+{% block JS %}
+<script type="text/javascript">
+    
+    function updateSupplier(obj){ 
+           var templateKey = $("[name=hidTemplateSupplierKey]").val();
+           $.ajax({
+                type: "GET",
+                url:  "../ajax-template-supplier.php", 
+                data: "action=getDetailById&pkey=" + templateKey,  
+            }).done(function( data ) {  
+                 data = JSON.parse(data) ;   
+
+                 $("[name='selSupplier[]']:checked").click(); 
+                 for(i=0;i<data.length;i++) 
+                     $("[name='selSupplier[]'][value="+data[i].supplierkey+"]:not(:checked)").click();
+
+            }); 
+     } 
+    
+	jQuery(document).ready(function(){    
+        
+    })
+
+</script>
+{% endblock %}
+{% block filter %}
+ <div > 
+    <div class="form-group mnv-date-range">
+        <label class="col-xs-12 control-label" >{{ LANG.period }}</label> 
+        <div class="col-xs-12"> {{ inputEndDate|raw }} </div>
+    </div>   
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.supplier }}</label>
+		<div class="col-xs-12" style="margin-bottom: 0.2em"> {{ inputTemplateSupplier|raw }} </div>
+        <div class="col-xs-12"> {{ inputSelSupplier|raw }} </div>
+    </div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.warehouse }}</label>
+        <div class="col-xs-12"> {{ inputSelWarehouse|raw }} </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >Mata Uang</label>
+        <div class="col-xs-12"> {{ inputSelCurrency|raw }} </div>
+    </div>
+    <div class="form-group" style="margin-bottom:0">
+        <label class="col-xs-12 control-label" >{{ LANG.others }}</label> 
+    </div>   
+     <div class="form-group">  
+        <div class="col-xs-12"> {{ inputIsShowDetail|raw }} <span style="margin-left: 5px">{{ LANG.showDetail }}</span></div>
+    </div> 
+ </div>	 
+{% endblock %}

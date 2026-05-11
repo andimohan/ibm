@@ -1,0 +1,45 @@
+{% set TEMPLATE_JS_PAGE_PATH = TEMPLATE_JS_PAGE_PATH ~ 'formJS-1.1/' %}
+
+<script type="text/javascript" src="{{ TEMPLATE_JS_PAGE_PATH }}newsletter.min.js"></script> 
+<script type="text/javascript">
+jQuery(document).ready(function(){   
+ var opt = new Array();    
+ var errMsg = new Array();  
+ var lang = new Array();     
+
+ errMsg['email'] = {{ ERRORMSG.email|json_encode()|raw }}; 
+ lang['registrationSuccessful'] = "{{ LANG.registrationSuccessful|raw }}";
+
+ opt['errMsg'] = errMsg;
+ opt['lang'] = lang;
+
+ var newsletter = new Newsletter(opt);
+ newsletter.loadOnReady(); 
+});
+    
+</script>
+<div id="popup-registration" class="div-table" style="width: 100%; height: 100vh;">
+    <div class="div-table-row">
+        <div class="div-table-col" style="vertical-align: middle">
+            <div class="content-panel" style="padding: 2em; background-color: #fff; border:10px solid #d7bf85; width: 90%; max-width:35em; margin: auto">   
+				 <div class="popup-form" >
+					 
+					 {{ LANG.popupSignup|raw }}
+					 <div class="section-break-2"></div>
+					 
+					  <form id="form-subscription" method="post"  class="form-horizontal form-default prevent-form-submit" action="/ajax-newsletter.php">  
+						 {{ inputHidActionNewsletter|raw }}
+						<div class="notification-msg"></div>  
+						<div class="form-group"> 
+							<div class="col-sm-9" style="padding-right: 0; padding-bottom: 1em"> 
+								  {{ inputSubscribeNewsletterPlaceholder|raw }}  
+							</div> 
+							<div class="col-sm-3">{{ btnSubmitSubscribeNewsletter|raw }}</div>
+						</div> 
+					 </form>
+						   
+				 </div>
+            </div>
+        </div>
+    </div>
+</div>

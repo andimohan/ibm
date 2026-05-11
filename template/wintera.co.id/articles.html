@@ -1,0 +1,64 @@
+{% extends "template.html" %}
+{% import "twigMacro.html" as macro %}
+{% block pagetitle %}{{ LANG.articles }} | {{ parent() }}{% endblock %}
+{% block JS %}
+<script type="text/javascript" src="{{ TEMPLATE_JS_PAGE_PATH }}articles.min.js"></script>  
+<script type="text/javascript">
+jQuery(document).ready(function(){   
+ var opt = new Array();   
+ var articles = new Articles(opt);
+ articles.loadOnReady();   
+});
+    
+</script> 
+{% endblock %}
+
+{% block headerBannerContent %}  
+ <div style="clear: both; height: 4em"></div>
+<div class="content-wrapper">
+  <div class="article-header flex flex-start">
+        <div class="consume">
+            <h1>{{ rsLatestArticles[0].title|raw }}</h1> 
+            <div class="short-desc">{{ rsLatestArticles[0].shortdesc|raw }}</div>
+            <a href="/article-detail/{{ rsLatestArticles[0].title|urlfilter|raw }}/{{ rsLatestArticles[0].pkey }}">{{ LANG.readMore }}</a> <i class="fas fa-arrow-right"></i>
+        </div>
+        <div class="featured-image-panel">
+            <div class="featured-image"><img src="/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}article/{{ rsLatestArticles[0].pkey }}/{{ rsLatestArticles[0].image }}&hash={{ getPHPThumbHash(rsLatestArticles[0].image) }}"></div>
+        </div>
+    </div>
+</div>
+ <div style="clear: both; height: 8em"></div>
+{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">  
+<div style="clear: both; height: 8em"></div>  
+<ul class="article-list">    
+{% for data in rsArticles %}   
+    <li>
+            <div class="content-panel">
+            <a href="/article-detail/{{ data.title|urlfilter|raw }}/{{ data.pkey }}" title="{{ data.title }}">
+            <div class="img-panel" style="background-image:url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}article/{{ data.pkey }}/{{ data.image }}&hash={{ getPHPThumbHash(data.image) }}')">
+                <div class="title"> {{ data.title|raw }} </div>
+            </div>
+            <div class="auto-height"> 
+                <div class="shortdesc">{{ data.shortdesc|raw }}</div>
+            </div> 
+            </a>
+            </div>
+    </li>
+{% endfor %}   
+</ul>
+    
+<div style="clear: both;"></div>   
+
+{% set path = 'articles/' %}
+{% if not categoryPath is empty  %}
+{% set path = path ~ categoryPath[0]['name']|urlfilter ~ '/cat=' ~ categoryPath[0]['pkey']  %}
+{% endif %}
+    
+{{ macro.buildPageList(_context,path) }}
+	
+<div style="clear: both; height: 4em"></div>   
+</div>
+{% endblock %}

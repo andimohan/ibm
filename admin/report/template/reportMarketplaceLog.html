@@ -1,0 +1,49 @@
+{% extends "template.html" %} 
+{% block JS %}
+<script type="text/javascript">
+
+	jQuery(document).ready(function(){ 
+         
+        //setAutoComplete('filterForm', {objName:'employeeName', objValue :'hidEmployeeKey', url : 'ajax-employee.php?action=searchData' });
+        
+        $( "[name=trStartDate], [name=trEndDate]" ).change(function() { 
+            var trStartDate = Date.parse(convertDateToStandartFormat($("[name=trStartDate]").val()));
+            var trEndDate = Date.parse(convertDateToStandartFormat($("[name=trEndDate]").val()));
+               
+            if (trStartDate > trEndDate) 
+                $("[name=trEndDate]").val($("[name=trStartDate]").val()); 
+            
+		});
+        
+         
+	});
+
+</script>
+{% endblock %}
+{% block filter %} 
+ <div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.period }}</label>
+        <div class="col-xs-6" style="padding-right:5px;"> {{ inputStartDate|raw }} </div>
+        <div class="col-xs-6" style="padding-left:5px;"> {{ inputEndDate|raw }} </div>
+    </div> 
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.status }}</label>
+        <div class="col-xs-12"> {{ inputSelStatus|raw }} </div> 
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.marketplace }}</label>
+        <div class="col-xs-12"> {{ inputSelMarketplace|raw }} </div> 
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.reference }}</label>
+        <div class="col-xs-12"> {{ inputReference|raw }} </div> 
+    </div>
+      <div class="form-group">
+        <label class="col-xs-12 control-label" >{{ LANG.action }}</label>
+        <div class="col-xs-12"> {{ inputSelMarketplaceAction|raw }} </div> 
+    </div>
+     
+     
+ </div>	 
+{% endblock %}

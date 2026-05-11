@@ -1,0 +1,122 @@
+{% extends "template-portal.html" %} 
+{% import "twigMacro.html" as macro %}  
+{% block pagetitle %}{{ LANG.jobOrder }} | {{ parent() }}{% endblock %}
+{% block JS %}
+<script type="text/javascript">
+	
+var baseURL = '/';
+var batchUpdateVehicle = []; 
+	
+//function getVehicleGPSInformation(string,haystack){ 
+//	
+//	$.each(haystack, function( index, value ) {
+//	  if (string == value.policenumber) return value;
+//	});
+//	
+//	
+//}
+//	
+function updateGPSInformationBatch(){
+
+	 $.ajax({
+		type: "GET",
+		data : 'registrationnumber='+JSON.stringify(batchUpdateVehicle), 
+		url: baseURL + "ajax-gps.php",   
+		beforeSend : function() {
+
+		},
+		success: function(data){   
+		   
+			if (!data) return;
+
+			 data = parseJSON(data); 
+			 if(data.length == 0)  return;
+   
+			//loop data cari row berdasarkan plat no
+			for(var i=0; i < data.length; i++){ 
+				var vehicleNumber = data[i]['policenumber'];
+				var gpsRow = $("[rel-vehicle-id=\""+vehicleNumber+"\"]");
+				var wokey = gpsRow.attr("rel-wo-key");
+				gpsRow.find(".gps-address").html("<a href=\"/work-order-map/"+wokey+"\" target=\"_blank\">"+data[i]['location']['address'] + "</a>");   
+			}
+ 
+		},
+		complete:function(xhr, desc) {    
+			setTimeout(function(){
+			  updateGPSInformationBatch();
+			}, 30000); // 30 second
+		 }
+	}); 
+ }
+
+function updateGPSLocation(){
+	 $(".vehicle-number").each(function(){   
+		var val =  $(this).attr('rel-vehicle-number'); 
+		if($.inArray(val, batchUpdateVehicle) == -1)
+			batchUpdateVehicle.push(val);  
+	});
+	
+	updateGPSInformationBatch();
+}
+	
+jQuery(document).ready(function(){ 
+	{% if showGPSLocation == 1 %}updateGPSLocation(){% endif %}
+}); 
+</script>
+{% endblock %}
+{% block contenttitle %}{{ LANG.jobOrder|upper }}{% endblock %}
+{% set pageFileName = 'job-order-list' %}
+{% block listcontent %} 
+{% for item in rsJobOrder %}
+<div class="card-row flex flex-start">   
+		<div class="consume">
+			<h2>{{ item.code }}</h2>
+			<div class="data-row flex">
+				<div class="label">{{ LANG.date }}</div>
+				<div class="consume">{{ item.trdate|date("d M Y") }}</div>
+			</div>	
+			<div class="data-row  flex">
+				<div class="label">{{ LANG.consignee }}</div>
+				<div class="consume" >{{ item.consigneename }}</div> 
+			</div>
+			<div  class="data-row flex">
+			<div class="label">{{ LANG.route }}</div>
+			<div class="consume"> {{ item.routefrom }} - {{ item.routeto }}</div> 
+			</div>
+			<div class="data-row flex">
+				<div class="label">{{ LANG.status }}</div>
+				<div  class="consume" >{{ item.statusname }}</div> 
+			</div>	
+		</div>
+		<div class="consume" >
+			<div class="expand-group">
+				<div class="label user-select-none expand-link">{{ LANG.vehichleInformation }}<i class="fas fa-caret-down expand-icon"></i><i class="fas fa-caret-up expand-icon" style="display:none"></i></div>
+				<div class="expand-detail">
+					<div style="clear:both; height: .5em"></div>
+					<div>{{ item.party|raw }}</div>
+					<div style="clear: both; height: 1em"></div> 
+					<div>
+						{% if showGPSLocation == 1 %}
+							{% for gpsRow in item['gpsdetail']  %}
+						 		<div class="div-table gps-detail">
+									<div class="div-table-row" rel-vehicle-id="{{ gpsRow.vehicleid }}" rel-wo-key="{{ gpsRow.wokey }}" >
+										<div class="div-table-col vehicle-number"  rel-vehicle-number="{{ gpsRow.vehiclenumber }}">{{ gpsRow.vehiclenumber }}</div>
+										<div class="div-table-col text-blue-munsell {% if gpsRow.spkstatuskey == 2 %}gps-address{% endif %}" style="padding-left: 0.5em">{% if gpsRow.spkstatuskey == 2 %}{{ LANG.fetching }} ...{% else %}{{ LANG.jobComplete }}{% endif %}</div>
+									</div> 
+								</div>
+							{% endfor %}
+						{% else %}
+							{{ item.vehiclenumber|raw }}
+						{% endif %}
+					</div>
+					
+				</div>
+			</div>
+		</div>  
+</div>    
+{% endfor %} 
+
+{% if rsJobOrder is empty %} 
+<div style="text-align: center; padding-top:1em">{{ LANG.noDataFound }}</div>
+{% endif %}
+{% endblock %}

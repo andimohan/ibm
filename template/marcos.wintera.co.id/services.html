@@ -1,0 +1,101 @@
+{% extends "template.html" %}
+{% import "twigMacro.html" as macro %}  
+{% block pagetitle %}{{ LANG.services }} | {{ parent() }}{% endblock %} 
+{% block JS %}  
+<script type="text/javascript"> 
+  window.addEventListener('load', () => {
+    const hash = window.location.hash;
+    if (hash) {
+      const target = document.querySelector(hash);
+      if (target) {
+        // Wait a bit in case layout is still adjusting (optional but safer)
+        setTimeout(() => {
+          const offset = target.getBoundingClientRect().top + window.scrollY;
+          const center = offset - (window.innerHeight / 2) + (target.offsetHeight / 2);
+
+          window.scrollTo({
+            top: center,
+            behavior: 'smooth' // Can use 'auto' if you don't want animation
+          });
+        }, 100); // Adjust delay as needed
+      }
+    }
+  });
+</script> 
+{% endblock %}
+{% block content %}    
+<div class="section-break-4"></div>
+<div class="content-wrapper">
+<h2 style="text-align: center">{{ LANG.ourServices }}</h2>
+<div class="header-description">{{ page['services'].detail|raw }}</div>
+<div class="section-break-4"></div> 
+<ul class="services-list">
+    {% for data in rsServices %}
+        {% if loop.index % 2 == 0 %}
+        <li id="{{ data.name|urlfilter }}">
+            <div class="div-table  mobile-table">
+                <div class="div-table-row">
+                    <div class="div-table-col-3 img-col">
+                        <div class="img" style="background-image: url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}service/{{ data.pkey }}/{{  data.mainimage }}&hash={{  getPHPThumbHash(data.mainimage) }}');"></div>
+                    </div>
+                    <div class="div-table-col-3 desc-col">
+                        <div class="service-name">{{ data.name }}</div>
+                        <div class="service-desc">{{ data.shortdescription|html_entity_decode }}</div>
+                    </div> 
+                </div>
+            </div> 
+        </li>
+        {% else %}
+        <li  id="{{ data.name|urlfilter }}" class="hide-mobile">
+            <div class="div-table">
+                <div class="div-table-row">
+                    <div class="div-table-col-3 desc-col">
+                        <div class="service-name">{{ data.name }}</div>
+                        <div class="service-desc">{{ data.shortdescription|html_entity_decode }}</div>
+                    </div> 
+                    <div class="div-table-col-3 img-col">
+                        <div class="img" style="background-image: url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}service/{{ data.pkey }}/{{  data.mainimage }}&hash={{  getPHPThumbHash(data.mainimage) }}');"></div>
+                    </div>
+                </div>
+            </div> 
+        </li>
+        <li id="{{ data.name|urlfilter }}"  class="show-mobile">
+            <div class="div-table mobile-table">
+                <div class="div-table-row">
+                    <div class="div-table-col-3 img-col">
+                        <div class="img" style="background-image: url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}service/{{ data.pkey }}/{{  data.mainimage }}&hash={{  getPHPThumbHash(data.mainimage) }}');"></div>
+                    </div>
+                    <div class="div-table-col-3 desc-col">
+                        <div class="service-name">{{ data.name }}</div>
+                        <div class="service-desc">{{ data.shortdescription|html_entity_decode }}</div>
+                    </div> 
+                </div>
+            </div> 
+        </li>
+        {% endif %}
+    {% endfor %} 
+</ul>
+    
+<div class="section-break-4"></div> 
+<div class="service-vehicle-description">{{ page['services-vehicle'].detail|raw }}</div> 
+<div class="section-break-2"></div>
+<div class="div-table vehicle-table">
+    <div class="div-table-row col-header">
+         <div class="div-table-col-5">{{ LANG.vehicles }}</div>
+         <div class="div-table-col-5">{{ LANG.configuration }}</div>
+         <div class="div-table-col-5">{{ LANG.capacity }}</div>
+         <div class="div-table-col-5">{{ LANG.dimension }} (P x L x T)</div>
+    </div>
+    {% for data in rsFeaturedItem %}
+     <div class="div-table-row">
+         <div class="div-table-col-5">{{ data.name }}</div>
+         <div class="div-table-col-5">{{ data.shortdescription }}</div>
+         <div class="div-table-col-5">{{ data.gramasi|number_format }} Ton</div>
+         <div class="div-table-col-5">{{ data.width|number_format(1) }} x {{ data.length|number_format(1) }} x {{ data.height|number_format(1) }} m</div>
+     </div> 
+    {% endfor %}  
+</div>    
+
+<div class="section-break-8"></div>
+</div>
+{% endblock %}

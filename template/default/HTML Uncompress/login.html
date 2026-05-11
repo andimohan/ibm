@@ -1,0 +1,115 @@
+{% extends "template.html" %}
+{% block pagetitle %}{{ LANG.login }} | {{ parent() }}{% endblock %} 
+{% block JSOnLoad %} 
+ {{ parent() }}
+			$('#form-login')
+				.bootstrapValidator({ 
+					feedbackIcons: {
+						valid: 'glyphicon glyphicon-ok',
+						invalid: 'glyphicon glyphicon-remove',
+						validating: 'glyphicon glyphicon-refresh'
+				},
+				fields: {
+					loginID: { 
+						validators: {
+							notEmpty: {
+								message: '{{ ERRORMSG.username[1] }}'
+							}, 
+							 stringLength: {
+								min: 5,
+								max: 30,
+								message:  '{{ ERRORMSG.username[3] }}'
+							}, 
+							regexp: {
+								regexp: /^[a-zA-Z0-9_\.]+$/,
+								message: '{{ ERRORMSG.username[4] }}'
+							},
+						}
+					}, 
+					
+					loginPassword: { 
+						validators: {
+							 notEmpty: {
+								message: '{{ ERRORMSG.password[1] }}'
+							}, 
+							stringLength: {
+								min: 5,
+								max: 30,
+								message: '{{ ERRORMSG.password[2] }}'
+							}, 
+						}
+					},  
+				}
+			})
+			.on('success.form.bv', function(e) {
+				$("[name=btnSave]").prop('disabled', true).addClass("btn-primary-loading");
+				
+				// Prevent form submission
+				e.preventDefault(); 
+				// Get the form instance
+				var $form = $(e.target);
+	
+				// Get the BootstrapValidator instance
+				var bv = $form.data('bootstrapValidator');
+	
+				// Use Ajax to submit form data
+				$.post($form.attr('action'), $form.serialize(), function(result) {
+					$("[name=btnSave]").removeClass("btn-primary-loading");
+					 
+					var error = "";
+					for (i=0;i<result.length;i++)
+						error = error + "<li>" + result[i].message + "</li>";
+						
+					if (error != "")
+						error = "<ul class=\"message-dialog-ul\">" + error + "</ul>";
+						
+					$(".notification-msg").html(error).hide().fadeToggle("fast");
+					if (!result[0].valid){
+						$(".notification-msg").removeClass("bg-green-avocado").addClass("bg-red-cardinal");
+						$form.data('bootstrapValidator').resetForm();
+						scrollToTopForm($form);
+					}else{ 
+						$(".notification-msg").removeClass("bg-red-cardinal").addClass("bg-green-avocado");
+						location.href="/";
+					}
+					
+				}, 'json');
+			}); 
+					
+{% endblock %} 
+{% block contenttitle %} 
+    <div class=" title" >
+        <h1>{{ LANG.login }}</h1> 
+    </div>	 
+{% endblock %} 
+{% block content %} 		 
+<form id="form-login" method="post" class="form-horizontal form-default prevent-form-submit" action="/ajax-member.php"> 
+{{ inputHidAction|raw }}
+    <div class="notification-msg" ></div>  
+    <div style="clear:both; height:1em"></div>
+    <div class="form-group">
+        <label class="col-lg-4 control-label">{{ LANG.username|upper }}</label>
+        <div class="col-lg-8">
+         {{ inputUserName|raw }}
+        </div>
+    </div>
+   <div class="form-group">
+        <label class="col-lg-4 control-label">{{ LANG.password|upper }}</label>
+        <div class="col-lg-8">
+         {{ inputPassword|raw }}
+        </div>
+    </div> 
+    <div class="form-group"> 
+        <label class="col-lg-4"></label>
+        <div class="col-lg-8">
+            {{ LANG.forgotPassword }} ? <span rel=""><a href="/forgot-password">{{ LANG.clickHere }}</a></span>.
+         </div>
+    </div>   
+    <div class="form-group">
+        <label class="col-lg-4 control-label"></label>
+        <div class="col-lg-8">
+         {{ btnSubmit|raw }}
+        </div>
+    </div>  
+</form> 
+{% endblock %}

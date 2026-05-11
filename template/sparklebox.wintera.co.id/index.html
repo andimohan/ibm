@@ -1,0 +1,132 @@
+{% extends "template.html" %}
+{% block pagetitle %}{{ parent() }}{% endblock %} 
+{% block CSS %} 
+<link rel="stylesheet" type="text/css" href="{{ TEMPLATE_CSS_PATH }}tooltipster.bundle.min.css" />
+{% endblock %} 
+{% block JS %}
+<script type="text/javascript" src="{{ TEMPLATE_JS_PATH }}tooltipster.bundle.min.js"></script>
+<script type="text/javascript" src="{{ TEMPLATE_JS_PAGE_PATH }}index.js"></script>
+<script>
+    
+jQuery(document).ready(function(){   
+ 
+ var opt = new Array();    
+ var errMsg = new Array();  
+ var lang = new Array();   
+ 
+errMsg['email'] = {{ ERRORMSG.email|json_encode()|raw }}; 
+lang['registrationSuccessful'] = "{{ LANG.registrationSuccessful|raw }}";
+
+ opt['errMsg'] = errMsg;
+ opt['lang'] = lang;
+ opt['city'] = {{ featuredPartners|json_encode|raw }};
+
+ var index = new Index(opt); 
+ index.loadOnReady(); 
+   
+})
+</script>
+  
+{% endblock %}
+
+{% block content %}
+<ul class="hero slick-list-hero" >    
+{% for data in banner['slide show'] %}   
+    <li class="slick-slide">  
+        {% if data.file|ext == 'mp4' %}
+            <video class="banner" {% if data.isloop == 1 %}loop{% endif %} id="vid" src="{{ DEFAULT_URL_UPLOAD_PATH }}banner/{{ data.pkey }}/{{ data.file }}" autoplay muted style="object-fit: cover;"></video>
+        {% else %}
+        <div style="width: 100%; background-image: url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}banner/{{ data.pkey }}/{{  data.file }}&hash={{  getPHPThumbHash(data.file) }}');" class="banner img-bg" alt="banner-slick"></div>
+        {% endif %}       
+    </li>
+{% endfor %}  
+</ul>
+<div class="mobile-wrapper">
+    <!-- CATEGORY START -->
+    <div class="bg-blue-sbox text-white">
+        <div class="content-wrapper">
+            <div class="flex align-items-start justify-content-between text-center list-category">
+                <div class="usp">
+                    <div class="font-bold">{{ LANG.usp1}}</div>
+                    <div class="desc-usp">{{ LANG.usp1Desc}}</div>
+                </div>
+                <div class="usp">
+                    <div class="font-bold">{{ LANG.usp2}}</div>
+                    <div class="desc-usp">{{ LANG.usp2Desc}}</div>
+                </div>
+                <div class="usp">
+                    <div class="font-bold">{{ LANG.usp3}}</div>
+                    <div class="desc-usp">{{ LANG.usp3Desc}}</div>
+                </div>
+            </div>
+        </div>
+        <div style="clear: both"></div> 
+    </div>
+    <!-- CATEGORY END -->
+    <div class="content-wrapper">
+        <div class="section-break-4"></div>
+        <!-- <div class="flex justify-content-center tagline-image-panel">
+            <div class="tagline-text">
+                <div class="tagline">
+                    <h1 class="font-title font-bold italic">Tagline Tagline Tagline</h1>
+                    <div class="sub-tagline">
+                        <div><h4>Tagline Tagline Tagline</h4></div>
+                        <div><h4>Tagline Tagline Tagline</h4></div>
+                        <div><h4>Tagline Tagline Tagline</h4></div>
+                    </div>
+                </div>
+            </div>
+            <div class="tagline-image text-center">
+                <img src="{{ TEMPLATE_IMG_PATH }}image-home.png" alt="img" class="image-tagline blend">
+            </div>
+        </div> -->
+        <div class="flex justify-content-center tagline-image-panel">
+            <!-- {{ page['index-tagline-image'].detail|raw }} -->
+            <img src="{{ TEMPLATE_IMG_PATH }}image-banner.png" alt="banner" class="blend" style="width: 100%;">
+        </div>
+        <div class="section-break-8"></div>
+        <!-- ARCHIVE SALE -->
+        <div class="">
+            <h2 class="text-center font-libre-baskerville archive-text">{{ LANG.archiveSale|upper }}</h2>
+            <div class="section-break-1"></div>
+            <div class="text-center">{{ LANG.archiveSaleDesc }}</div>
+            <div class="flex arrow-panel">
+                <div class="flex arrow-left-right">
+                    <div class="flex justify-content-center arrow-left"><i class="fa-solid fa-arrow-left"></i></div>
+                    <div class="flex justify-content-center arrow-right"><i class="fa-solid fa-arrow-right"></i></div>
+                </div>
+            </div>
+            <div>
+                <div class="product-feature-panel slick-list">
+                {% for data in rsFeaturedItem %}
+                    <div class="card-product-feature">
+                        <div class="flex flex-direction-column align-items-start">
+                            <div class="index-skeleton-img" onclick="location.href='/products-detail/{{ data.name|urlfilter }}/{{ data.pkey }}'"></div>
+                            <img onclick="location.href='/products-detail/{{ data.name|urlfilter }}/{{ data.pkey }}'" src="/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}item/{{ data.pkey }}/{{ data.mainimage }}&f=png&far=C&&hash={{  getPHPThumbHash(data.mainimage) }}" alt="img" class="image-product-feature hidden" onload="this.previousElementSibling.style.display='none'; this.classList.remove('hidden');">
+                            <div class="text-left price-panel">
+                                <div class="product-name font-libre-baskerville auto-height"><a href="/products-detail/{{ data.name|urlfilter }}/{{ data.pkey }}">{{ data.name }}</a></div>
+                                <div class="price">Rp. {{ data.sellingprice|format_number }}</div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="section-break-2"></div>
+
+        <!-- POINT SYSTEM DESC --> 
+         <div class="bg-blue-sbox flex justify-content-between text-white system-reward-panel">
+            <div class="reward-panel">
+                <h1 class="font-title italic">{{ LANG.shopMore }} <br> {{ LANG.valueable }}</h1>
+                <div style="height: 1.5em;"></div>
+                <div class="desc-reward">{{ LANG.rewardDesc }}</div>
+            </div>
+            <div class="reward-img img-bg" style="background-image: url('{{ TEMPLATE_IMG_PATH }}reward.png');"></div>
+         </div>
+    </div>
+</div>
+<div class="section-break-4"></div>
+  
+
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends "template.html" %} 
+{% block dfLoadFiles %}
+["{{ DEFAULT_JS_PATH }}qrcode/filereader.js"],
+["{{ DEFAULT_JS_PATH }}qrcode/qrcodelib.js"],
+["{{ DEFAULT_JS_PATH }}qrcode/webcodecamjquery.js"],
+["{{ DEFAULT_JS_PATH }}qrcode/qrjquery.js"],
+{% endblock %}
+{% block JS %}
+<script>
+function qrPlayButtonHandler(obj,triggerObj){  
+    //obj.responseTarget = $("[name=hidWoCode]");  
+    loadOverlayScreen();
+    obj.showBarcodeReader();
+    obj.playDecoder(); 
+}
+
+function qrReaderResponse(obj,res){
+    var $form = $("[name=frmWorkOrder]"); 
+    var code = res.code;
+     
+    var data=[]; 
+    data.push({name: "action", value: "getDataRowById"}); 
+    data.push({name: "code", value: code}); 
+        
+    obj.hideBarcodeReader();
+    obj.stopDecoder();
+    
+     $.ajax({
+        type: "POST",
+        url:  'ajax-trucking-service-work-order.php',
+        data: data,
+        success: function(data){ 
+            if(!data) return;
+            data = JSON.parse(data);    
+            $("[name=woCode]").val(data[0]['code']); 
+            $("[name=verificationCode]").val(data[0]['verificationcode']); 
+        } 
+    }).done(function( data ) {  
+            disabledButton($form.find(".btn-primary"), false);   
+            hideOverlayScreen();
+    }); 
+     
+}
+    
+</script>    
+{% endblock %}
+{% block JSOnLoad %}
+
+var qr = new QRReader(); 
+$("[name=btnProceed]").click(function(){ 
+   
+});
+
+$("[name=btnSave]").click(function(){ 
+    var $form = $(this).closest("form"); 
+    disabledButton($form.find(".btn-primary"));   
+
+    var data = $form.serializeArray();
+    data.push({name: "action", value: "takeWorkOrder"}); 
+
+    $.ajax({
+        type: "POST",
+        url:  'ajax-trucking-service-work-order.php',
+        data: data,
+        success: function(data){ 
+
+            data = JSON.parse(data);   
+
+            if (!data[0].valid){
+               alert(data[0]['message']);
+               return;
+            }
+
+           $form.attr("action","/driver/jobList");
+           $form.submit();    
+        } 
+    }).done(function( data ) {  
+            disabledButton($form.find(".btn-primary"), false);   
+    }); 
+});
+
+{% endblock %} 
+{% block contenttitle %}
+{% endblock %}
+
+{% block content %}
+<div class="barcode-reader hide-on-dismiss">
+<select class="form-control" id="camera-select"></select>
+<div class="panel-body text-center">
+    <div class="qr-cam-panel">
+        <canvas width="340px" height="240px" id="webcodecam-canvas"></canvas> 
+    </div>
+</div>
+<div style="clear:both"></div>
+</div>
+
+<form name="frmWorkOrder" action="#" method="post"> 
+<div style="text-align: center">{{ LANG.pleaseInputWOCodeYouWantToProceed }}</div>
+<div style="padding: 0.5em 0; position: relative">
+    {{ inputWOCode|raw }}
+    <i class="qr-code-play fas fa-qrcode inline"></i> 
+</div>
+<div style="clear: both; height: 1em"></div>
+<div style="text-align: center">{{ LANG.verificationCode }}</div>
+<div style="padding: 0.5em 0">{{ inputVerificationCode|raw }}</div>
+<div style="clear: both; height: 1em"></div>
+<div style="text-align: center">{{ btnSave|raw }}</div>
+</form>
+
+{% endblock %}

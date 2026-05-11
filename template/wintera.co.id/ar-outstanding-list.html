@@ -1,0 +1,138 @@
+{% extends "template-portal.html" %} 
+{% import "twigMacro.html" as macro %}  
+{% block pagetitle %}{{ LANG.accountsReceivable }} | {{ parent() }}{% endblock %} 
+{% block contenttitle %}{{ LANG.accountsReceivable|upper }}{% endblock %}
+{% set pageFileName = 'ar-outstanding-list' %}
+{% block filteritem %} 
+	<div class="label">{{ LANG.status }}</div>
+	<div class="status-item flex">
+		{% for statusRow in inputChkStatus %}
+			<div class="flex">
+				<div class="chk-panel">{{ statusRow.input|raw }}</div>
+				<div>{{ statusRow.label }}</div>
+			</div>
+		{% endfor %}
+	</div>
+{% endblock %}
+{% block actionpanelinfo %}<div><b>Outstanding</b><div style="font-size: 1.3em">Rp. {{ totalOutstanding|number_format }}</div></div>{% endblock %}
+{% block listcontent %}
+<div class="table-and-card">
+<div class="div-table transaction-table-with-detail table-list hide-mobile" style="width:100%">
+	<div class="div-table-row">
+		<div class="div-table-col-3 col-header" style="width:3em; text-align: right">{{ LANG.number }}</div>
+		<div class="div-table-col-3 col-header" style="width:11em" >{{ LANG.invoiceNumber }}</div>
+		<div class="div-table-col-3 col-header" style="width:8em; text-align: center" >{{ LANG.duedate }}</div>
+		<div class="div-table-col-3 col-header" style="width:4em; text-align: center"  >{{ LANG.curr }}</div>
+		<div class="div-table-col-3 col-header" style="width:9em; text-align: right"  >{{ LANG.amount }}</div>
+		<div class="div-table-col-3 col-header" style="width:9em; text-align: right"  >{{ LANG.outstanding }}</div>
+		<div class="div-table-col-3 col-header">{{ LANG.status }}</div>
+	</div>
+</div>	
+<div class="div-table transaction-table-with-detail" style="width:100%">
+{% for item in rsAR %} 
+<div class="div-table-row">
+<div class="div-table-col">
+<div class="div-table table-list hide-mobile" style="width:100%">
+	<div class="div-table-row" attr-index="{{ item.pkey }}">
+		<div class="div-table-col-3" style="width:3em; text-align:right;">{{ loop.index }}.</div>
+		<div class="div-table-col-3" style="width:11em"><span class="{% if not item.paymentHistory is empty %}show-detail-link{% endif %}">{{ item.refcode }}</span></div>
+		<div class="div-table-col-3" style="width:8em; text-align: center">{{ item.duedate|date("d M Y") }}</div>
+		<div class="div-table-col-3" style="width:4em; text-align: center">{{ item.currencyname }}</div>
+		<div class="div-table-col-3" style="width:9em; text-align: right">{{ item.amount|number_format }}</div>
+		<div class="div-table-col-3" style="width:9em; text-align: right">{{ item.outstanding|number_format }}</div>
+		<div class="div-table-col-3">{{ item.statusname }}</div>
+	</div>
+</div>
+<div class="div-table detail-row hide-mobile" style="width:100%" attr-detail="{{ item.pkey }}">
+	<div class="div-table-row">
+		<div class="div-table-col-3" style="width:3em;"></div>
+		<div class="div-table-col-3"> 
+			{% if not item.paymentHistory is empty %} 
+					<div class="div-table table-row-detail ">
+						<div class="div-table-caption">{{ LANG.paymentInformation }}</div>
+						<div class="div-table-row" >
+							<div class="div-table-col  col-header"  style="width: 10em">{{ LANG.date }}</div>
+							<div class="div-table-col  col-header" style="text-align: right">{{ LANG.payment }}</div>
+							<div class="div-table-col  col-header" style="width: 8em; text-align: right">{{ LANG.tax23 }}</div>
+							<div class="div-table-col  col-header" style="width: 10em; text-align: right">{{ LANG.payingOffAmount }}</div>
+						</div>
+						{% for paymentRow in item.paymentHistory %} 
+							<div class="div-table-row">
+								<div class="div-table-col">{{ paymentRow.trdate|date("d M Y") }}</div>
+								<div class="div-table-col" style="text-align: right">{{ (paymentRow.amount-paymentRow.taxamount)|number_format }}</div>
+								<div class="div-table-col" style="text-align: right">{{ paymentRow.taxamount|number_format }}</div>
+								<div class="div-table-col" style="text-align: right">{{ paymentRow.amount|number_format }}</div>
+							</div>
+						{% endfor %}
+					</div>
+		  {% endif %} 
+		</div> 
+	</div>
+</div>
+</div>	
+</div>	
+{% endfor %}
+</div>
+ 
+{% for item in rsAR %} 
+<div class="card-row flex flex-start card-mobile column">   
+		<div class="consume">
+			<h2>{{ item.refcode }}</h2> 
+			<div class="data-row  flex">
+				<div class="label">{{ LANG.duedate }}</div>
+				<div class="consume" >{{ item.dueDate|date("d M Y") }}</div> 
+			</div>
+			<div class="data-row  flex">
+				<div class="label">{{ LANG.currency }}</div>
+				<div class="consume" >{{ item.currencyname }}</div> 
+			</div>
+			<div class="data-row  flex">
+				<div class="label">{{ LANG.amount }}</div>
+				<div class="consume" >{{ item.amount|number_format }}</div> 
+			</div>
+			<div class="data-row  flex">
+				<div class="label">{{ LANG.outstanding }}</div>
+				<div class="consume" >{{ item.outstanding|number_format }}</div> 
+			</div> 
+			<div class="data-row flex">
+				<div class="label">{{ LANG.status }}</div>
+				<div  class="consume" >{{ item.statusname }}</div> 
+			</div>	
+		</div> 
+		<div class="consume detail-information"> 
+			<div class="expand-group">
+				<div  class="label  user-select-none expand-link">{{ LANG.paymentInformation }}<i class="fas fa-caret-down expand-icon"></i><i class="fas fa-caret-up expand-icon" style="display:none"></i></div>
+				<div class="expand-detail">
+				<div style="clear:both; height: .5em"></div>
+				{% if item.paymentHistory is empty %} 
+						- 
+				{% else %}
+					<div class="div-table mobile-table">
+						<div class="div-table-row col-header-row">
+							<div class="div-table-col col-header" style="width: 10em">{{ LANG.date }}</div>
+							<div class="div-table-col col-header" style="width: 8em; text-align: right">{{ LANG.payment }}</div>
+							<div class="div-table-col col-header" style="width: 8em; text-align: right">{{ LANG.tax23 }}</div>
+							<div class="div-table-col col-header" style="width: 10em; text-align: right">{{ LANG.payingOffAmount }}</div>
+						</div>
+					{% for paymentRow in item.paymentHistory %} 
+						<div class="div-table-row">
+								<div class="div-table-col"><div class="row-header">{{ LANG.date }}</div>{{ paymentRow.trdate|date("d M Y") }}</div>
+								<div class="div-table-col" style="text-align: right"><div class="row-header">{{ LANG.payment }}</div>{{ (paymentRow.amount-paymentRow.taxamount)|number_format }}</div>
+								<div class="div-table-col" style="text-align: right"><div class="row-header">{{ LANG.tax23 }}</div>{{ paymentRow.taxamount|number_format }}</div>
+								<div class="div-table-col" style="text-align: right"><div class="row-header">{{ LANG.payingOffAmount }}</div>{{ paymentRow.amount|number_format }}</div>
+						</div>
+					{% endfor %}
+					</div>
+				{% endif %}
+				</div>
+			</div>
+		</div>
+</div>     
+{% endfor %}
+</div>
+
+{% if rsAR is empty %}
+	<div style="text-align: center; padding-top:1em">{{ LANG.noDataFound }}</div>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends "template.html" %}  
+{% block pagetitle %}{% if not categoryPath is empty %} {{ categoryPath[0].name|raw }} {% else %} {{ LANG.allProducts }} {% endif %} | {{ parent() }}{% endblock %} 
+ 
+{% set categoryKey = 0 %} 
+{% if not categoryPath is empty %}
+    {% set categoryName = categoryPath[0].name %}
+    {% set categoryKey = categoryPath[0].pkey %}
+{% endif %}
+ 
+{% block contenttitle %} 
+<div class="content-wrapper"> 
+<div style="clear:both; height: 2em"></div>
+    <div class=" title" > 
+        <h1>
+         {% if not categoryPath is empty %}
+            {{ categoryName|raw }}
+        {% else %}
+            {{ LANG.allProducts }}
+        {% endif %}
+        </h1> 
+        <div class="line"></div>
+    </div>	 
+</div>	   
+{% endblock %} 
+
+{% block JSOnLoad %}
+
+   {{ parent() }} 
+ 
+    {% set categoryKey = 0 %} 
+    {% if not categoryPath is empty %}
+        {% set categoryName = categoryPath[0].name %}
+        {% set categoryKey = categoryPath[0].pkey %}
+    {% endif %} 
+
+    var varParam = Array(); 
+    var basicUrl = '/products/{{ categoryKey }}';
+    var paramUrl = '';
+
+    {% if categoryKey != 0 %} basicUrl +=  '/{{ categoryName|urlfilter }}'; {% endif %} 
+    basicUrl += '/page=0'; 
+
+    {{ macro.itemDataCardJS(_context) }} 
+{% endblock %}
+
+{% block content %}  
+<div class="content-wrapper">     
+<div style="height:2em;"></div>        
+
+{{ macro.buildPageList(_context) }} 
+    
+<div style="height:2em;"></div> 
+{% if rsItem is empty %}
+<div style="text-align:center">{{ LANG.noDataFound }}</div>
+{% endif %}
+ 
+  
+{{ inputHidAction|raw }}       
+<ul class="product-list" style="width:100%">          
+{% for item in rsItem %} 
+{% if item.name is empty %}
+{% set itemname = item.code  %}
+{% set itemnamelink = item.code  %}
+{% set hreftitle = item.code  %}
+{% else %}
+{% set itemname = item.name %}
+{% set itemnamelink = item.linkname %}
+{% set hreftitle = item.name  %}
+{% endif %} 
+
+<li>
+    <div class="div-table panel">
+    <div class="div-table-row">
+        <div class="div-table-col-5 image-col"><div class="image" style="background-image:url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}item/{{ item.pkey }}/{{ item.mainimage }}&f=png&w=500&h=500&hash={{ item.phpThumbHash }}')"></div></div> 
+        <div class="div-table-col-5 description-col">
+            <h2 class="name"><a href="/products-detail/{{ item.pkey|e }}/{{ itemnamelink|raw }}" title="{{ hreftitle }}">{{ itemname|raw }}</a></h2> 
+            <div class="short-desc">{{ item.shortdescription }}</div>
+        </div>  
+    </div>
+    </div>
+</li> 
+
+{% endfor %}   
+
+</ul> 
+<div style="clear:both; height: 1em"></div> 
+ 
+    {{ macro.buildPageList(_context) }} 
+   	 <div style="clear:both"></div> 
+</div>
+{% endblock %}

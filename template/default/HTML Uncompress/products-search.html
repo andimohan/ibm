@@ -1,0 +1,266 @@
+{% extends "template.html" %} 
+ 
+{% block JSOnLoad %}
+
+        {{ parent() }}
+        updateSelectedFilter(); 
+
+    {% set categoryKey = 0 %} 
+    {% if not categoryPath is empty %}
+        {% set categoryName = categoryPath[0].name %}
+        {% set categoryKey = categoryPath[0].pkey %}
+    {% endif %}
+ 
+    var varParam = Array(); 
+    var basicUrl = '/products-search/key={{ searchKey }}';
+    {% if categoryKey != 0 %}  basicUrl +=  '&categorykey={{ categoryName|urlfilter }}'; {% endif %}
+    basicUrl += '&page=0';
+      
+    var paramUrl = '';  
+
+    function updateFilter(){
+      varParam = [];
+      $('.filter-panel .option-item-active').each(function() {   
+        if ($(this).attr("val") != undefined) { 
+             varParam.push($(this).attr("val"));
+        }
+      }); 
+
+      if ($('.filter-panel .hidHideNotAvailable').hasClass("option-item-active"))
+         paramUrl += '&hidHideNotAvailable=1';
+
+      if (varParam.length > 0 ){
+           paramUrl += '&filterkey='+varParam;
+      }
+
+      var priceFrom =  parseInt (unformatCurrency($('.filter-panel [name=priceFrom]').val()));
+      var priceTo =   parseInt (unformatCurrency($('.filter-panel [name=priceTo]').val()));
+
+
+      if (priceTo < priceFrom ){ 
+         priceFrom = 0; 
+      }
+
+      if (priceTo != 0)		
+         paramUrl += '&pricerange='+ priceFrom +','+ priceTo;
+
+      $('[name=parameter-form]').attr("action",basicUrl+paramUrl);
+      $('[name=parameter-form]').submit();
+    }
+
+    function updateSelectedFilter(){ 
+        {% for keyvalue in filterkey %} 
+            $('.filter-panel').find('.'+{{ keyvalue }}).addClass("option-item-active")
+            $('.active-filter').append('<li>'+$('.filter-panel').find('.'+{{ keyvalue }}).text()+'</li>');
+        {% endfor %}
+
+        {% if hidHideNotAvailable == 1 %}
+         $('.filter-panel .hidHideNotAvailable').addClass("option-item-active") 
+            $('.active-filter').append('<li>'+$('.filter-panel .hidHideNotAvailable').text()+'</li>');
+        {% endif %}	 
+
+        {% if priceFrom > 0 %}
+            $('.filter-panel [name=priceFrom]').val('{{ priceFrom }}').formatCurrency({roundToDecimalPlace: 0 });
+        {% endif %}	 
+
+        {% if priceTo > 0 %}
+            $('.filter-panel [name=priceTo]').val('{{ priceTo }}').formatCurrency({roundToDecimalPlace: 0 }); 
+            $('.active-filter').append('<li>{{ LANG.price }}: {{ priceFrom|number_format }} - {{ priceTo|number_format }}</li>');
+        {% endif %}	
+     }
+ 
+           
+        $(".list-layout, .grid-layout").click(function(){ 
+            $('[name=hidLayout]').val($(this).attr("rel"));
+            $('[name=parameter-form]').submit();
+        }); 
+
+
+        $(".total-item-option li").click(function(){ 
+            $('[name=hidTotalItemPerPage]').val($(this).attr("rel"));
+            $('[name=parameter-form]').submit();
+        }); 
+
+        $(".filter-panel .option-item").click(function(){  
+            if ($(this).hasClass("option-item-active"))
+                $(this).removeClass("option-item-active");
+            else
+                $(this).addClass("option-item-active"); 
+        });
+
+        $(".filter-panel [name=btnUpdateFilter]").click(function(){  
+          updateFilter(); 
+        }); 
+
+        $(".update-filter-button").click(function(){  
+          $(".filter-panel").toggle();
+          columnConform('.auto-height'); 
+        }); 
+          
+        $( "[name=order-form-list]" ).submit(function( event ) { 
+           event.preventDefault();
+
+           $('#order-form-list [name=\"orderQty[]\"]:not(:disabled)').each(function() {     
+              itemkey = $(this).closest(".inputListQty").attr("rel"); 
+              $(this).closest(".inputListQty").find("[name=\"hiditemkey[]\"]").val(itemkey);
+           }); 
+
+
+            var formObj = $(this);
+                $.ajax({
+                    type: "POST",
+                    url:  '/ajax-cart.php',
+                    data: $(this).serialize(),
+                    success: function(data){ 
+
+                    } 
+                }).done(function( data ) {     
+                       updateCartStatus();
+
+                       $('#order-form-list [name=\"orderQty[]\"]').each(function() {     
+                          $(this).val(0);
+                       });  
+
+                       $( "#dialog-confirm" ).dialog( "open" );
+                       alert('{{ LANG.itemHasBeenAddedToCart }}');  
+
+                });
+
+         });
+
+    {{ macro.itemDataCardJS(_context) }} 
+{% endblock %} 
+
+{% block JS %} 
+ 
+<script type="text/javascript"> 
+
+   
+</script>
+{% endblock %}
+{% block pagetitle %}{{ searchKey|url_decode|url_decode }} | {{ parent() }}{% endblock %} 
+
+{% block contenttitle %} 
+ <div class=" title" >
+     <h1>{{ searchKey|url_decode|url_decode }}</h1> 
+ </div>	 
+{% endblock %} 
+{% block content %}     
+
+<div class="div-table view-option">
+    <div class="div-table-row">
+        <div class="div-table-col">
+            <div class="filter-active-panel user-select-none" > 
+                <ul class="active-filter hide-mobile"></ul>
+                <div class="update-filter-button">{% if  (filterkey is empty) and (hidHideNotAvailable is empty) and (priceTo is empty) %}{{ LANG.searchFilter }}{% else %}{{ LANG.updateSearchFilter }}{% endif %}</div>
+                <div style="clear:both"></div>
+             </div> 
+        </div> 
+        <div class="div-table-col" >
+            <div class="icon-coll list-layout" rel="2"></div>
+            <div class="icon-coll grid-layout" rel="1"></div>
+             {% if not settings.productTotalItemPerPageOption is  empty %} 
+                 {% set totalOption = settings.productTotalItemPerPageOption|split(',') %}
+                <ul class="total-item-option">
+                     {% for number in totalOption %}  
+                        <li rel="{{ number|trim }}" {% if totalItemPerPage == number|trim %}class="selected"{% endif %}>{% if number|trim == '-' %}&infin;{% else %} {{ number|trim }} {% endif %}</li>
+                     {% endfor %}
+                </ul>
+
+              {% endif %} 
+       </div>
+    </div> 
+</div>  
+<div class="filter-panel user-select-none"> 
+     {% for item in rsFilterCategory %} 
+      {% if not item.filter is empty %} 
+        <div class="filter-category auto-height">
+            <div class="title">{{ item.name|upper }}</div>
+            <div style="clear:both"></div>
+            {% for options in item.filter %} 
+                <div class="option-item {{ options.pkey }}" val="{{ options.pkey }}">{{ options.name }}</div>  
+            {% endfor %} 
+        </div> 
+       {% endif %} 
+     {% endfor %}  
+       <div class="filter-category auto-height">
+
+            <div class="title">{{ LANG.availability|upper }}</div>
+            <div style="clear:both"></div> 
+            <div class="option-item hidHideNotAvailable">{{ LANG.hideNotAvailableItem }}</div>   
+
+            <div style="clear:both; height:1em"></div> 
+            <div class="title">{{ LANG.price|upper }}</div>
+            <div style="width:45%; float:left">{{ inputPriceFrom|raw }}</div>
+            <div style="width:10%; float:left; text-align:center"> - </div>
+            <div style="width:45%; float:left">{{ inputPriceTo|raw }}</div> 
+
+       </div>   
+     <div style="clear:both; height:1em"></div>    
+     <div style="margin:auto; text-align:center">{{ btnUpdateFilter|raw }}</div>  
+     <div style="clear:both"></div>
+</div>   
+<div style="height:2em;"></div>        
+<div class="div-table view-option">
+    <div class="div-table-row">  
+        <div class="div-table-col">
+              {{ macro.buildSearchResultPageList(_context) }} 
+        </div>
+    </div> 
+</div> 
+
+<div style="height:2em;"></div> 
+{% if rsItem is empty %}
+<div style="text-align:center">{{ LANG.noDataFound }}</div>
+{% endif %}
+
+{% if layout is empty or layout == 1%}     
+          {{ macro.buildItemDataCard(_context) }} 
+{% else %} 
+          <form id="order-form-list" name="order-form-list" class="order-form" action="/ajax-cart.php" method="post" >
+{{ inputHidAction|raw }}       
+<div class="product-list div-table" style="width:100%">          
+{% for item in rsItem %} 
+{% if item.name is empty %}
+{% set itemname = item.code  %}
+{% set itemnamelink = item.code  %}
+{% set hreftitle = item.code  %}
+{% else %}
+{% set itemname = item.name %}
+{% set itemnamelink = item.linkname %}
+{% set hreftitle = item.name  %}
+{% endif %} 
+
+<div class="div-table-row">
+    <div class="div-table-col-5 image-col"><div class="image" style="background-image:url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}item/{{ item.pkey }}/{{ item.mainimage }}&w=500&h=500&hash={{ item.phpThumbHash }}')"></div></div> 
+    <div class="div-table-col-5 description-col">
+        <h2 class="name"><a href="/products-detail/{{ item.pkey|e }}/{{ itemnamelink|raw }}" title="{{ hreftitle }}">{{ itemname|raw }}</a></h2>
+        <div class="stock"> 
+        {% if item.qtyonhand == 0 %}
+            <span class="text-red-cardinal">{{ LANG.outOfStock }}</span>
+        {% elseif item.qtyonhand <= settings.lowStockThreshold %}
+            <span class="text-yellow-mikado">{{ LANG.lowStock }}</span> 
+        {% else %}
+            <span class="text-green-avocado">{{ LANG.inStock }}</span> 
+        {% endif %}
+        </div>  
+        <div class="price">  {{ item.sellingprice|number_format }} IDR{% if item.oldprice != 0 %}<div class="discounted-price">{{ item.oldprice|number_format }}<span class="currency-after-price">IDR</span></div>{% endif %} </div>    
+    </div> 
+    <div class="div-table-col-5 input-qty-col">
+        <div class="inputListQty" rel="{{ item.pkey|e }}"> 
+                {% if item.qtyonhand > 0 %}{{ inputQty|raw }}{{ inputHidItemkey|raw }}{% else %}{{ inputDisabledQty|raw }}{% endif %}
+        </div>
+    </div> 
+</div>
+
+{% endfor %}   
+
+</div> 
+<div style="clear:both; height: 1em"></div>
+<div class="product-list-submit-panel">{{ btnListSubmit|raw }}</div>
+<div style="clear:both; height: 2em"></div>
+</form> 
+{% endif %}  
+    {{ macro.buildSearchResultPageList(_context) }} 
+   	 <div style="clear:both"></div> 
+{% endblock %}

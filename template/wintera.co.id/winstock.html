@@ -1,0 +1,111 @@
+{% extends "template.html" %}
+{% set ACTIVE_MENU = ['/services.php'] %}  
+{% block pagetitle %}WinStock / Omnichannel | {{ parent() }}{% endblock %}
+{% block meta %}
+<meta name="title" content="Aplikasi Stok Inventori Online Real-Time | WinStok Wintera">
+<meta name="description"  content="WinStok Wintera adalah aplikasi stok inventori online berbasis web untuk memantau stok, penjualan, dan laporan keuangan secara real-time, terintegrasi antar cabang dan toko">
+<meta name="keywords" content="aplikasi stok inventori, sistem inventori online, software stok barang, aplikasi stok real time, sistem inventori multi cabang, aplikasi inventori berbasis web, manajemen stok barang, aplikasi stok toko, software inventory indonesia, WinStok Wintera, aplikasi stok terintegrasi laporan keuangan">
+<meta name="author" content="{{ settings.companyName }}"> 
+<meta property=og:url content="{{ CANONICAL }}" />
+<meta property=og:site_name content="{{ settings.companyName }}" /> 
+<meta property="og:type" content="{{ META_TYPE }}" />
+<meta property="og:title" content="Aplikasi Stok Inventori Online Real-Time | WinStok Wintera" />
+<meta property="og:description" content="WinStok Wintera adalah aplikasi stok inventori online berbasis web untuk memantau stok, penjualan, dan laporan keuangan secara real-time, terintegrasi antar cabang dan toko" /> 
+<meta property="og:image" content="{{ META_IMAGE }}" /> 
+<meta property="fb:app_id" content="{{ settings.FBAppID }}" /> 
+{% endblock %}
+{% block headerBannerContent %}   
+<div class="service-banner banner-header-panel"> 
+<div class="content-wrapper">
+        <div class="flex  flex-start">
+            <div class="content-desc consume"> 
+                <h1 class="flex flex-center">
+                     <div class="icon-image" style="background-image:url('{{ TEMPLATE_IMG_PATH }}icon-winstock-white.png')"></div>
+                     <div>Stok Inventori/Winstok</div> 
+                </h1>
+                <h2>Memudahkan Anda Memantau Bisnis Secara <i>Real Time</i></h2>
+                <div class="tag-line">
+                    Stok inventori/Winstok adalah solusi terbaik untuk mengelola stok dan transaksi penjualan Anda karena telah terintegrasi dengan website dan toko offline dalam satu platform.
+<!--
+                    Terintegrasi dengan marketplace, website dan penjualan ⁣toko
+                    <i>offline</i> sekaligus dalam satu platform. Stok dan data penjualan tersinkronisasi secara otomatis dan <i>real time</i>.⁣                   
+-->
+                </div>
+                <div class="advantage-panel">
+                    <ul class="advantage-list">
+                        <li>Update stok di website secara otomatis</li>
+                        <li>Mendukung multi gudang / cabang</li>
+                        <li>Terintegrasi dengan laporan keuangan</li>
+                    </ul>
+                </div>
+                 <div class="btn-panel" style="">
+                    <ul class="content-list">
+                        <li ><a class="button btn-white" href="/">{{ LANG.subscribeNow }}</a></li>
+                    </ul>
+                </div>
+
+            </div>
+            <div class="content-image">
+                <img src="{{ TEMPLATE_IMG_PATH }}winstock-header.png"> 
+            </div>
+        </div>
+    </div>
+    </div> 
+{% endblock %}
+
+{% block content %} 
+
+<div class="winstock">
+<div  id="services">
+<div class="content-wrapper"> 
+        <div style="clear: both; height:5em;"></div> 
+        <div class="feature flex">
+                        <div class="consume">
+                            <h2>Rekap laporan penjualan dari website dan toko offline dalam satu platform</h2>
+                            <div class="desc">
+                                Semua transaksi di website akan tersinkronisasi otomatis dengan <span class="brand-color">WinStok</span>. Dengan demikian, Anda dapat menganalisa laporan penjualan website dan toko <i>offline</i> Anda dalam satu platform.
+                            </div>  
+                        </div>  
+                        <div class="img-panel">
+                         <img src="{{ TEMPLATE_IMG_PATH }}rekap-laporan.png">
+                        </div>
+                    </div>
+     <div class="feature flex">
+                    <div class="img-panel">
+                     <img src="{{ TEMPLATE_IMG_PATH }}multi-akses.png">
+                    </div>
+                    <div class="consume">
+                        <h2>Dapat diakses dari mana saja</h2>
+                        <div class="desc">
+                            <span class="brand-color">WinStok</span> menggunakan basis <i>web</i> yang memungkinkan Anda menganalisa penjualan, mengecek persediaan stok dan melihat laporan keuangan dari mana saja, kapan saja 24/7.<br><br>Selain itu karena berbasis <i>web</i>, Anda dapat mengakses <span class="brand-color">WinStok</span> menggunakan perangkat apa pun seperti laptop, tablet, atau pun <i>smartphone</i>.
+                        </div>  
+                    </div>  
+                </div>
+       <div class="feature flex">
+                        <div class="consume">
+                            <h2>Mendukung sinkronisasi antar cabang</h2>
+                            <div class="desc">
+                                Anda tidak perlu repot menggunakan beberapa aplikasi dan melakukan konsolidasi manual untuk cabang-cabang Anda. Dengan <span class="brand-color">WinStok</span>, semua data stok dan transaksi cabang akan tersinkronisasi dalam satu platform.
+                            </div>  
+                        </div>  
+                        <div class="img-panel">
+                         <img src="{{ TEMPLATE_IMG_PATH }}multi-cabang.png">
+                        </div>
+                    </div>
+</div>
+    <div style="clear: both; height: 3em"></div>
+    <div class="more-features">
+        <div class="content-wrapper"> 
+            <span class="brand-color">WinStok</span> juga dilengkapi dengan fitur-fitur lain seperti<br>
+            multi unit, multi user, pembelian, pengiriman stok sebagian, stok opname, kas bank, hutang piutang, fixed asset, laporan keuangan dan masih banyak lagi.
+            <div style="clear: both; height: 3em"></div>
+            <h3>
+                Mulai dari 
+                <div class="brand-color" style="font-size:4em; margin-top: .4em; line-height: .5em">550<span style="font-size:.5em;font-weight: 400; margin-left: 0.2em">rb  / bulan</span></div>
+            </h3>
+        </div> 
+        <div class="bg"  style="background-image:url('{{ TEMPLATE_IMG_PATH }}offering.png')"></div> 
+    </div>
+</div> 
+</div>
+{% endblock %}

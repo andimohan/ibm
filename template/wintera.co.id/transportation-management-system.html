@@ -1,0 +1,123 @@
+{% extends "template.html" %} 
+{% set ACTIVE_MENU = ['/services.php'] %}  
+ 
+{% block pagetitle %}Transportation Management System | {{ parent() }}{% endblock %}
+{% block meta %}
+<meta name="title" content="Transportation Management System (TMS) Terintegrasi | Wintera">
+<meta name="description"  content="Kelola biaya, kasbon, armada, GPS, dan laporan keuangan dalam satu sistem. TMS Wintera membantu bisnis transportasi & logistik lebih efisien dan real-time">
+<meta name="keywords" content="{{ META_KEYWORDS }}">
+<meta name="author" content="{{ settings.companyName }}"> 
+<meta property=og:url content="{{ CANONICAL }}" />
+<meta property=og:site_name content="{{ settings.companyName }}" /> 
+<meta property="og:type" content="{{ META_TYPE }}" />
+<meta property="og:title" content="Transportation Management System (TMS) Terintegrasi | Wintera" />
+<meta property="og:description" content="Kelola biaya, kasbon, armada, GPS, dan laporan keuangan dalam satu sistem. TMS Wintera membantu bisnis transportasi & logistik lebih efisien dan real-time" /> 
+<meta property="og:image" content="{{ META_IMAGE }}" /> 
+<meta property="fb:app_id" content="{{ settings.FBAppID }}" /> 
+{% endblock %} 
+{% block headerBannerContent %}   
+<div class="service-banner banner-header-panel"> 
+<div class="content-wrapper">
+        <div class="flex  flex-start">
+            <div class="content-desc consume"> 
+                <h1 class="flex flex-center">
+                     <div class="icon-image" style="background-image:url('{{ TEMPLATE_IMG_PATH }}icon-tms-white.png')"></div>
+                     <div>Transportation Management System</div> 
+                </h1>
+                <h2>Membantu Mengelola Bisnis Transportasi dan Logistik</h2>
+                <div class="tag-line">
+                    Pantau biaya dan omset unit kendaraan Anda dalam
+                    satu platform, dan pastinya terintegrasi dengan GPS
+                    dan laporan keuangan.                
+                </div>
+                <div class="advantage-panel">
+                    <ul class="advantage-list">
+                        <li>Dapat diakses dimana saja</li>
+                        <li>Sinkronasi antar kantor pusat, cabang dan garasi</li>
+                        <li>Terintegrasi dengan GPS</li>
+                    </ul>
+                </div>
+                 <div class="btn-panel" style="">
+                            <ul class="content-list">
+                                <li ><a class="button btn-white" href="/contact-us">{{ LANG.subscribeNow }}</a></li>
+                            </ul>
+                </div>
+
+            </div>
+            <div class="content-image">
+                <img src="{{ TEMPLATE_IMG_PATH }}tms-banner.png"> 
+            </div>
+        </div>
+    </div>
+    </div> 
+{% endblock %}
+
+{% block content %} 
+
+<div id="services" class="trucking"> 
+<div class="content-wrapper">
+        <div style="clear: both; height:3em;"></div>
+        <div class="feature flex">
+            <div class="img-panel">
+             <img src="{{ TEMPLATE_IMG_PATH }}monitor-biaya.png">
+            </div>
+            <div class="consume">
+                <h2>Monitor biaya, kasbon dan tutupan kasbon</h2>
+                <div class="desc">
+                    Lambatnya laporan kasbon dan pengeluaran biaya operasional di lapangan sering kali menjadi salah satu masalah utama di perusahaan transportasi dan logistik. Hal ini tentunya  berpotensi menyebabkan terjadinya kebocoran dana.
+                    <br><br>Dengan fitur <b>Kasbon</b> dan <b>Realisasi Kasbon</b> dari <span class="brand-color">TMS Wintera</span>, Anda dapat dengan mudah memonitor semua biaya operasional di lapangan, kasbon mana saja yang belum ditutup, hingga detail informasi realisasi untuk kasbon tersebut.
+                </div>  
+            </div>  
+        </div>
+    
+        <div class="feature flex">
+            <div class="consume">
+                <h2>Maksimalkan produktivitas dan efisiensi kendaraan</h2>
+                <div class="desc">
+                    Dengan menggunakan <span class="brand-color">TMS Wintera</span>, Anda dapat memantau produktivitas dan efisiensi operasional kendaraan secara <i>real-time</i>.<br><br>Dari laporan pendapatan kendaraan per-unit, biaya operasional per-rit,  histori perawatan mobil hingga penggunaan suku cadang dapat dipantau dengan mudah dan <i>real-time</i>, sehingga Anda dapat mengambil tindakan yang diperlukan secara efektif dan efisien.
+                </div>
+            </div>  
+            <div class="img-panel">
+             <img src="{{ TEMPLATE_IMG_PATH }}operasional.png">
+            </div>
+        </div> 
+        <div class="feature flex">
+            <div class="img-panel">
+             <img src="{{ TEMPLATE_IMG_PATH }}laporan-cepat.png">
+            </div>
+            <div class="consume">
+                <h2>Laporan cepat dan <i>real-time</i> !</h2>
+                <div class="desc">
+                    Anda tidak perlu waktu yang lama untuk mendapatkan laporan yang dibutuhkan. Anda juga tidak perlu lagi mengalami perbedaan data di laporan dikarenakan penginputan ulang atau pun dikarenakan data yang tidak <i>up to date</i> disetiap divisi. Hal ini tentu saja akan mempengaruhi kecepatan pengambilan keputusan strategis bisnis Anda.<br><br>Dengan <span class="brand-color">TMS Wintera</span>, Anda dapat mengakses semua laporan dengan mudah, cepat, akurat dan <i>real-time</i>. Kapan saja, dimana saja, hanya dengan satu klik!
+                </div>
+            </div>  
+        </div> 
+        <div class="feature flex">
+            <div class="consume">
+                <h2>Terintegrasi dengan laporan keuangan</h2>
+                <div class="desc">
+                  <span class="brand-color">TMS Wintera</span> adalah sistem yang terintegrasi antar divisi. Hal ini berarti semua biaya yang diinput oleh tim operasional, data transaksi penjualan yang diinput oleh tim sales, pelunasan hutang dan piutang yang diinput oleh tim keuangan hingga penggunaan suku cadang oleh tim mekanik,  semua akan otomatis tercatat dan tersinkronisasi dalam laporan keuangan.<br><br>Dengan demikian, konsistensi data dapat dijaga dan Anda tidak perlu lagi melakukan penginputan ulang di setiap divisi untuk membuat laporan keuangan.
+                </div>
+            </div>  
+            <div class="img-panel">
+             <img src="{{ TEMPLATE_IMG_PATH }}laporan-terintegrasi.png">
+            </div>
+        </div> 
+         <div class="feature flex">
+     
+            <div class="img-panel">
+             <img src="../template/wintera.co.id/img/tax.png">
+            </div>
+            <div class="consume">
+                <h2>Bukti potong PPH 23</h2>
+                <div class="desc">
+                    Perusahaan sering kali mengalami kesulitan dalam memonitor dan mengumpulkan Bukti Potong PPH 23, yang tentu saja berdampak terhadap laporan pajak tahunan perusahaan.<br><br>Dengan modul <b>Bukti Potong PPH 23</b> dari <span class="brand-color">TMS Wintera</span>, Anda sekarang dapat dengan mudah memonitor Bukti Potong PPH 23 dari siapa saja yang belum diterima, serta membantu Anda dalam membuat laporan untuk kepentingan perpajakan.
+                </div> 
+            </div>  
+        </div>
+        <div style="clear: both; height:5em;"></div>
+</div> 
+    
+</div> 
+        
+{% endblock %}

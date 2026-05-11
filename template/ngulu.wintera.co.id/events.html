@@ -1,0 +1,72 @@
+{% extends "template.html" %} 
+{% import "twigMacro.html" as macro %}  
+{% block pagetitle %}{{ LANG.eventsAndPromotions|raw }}{% endblock %} 
+{% block JS %}   
+{% endblock %} 
+{% block subcontentTitlePanel %}    
+<h2 class="page-title" style="text-align: center; max-width: 100%">{{ LANG.eventsAndPromotions|raw }}.</h2>
+{% endblock %}
+{% block content %}  
+
+<div class="content-wrapper">
+<h2 class="page-title" style="text-align: center; max-width: 100%">{{ LANG.eventsAndPromotions|raw }}.</h2> 
+
+<div class="page-hero mnv-proportion" rel-proportion="2">
+{% for data in rsEventFeatured|slice(0,1) %} 
+    <a href="/event-detail/{{ data.title|urlfilter }}/{{ data.pkey }}">
+        <div class="short-description"> 
+            <h3 class="title">{{ data.title|raw }}</h3> 
+            {{ data.shortdesc|raw }}
+        </div> 
+    </a>    
+        <div class="banner img-bg" style="width:100%; background-image: url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}event/{{ data.pkey }}/{{  data.image }}&hash={{  getPHPThumbHash(data.image) }}'); "></div> 
+{% endfor %}      
+</div> 
+
+<div class="main-table-panel flex align-items-start">
+    <div class="content-panel consume">
+        
+        <div class="section-break-4"></div>
+        <ul class="event-category-menu menu-pills non-stickies">
+            {% for data in rsCategory %}  
+            <a href="/events/{{ data.name }}/cat={{ data.pkey }}"><li class="{% if selectedCategory == data.pkey %}selected{% endif %}" name="data.name|urlfilter" rel="data.pkey">{{ data.name|raw }}</li></a>
+            {% endfor %}   
+        </ul> 
+        <div class="section-break-2"></div>
+         <ul class="ul-list event-list">
+               {% for data in rsEvent %}  
+                <li class="col-3-panel">
+                    <div class="content-panel">
+                    <div class="img-panel img-bg" style="background-image: url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}event/{{ data.pkey }}/{{ data.image }}&f=png&far=C&hash={{  getPHPThumbHash(data.image) }}');">&nbsp;</div>
+                    <div class="auto-height title">
+                        <a href="/event-detail/{{ data.title|urlfilter }}/{{ data.pkey }}" title="{{ data.title }}"> {{ data.title|raw }}</a>
+                    </div>
+                    <div class="tag">{{ data.eventdatefrom|date("d M y") }}</div>
+                    </div>
+                </li>
+                {% endfor %}   
+                 {{ addDummyCol(3,rsEvent|length,'<li class="col-3-panel dummy-empty-col"></li>')|raw }}
+              <div  style="clear: both"></div>
+        </ul>
+
+        <div class="section-break-2"></div>
+
+        {% set path = 'events/' %}
+        {% if not categoryPath is empty  %}
+        {% set path = path ~ categoryPath[0]['name']|urlfilter ~ '/cat=' ~ categoryPath[0]['pkey']  %}
+        {% endif %}
+
+        {{ macro.buildPageList(_context,path) }}
+
+        <div class="section-break-4 show-mobile"></div>
+        <div class="hor-bar-5"></div> 
+        <div class="flex  flex-mobile  link-01">
+            <div class="consume"><a href="/brands">{{ LANG.ourProducts }}</a> <i class="fas fa-arrow-right"></i></div>
+            <div class="consume"><a href="/investor-relations">{{ LANG.investorRelations }}</a>  <i class="fas fa-arrow-right"></i></div>
+        </div>
+        
+    </div>
+</div>  
+</div>  
+<div class="section-break-4"></div>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "template-portal.html" %} 
+{% import "twigMacro.html" as macro %}  
+{% block pagetitle %}{{ LANG.news }} | {{ parent() }}{% endblock %} 
+{% block contenttitle %} {{ LANG.news|upper }}{% endblock %}
+{% set pageFileName = 'customer-news' %}
+{% block listcontent %}
+<div class="news"> 
+<ul>
+	{% for newsRow in rs %}
+		<li>
+			<h3>{{ newsRow.title }}</h3>
+			<div class="publish-date">{{ newsRow.publishdate|date('d M Y') }}</div>
+			<div>{{ newsRow.shortdesc }}</div>
+		</li>
+	{% endfor %} 
+</ul> 
+</div>
+
+{% if rs is empty %}
+<div style="text-align: center; padding-top:1em">{{ LANG.noNewInformation }}</div>
+{% endif %}
+{% endblock %}

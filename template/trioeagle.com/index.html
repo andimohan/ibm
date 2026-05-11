@@ -1,0 +1,273 @@
+{% extends "template.html" %}
+{% block pagetitle %}{{ settings.companyName }} | {{ parent() }}{% endblock %}
+{% block CSSInline %}
+<style>
+    .content-title{border:0}
+     
+    .simple-parallax{opacity:0;position:relative; transition:all ease-out .5s 0s;}
+    .simple-parallax-abs{opacity:0; transition:all ease-out .5s 0s;}
+    .fade-up{bottom:-50px;}
+    .fade-down{top:-50px;}
+    .fade-left{left:-50px;}
+    .fade-right{right:-50px;}
+
+    .simple-parallax.showing{}
+    .fade-in.showing{opacity:1;}
+    .fade-up.showing{bottom:0px;opacity:1;}
+    .fade-down.showing{top:-0px;opacity:1;}
+    .fade-left.showing{left:-0px;opacity:1;}
+    .fade-right.showing{right:-0px;opacity:1;}
+
+    
+    .fade-up-abs.showing{top:0px;opacity:1;}
+</style>
+{% endblock %}
+{% block content %}
+<div id="index"> 
+<div id="banner-galleria" ></div>       
+<div class="welcome-note"><div class="content-wrapper">{{ page.index.detail|raw }}</div></div> 
+<div class="services">
+<div class="content-wrapper">
+<div style="clear: both; height: 1em"></div>    
+<h2 style="text-align: center;">{{ LANG.whatWeOffer|upper }}</h2>
+<ul class="service-list">
+{% for row in services %}
+  <li class="simple-parallax fade-right">  
+    <div class="panel">
+        <div class="div-table service-table">
+            <div class="div-table-row"> 
+                <div class="div-table-col">
+                    <div class="service-title">{{ row.name }}</div>  
+                    <div class="short-description auto-height">{{ row.shortdescription|raw }}</div>
+                    <div style="clear: both;"></div> 
+                </div>
+            </div>
+        </div> 
+        <a href="/service-detail/{{ row.name|urlfilter|raw }}/{{ row.pkey }}" title="{{ row.name|raw }}"><div class="show-more">{{ LANG.learnMore }}</div></a>
+    </div>
+  </li> 
+{% endfor %}  
+</ul>
+<div style="clear: both"></div>    
+</div>  
+</div>
+    
+<div class="content-wrapper">    
+<div style="clear: both; height: 5em"></div>   
+<h2 style="text-align: center">{{ LANG.ourPartners|upper }}</h2>    
+<ul class="brand-list">
+{% for data in rsBrand %}
+<li><a href="#"><div class="image-panel" alt="{{ data.name }}" style="background-image:url('/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}brand/{{ data.pkey }}/{{ data.file }}&f=png&hash={{ getPHPThumbHash(data.file) }}')"></div></a></li>
+{% endfor %}  
+</ul>
+<div style="clear: both; height: 8em"></div>    
+</div>   
+    
+<div class="separator-01"></div>    
+<div class="network content-wrapper" style="position: relative"> 
+<h2 style="text-align: center">{{ LANG.needMoreInformation|upper }}</h2>    
+<div style="clear: both;"></div>  
+<div class="text-description">{{ LANG.visitUs }}</div>    
+<div style="clear: both; height: 2em"></div>  
+<div class="map" style="position: relative">
+<div class="indomap simple-parallax fade-up" ref-offset="0.5"></div>    
+<div class="branch-location jakarta simple-parallax fade-in" >
+<b>JAKARTA - HEAD OFFICE</b>
+<div> 
+Komplek Gading Bukit Indah Blok G No.9<br>
+Kelapa Gading - Jakarta Utara 14240<br>
+Tel : +62 21 2245 2155<br>
+Fax: +62 21 2245 2154<br>
+Email: info@trioeagle.com 
+</div>    
+</div>   
+<div class="branch-location semarang simple-parallax fade-in">
+<b>SEMARANG</b>
+<div>
+Jl. Karang Anyar No. 55<br>
+Semarang, Jawa Tengah  50135<br>
+Tel : +62 24 8657 7725<br>
+Fax: +62 24 8657 7862<br>
+Email: brigitta@trioeagle.com
+</div>    
+</div>    
+<div class="branch-location surabaya simple-parallax fade-in" >
+<b>SURABAYA</b>
+<div>
+Ruko Sentra Fortuna No. 63<br>
+Jl. Jaksa Agung Suprapto <br>
+Surabaya – Jawa Timur 60272<br>
+Tel : +62 31 9925 5074<br>
+Email: eka@trioeagle.com
+</div>    
+</div>   
+<div class="branch-location padang simple-parallax fade-in">
+<b>PADANG</b>
+<div>
+Jl. Padang Pasir IX No. 61<br>
+Padang – Sumatera Barat 25114<br>
+Tel &amp; Fax : +62 751 477 1404<br>
+Email: santi@trioeagle.com
+</div>    
+</div>   
+<div class="branch-location bitung simple-parallax fade-in">
+<b>BITUNG</b>
+<div>
+Taman Griya Indah<br>
+Jl. Wolter Monginsidi Blok F13-F14<br>
+Bitung - Sulawesi Utara 95543<br>
+Tel &amp; Fax: +62 438  223 0575<br>
+Email: sar_bitung@trioeagle.com
+</div>    
+</div>  
+</div>    
+{%  if  not settings.companyMedsos is empty %}     
+<div style="clear:both; height: 4em"></div>  
+<div class=" simple-parallax fade-up">
+<div class="text-description">{{ LANG.simplyFollowUs }}</div>    
+<ul class="network-sosmed-panel ">   
+ {% for item in settings.companyMedsos %} 
+    {% if item.label|lower == "fb" or item.label|lower == "facebook" %}  
+        {% set FA_ICON = "fab fa-facebook-square" %}
+    {% elseif item.label|lower == "instagram" %}  
+        {% set FA_ICON = "fab fa-instagram" %}
+    {% elseif item.label|lower == "twitter" %}  
+        {% set FA_ICON = "fab fa-twitter" %}
+    {% elseif item.label|lower == "youtube" %}  
+        {% set FA_ICON = "fab fa-youtube" %}
+    {% endif %}  
+    <li><a href="{{ item.value }}" title="{{ LANG.linkto }} {{ item.label }}" target="_blank"><i class="{{ FA_ICON }}"></i></a></li>
+  {% endfor %}  
+    <div style="clear:both"></div>
+</ul>    
+</div>    
+{% endif %} 
+<div style="clear:both; height: 2em"></div>   
+</div>  
+    
+<div class="stage-01">
+    <div class="text" style="float:right; width: 50%;">Knowing that every customer has different requirement and needs for their shipment, our experience and professional team will always be there to LISTEN, ANALYZE and PROVIDE</div>
+    <div style="clear: both"></div>
+</div>     
+</div>  
+{% endblock %}
+{% block JS %}
+<script type="text/javascript">
+     function initGalleria(){
+        var isDesktop = true;
+		var desktopdata = [
+		  	    {% for banner in banner['slide show'] %}  
+                     	{    	image: '/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}banner/{{ banner.pkey }}/{{  banner.file }}&hash={{ getPHPThumbHash(banner.file) }}',
+								title: '{{ banner.name }}', 
+								link: '{{ banner.url }}' 
+							},   
+                {% endfor %} 
+		 ];
+		 var mobiledata = [
+		  	    {% for banner in banner['mobile main banner'] %}  
+                     	{    	image: '/phpthumb/phpThumb.php?src={{ PHPTHUMB_URL_SRC }}banner/{{ banner.pkey }}/{{  banner.file }}&hash={{  getPHPThumbHash(banner.file) }}',
+								title: '{{ banner.name }}', 
+								link: '{{ banner.url }}' 
+							},   
+                {% endfor %} 
+		 ];
+		 
+		 
+		var mobileWidth = 600;
+		var initialdata = desktopdata; 
+        var galleriaHeight = 0.4;
+		 
+		 if ($( window ).width()  <= mobileWidth){
+		 	initialdata = mobiledata;
+			isDesktop = !isDesktop;
+			galleriaHeight = $( window ).width() * 0.6;
+		 }
+		 
+		Galleria.loadTheme('{{ TEMPLATE_JS_PATH }}galleriathemes/twelve/galleria.twelve.min.js');  
+        
+		Galleria.run('#banner-galleria', { 
+            dataSource: initialdata,
+            height:galleriaHeight,
+            popupLinks:true,
+            transition: 'fade',
+            autoplay: 3000 ,  
+            transitionSpeed : 3000,
+            pauseOnInteraction: false,
+            _showFullscreen: false,
+            _showPopout: false, 
+            extend: function() { 
+							var gallery = this;
+							this.$('stage').hover(function() {
+								gallery.pause();
+							}, function() {
+								gallery.play();
+							});
+		 				} 
+		}); 
+		
+		Galleria.ready(function(){
+			var gallery = this;
+				  
+			$( window ).resize(function() {    
+				if ($( window ).width() <= mobileWidth && isDesktop == true){
+					isDesktop = !isDesktop;	 
+				    gallery.load(mobiledata); 
+				}else if ($( window ).width() > mobileWidth && isDesktop == false){ 
+					isDesktop = !isDesktop;	 
+				   $('#banner-galleria  .galleria-container').css("min-height","");
+				    gallery.load(desktopdata);
+				} 
+				resizeGalleriaScaleRatio() 
+			}); 
+			
+		}); 
+        
+		Galleria.on('data',function(){
+			var gallery = this;
+			window.setTimeout(function(){
+				gallery.lazyLoadChunks(3);
+			},10);
+		});
+		
+		function resizeGalleriaScaleRatio(){
+			   if ($( window ).width() <= mobileWidth){ 
+				 var width =  $( window ).width() * 0.7;
+			 	 $('#banner-galleria  .galleria-container').css("min-height",width +"px");
+			   }
+		}  
+    }
+</script>                                                      
+{% endblock %}
+{% block JSOnLoad %}
+{{ parent() }} 
+    
+    $(".scroll-more").click( function(e){
+       e.preventDefault();
+        $('html, body').animate({
+            scrollTop: $(".services").offset().top - 100
+        }, 1000);
+    });
+
+    initGalleria();  
+    // simple parralax
+	$(window).scroll( function(){
+		
+		var bottomOfWindow = $(window).scrollTop() + $(window).height();
+         
+		//fade-in
+		$('.simple-parallax').each(function(){
+			var bottomOfObject = $(this).offset().top + $(this).outerHeight();
+            var offsetAdj = parseFloat($(this).attr("ref-offset")) || 0;
+            
+            bottomOfObject = (offsetAdj == 0) ?  bottomOfObject : bottomOfObject - ($(this).height() * offsetAdj);
+
+			 if( bottomOfWindow > bottomOfObject )
+				$(this).addClass('showing'); 
+			else
+				$(this).removeClass('showing'); 
+		}); 
+	}); 
+
+    $(window).scroll();
+
+{% endblock %}

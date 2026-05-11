@@ -1,0 +1,28 @@
+
+for filename in `find /home/programstok/minerva/log -type d`; do rm -rf $filename; done
+mkdir -p '/home/programstok/minerva/log'; chown programstok:programstok '/home/programstok/minerva/log';
+
+for filename in `find /home/programstok/minerva/uploadeditor/pstn.program-stok.com/item`; do rm -rf $filename;done
+mkdir -p '/home/programstok/minerva/uploadeditor/pstn.program-stok.com/item'; chown programstok:programstok '/home/programstok/minerva/uploadeditor/pstn.program-stok.com/item';
+
+for filename in `find /home/programstok/minerva/_temp -type d`; do rm -rf $filename; done
+mkdir -p '/home/programstok/minerva/_temp';  chown programstok:programstok '/home/programstok/minerva/_temp';
+
+for filename in `find /home/programstok/_temp -type d`; do rm -rf $filename; done
+mkdir -p '/home/programstok/_temp';  chown programstok:programstok '/home/programstok/_temp';
+
+for filename in `find /home/programstok/logs -type f`; do rm $filename; done
+
+for filename in `find /home/programstok/backupDB -type f -mtime 1`; do rm $filename; done
+
+for filename in `find /home/wintera/public_html/log -type d`; do rm -rf $filename; done
+mkdir -p '/home/wintera/public_html/log'; chown wintera:wintera '/home/wintera/public_html/log';
+
+for filename in `find /home/wintera/logs -type f`; do rm $filename; done
+mkdir -p '/home/wintera/logs'; chown wintera:wintera '/home/wintera/logs';
+
+for filename in `find /home/wintera/_temp -type d`; do rm -rf $filename; done
+mkdir -p '/home/wintera/_temp'; chown wintera:wintera '/home/wintera/_temp';
+
+for filename in `find /home/wintera/public_html/_temp -type d`; do rm -rf $filename; done
+mkdir -p '/home/wintera/public_html/_temp';  chown wintera:wintera '/home/wintera/public_html/_temp';

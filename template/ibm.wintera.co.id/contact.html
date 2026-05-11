@@ -1,0 +1,51 @@
+{% extends "template.html" %}
+
+{% block content %}
+
+    <section class="banner-inside">
+    <img class="hero-img-inside" src="{{ TEMPLATE_IMG_PATH }}hero-img.jpg" alt="Contact" />
+    
+    <div class="banner-overlay">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center text-white">
+                    <h1 class="display-4 font-weight-bold">Contact</h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb justify-content-center bg-transparent p-0">
+                            <li class="breadcrumb-item"><a href="#" class="text-white">Home</a></li>
+                            <li class="breadcrumb-item active text-white-50" aria-current="page">Contact</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    </section>   
+    
+
+<section class="contact-section py-5">
+    <div class="container text-center">
+        <small class="text-muted text-uppercase letter-spacing">Your Message</small>
+        <h2 class="section-title mt-2">Send Us a Message</h2>
+        <div class="title-divider mb-5"></div>
+        <form class="contact-form">
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <input type="text" class="form-control" placeholder="Name *">
+                </div>
+                <div class="form-group col-md-4">
+                    <input type="email" class="form-control" placeholder="E-mail *">
+                </div>
+                <div class="form-group col-md-4">
+                    <input type="text" class="form-control" placeholder="Subject">
+                </div>
+            </div>
+            <div class="form-group">
+                <textarea class="form-control" rows="5" placeholder="Message"></textarea>
+            </div>
+            <button type="submit" class="btn btn-submit"><i class="fas fa-paper-plane mr-2"></i> Leave a Reply</button>
+        </form>
+    </div>
+</section>
+    
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "template.html" %}
+{% block pagetitle %}{{ title }} | {{ parent() }}{% endblock %}
+{% block contenttitle %}  
+<div class="title">
+<h1>{{ title|upper }}</h1>
+<div class="line"></div>
+</div> 
+{% endblock %}
+{% block content %}  
+<div class="free-page"> 
+<div style="clear:both; height: 0.5em"></div>
+{{ content|raw }}
+<div style="clear:both"></div>
+</div> 
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "template.html" %} 
+{% block JS %}
+<script type="text/javascript">
+
+	jQuery(document).ready(function(){ 
+         $(".loading-icon").hide();
+          
+        //setAutoComplete('filterForm', {objName:'carNumber', objValue :'hidCarKey', url : 'ajax-car.php?action=searchData' });  
+        
+        $( "[name=trStartDate], [name=trEndDate]" ).change(function() { 
+            var trStartDate = Date.parse(convertDateToStandartFormat($("[name=trStartDate]").val()));
+            var trEndDate = Date.parse(convertDateToStandartFormat($("[name=trEndDate]").val()));
+               
+            if (trStartDate > trEndDate) 
+                $("[name=trEndDate]").val($("[name=trStartDate]").val()); 
+            
+		});
+        
+         
+	});
+
+</script>
+{% endblock %}
+{% block filter %}  
+ <div>  
+    <div class="form-group">
+        <label class="col-xs-12 control-label" >No Polisi</label>
+        <div class="col-xs-12"> {{ inputCarNumber|raw }} </div> 
+    </div>  
+ </div>	 
+{% endblock %}

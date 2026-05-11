@@ -1,0 +1,107 @@
+{% extends "template-portal.html" %} 
+{% import "twigMacro.html" as macro %}  
+{% block pagetitle %}{{ LANG.accountsReceivable }} | {{ parent() }}{% endblock %} 
+
+{% block contenttitle %} {{ LANG.accountsReceivable|upper }}{% endblock %}
+{% block categorycontent %}
+
+<form action="/ar-outstanding-list" method="post">
+<div class="action-panel flex">
+<div style="width: 20em;"><b>Outstanding</b><div style="font-size: 1.3em">Rp. {{ totalOutstanding|number_format }}</div></div>	
+<div class="search-panel flex justify-flex-end">
+	<div class="consume">{{ inputSearch|raw }}</div>
+	<div>{{ inputButton|raw }}</div>
+</div>
+</div>
+</form>
+<div style="clear: both;height: 1em"></div>
+
+<div class="div-table table-list hide-mobile" style="width:100%">
+	<div class="div-table-row">
+		<div class="div-table-col-3 col-header" style="width:3em; text-align: right">{{ LANG.number }}</div>
+		<div class="div-table-col-3 col-header"  >{{ LANG.invoice }}</div>
+		<div class="div-table-col-3 col-header"  style="text-align: center" >{{ LANG.duedate }}</div>
+		<div class="div-table-col-3 col-header" style="width:8em; text-align: right"  >{{ LANG.amount }}</div>
+		<div class="div-table-col-3 col-header" style="width:10em; text-align: right"  >{{ LANG.outstanding }}</div>
+		<div class="div-table-col-3 col-header" style="width:5em">{{ LANG.status }}</div>
+	</div>
+{% for item in rsAR %}
+	<div class="div-table-row">
+		<div class="div-table-col-3" style="text-align:right;">{{ loop.index }} .</div>
+		<div class="div-table-col-3">
+			{{ item.refcode }}
+			{% if not item.paymentHistory is empty %} 
+				 
+					<div class="div-table payment-information-row-detail ">
+						<div class="div-table-caption">{{ LANG.paymentInformation }}</div>
+						{% for paymentRow in item.paymentHistory %} 
+							<div class="div-table-row no-odd-even-style">
+								<div class="div-table-col"  style="width: 10em">{{ paymentRow.date|date("d M Y") }}</div>
+								<div class="div-table-col" style="text-align: right">{{ paymentRow.amount|number_format }}</div>
+							</div>
+						{% endfor %}
+					</div>
+		  {% endif %}
+		
+		</div>
+		<div class="div-table-col-3"   style="text-align: center">{{ item.dueDate|date("d M Y") }}</div>
+		<div class="div-table-col-3" style="text-align: right">{{ item.amount|number_format }}</div>
+		<div class="div-table-col-3" style="text-align: right">{{ item.outstanding|number_format }}</div>
+		<div class="div-table-col-3">{{ item.statusname }}</div>
+	</div>
+{% endfor %}
+</div>
+ 
+{% for item in rsAR %} 
+<div class="card-row flex flex-start card-mobile">   
+		<div class="consume">
+			<h2>{{ item.refcode }}</h2> 
+			<div class="data-row  flex">
+				<div class="label">{{ LANG.duedate }}</div>
+				<div class="consume" >{{ item.dueDate|date("d M Y") }}</div> 
+			</div>
+			<div class="data-row  flex">
+				<div class="label">{{ LANG.amount }}</div>
+				<div class="consume" >Rp. {{ item.amount|number_format }}</div> 
+			</div>
+			<div class="data-row  flex">
+				<div class="label">{{ LANG.outstanding }}</div>
+				<div class="consume" >Rp. {{ item.outstanding|number_format }}</div> 
+			</div> 
+			<div class="data-row flex">
+				<div class="label">{{ LANG.status }}</div>
+				<div  class="consume" >{{ item.statusname }}</div> 
+			</div>	
+		</div> 
+		<div class="consume">
+				<div  class="label">{{ LANG.paymentInformation }}</div>
+				<div style="clear:both; height: .5em"></div>
+				{% if item.paymentHistory is empty %} 
+						- 
+				{% else %}
+					<div class="div-table">
+						<div class="div-table-row">
+							<div class="div-table-col" style="font-weight: bold; width: 10em">{{ LANG.date }}</div>
+							<div class="div-table-col" style="font-weight: bold; text-align: right">{{ LANG.amount }}</div>
+						</div>
+					{% for paymentRow in item.paymentHistory %} 
+						<div class="div-table-row">
+							<div class="div-table-col">{{ paymentRow.date|date("d M Y") }}</div>
+							<div class="div-table-col" style="text-align: right">{{ paymentRow.amount|number_format }}</div>
+						</div>
+					{% endfor %}
+					</div>
+				{% endif %}
+		</div>
+</div>     
+{% endfor %}
+
+{% if rsAR is empty %}
+	<div style="text-align: center; padding-top:1em">{{ LANG.noDataFound }}</div>
+{% endif %}
+
+<div style="clear: both; height: 2em"></div> 
+{% set path = 'ar-outstanding-list/' %}
+{{ macro.buildPageList(_context,path) }}
+<div style="clear: both; height: 2em"></div>
+{% endblock %}
