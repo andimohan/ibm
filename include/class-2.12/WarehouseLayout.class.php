@@ -9,7 +9,7 @@ class WarehouseLayout extends BaseClass{
 		$this->tableName = 'warehouse_layout';  
 		$this->tableWarehouse = 'warehouse';  
 		$this->securityObject = 'WarehouseLayout'; 
-        $this->tableStatus = 'master_Status';  
+        $this->tableStatus = 'master_status';  
        
         $this->arrData = array();  
         $this->arrData['pkey'] = array('pkey');
