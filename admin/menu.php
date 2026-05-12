@@ -209,8 +209,9 @@
      $submenuitem = array();
      $arrSubMenu['menu'] = array();
      pushMenuItem($submenuitem , array ('label' => $class->lang['itemIn'],   'securityObject' => 'ItemIn',   'phplist' => 'itemInList', 'target' => 'tab' ));
+    pushMenuItem($submenuitem, array('label' => $class->lang['itemReceivingPlan'],   'securityObject' => 'ItemReceivingPlan',   'phplist' => 'itemReceivingPlanList', 'target' => 'tab'));
      pushMenuItem($submenuitem, array('label' => $class->lang['itemReceiving'],   'securityObject' => 'ItemReceiving',   'phplist' => 'itemReceivingList', 'target' => 'tab'));
-     pushMenuItem($submenuitem, array('label' => $class->lang['putAway'],   'securityObject' => 'PutAway',   'phplist' => 'putAwayList', 'target' => 'tab'));
+     pushMenuItem($submenuitem, array('label' => $class->lang['putAway'],   'securityObject' => 'PutAway',   'phplist' => 'putAwayList', 'target' => 'tab')); 
      pushMenuItem($submenuitem , array ('label' => $class->lang['itemInReceive'],   'securityObject' => 'ItemInReceive',   'phplist' => 'itemInReceiveList', 'target' => 'tab' ));
      pushMenuItem($submenuitem , array ('label' => $class->lang['itemOut'],   'securityObject' => 'ItemOut',   'phplist' => 'itemOutList', 'target' => 'tab' ));
      pushMenuItem($submenuitem , array ('label' => $class->lang['itemOutDelivery'],   'securityObject' => 'ItemOutDelivery',   'phplist' => 'itemOutDeliveryList', 'target' => 'tab' ));

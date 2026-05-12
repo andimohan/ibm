@@ -3240,6 +3240,7 @@ $this->lang['pallet'] = 'Pallet';
 $this->lang['warehouseLocation'] = 'Warehouse Location';
 $this->lang['alcohol'] = 'Alcohol';
 $this->lang['gol'] = 'Gol';
+$this->lang['itemReceivingPlan'] = 'Item Receiving Plan';
 
 $this->lang['activationEmailContent'] = 'Dear {{CUSTOMER_NAME}},
 									 <br>

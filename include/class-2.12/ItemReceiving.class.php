@@ -17,6 +17,7 @@ class ItemReceiving extends BaseClass
         $this->tableBrand = 'brand';
         $this->tableItemCategory = 'item_category';  
         $this->tableCountry = 'country';  
+        $this->tableItemReceivingPlanHeader = 'item_receiving_plan_header';  
 
         $this->isTransaction = true;
         $this->securityObject = 'ItemReceiving';
@@ -61,6 +62,7 @@ class ItemReceiving extends BaseClass
         $this->arrData['pkey'] = array('pkey', array('dataDetail' => $arrDetails));
         $this->arrData['code'] = array('code');
         $this->arrData['trdate'] = array('trDate', 'date');
+        $this->arrData['refkey'] = array('hidItemReceivingPlanKey');
         $this->arrData['warehousekey'] = array('selWarehouseKey');
         $this->arrData['warehouselayoutkey'] = array('selWarehouseLayoutKey');
         $this->arrData['customerkey'] = array('hidCustomerKey');
@@ -88,6 +90,7 @@ class ItemReceiving extends BaseClass
         $this->arrDataListAvailableColumn = array();
         array_push($this->arrDataListAvailableColumn, array('code' => 'code', 'title' => 'code', 'dbfield' => 'code', 'default' => true, 'width' => 100));
         array_push($this->arrDataListAvailableColumn, array('code' => 'trdate', 'title' => 'date', 'dbfield' => 'trdate', 'align' => 'center', 'format' => 'date', 'default' => true, 'width' => 120));
+        array_push($this->arrDataListAvailableColumn, array('code' => 'refCode', 'title' => 'refCode', 'dbfield' => 'itemreceivingplanheadercode', 'default' => true, 'width' => 120));
         array_push($this->arrDataListAvailableColumn, array('code' => 'warehouse', 'title' => 'warehouse', 'dbfield' => 'warehousename', 'default' => true, 'width' => 120));
         array_push($this->arrDataListAvailableColumn, array('code' => 'warehouselayout', 'title' => 'warehouseLayout', 'dbfield' => 'warehouselayoutname', 'default' => true, 'width' => 120));
         array_push($this->arrDataListAvailableColumn, array('code' => 'customer', 'title' => 'customer', 'dbfield' => 'customername', 'default' => true, 'width' => 150));
@@ -98,6 +101,7 @@ class ItemReceiving extends BaseClass
 
         $this->arrSearchColumn = array();
         array_push($this->arrSearchColumn, array('Kode', $this->tableName . '.code'));
+        array_push($this->arrSearchColumn, array('No. Receiving Plan', $this->tableItemReceivingPlanHeader . '.code'));
         array_push($this->arrSearchColumn, array('Gudang', $this->tableWarehouse . '.name'));
         array_push($this->arrSearchColumn, array('Tata Letak Gudang', $this->tableWarehouseLayout . '.name'));
         array_push($this->arrSearchColumn, array('Tgl', $this->tableName . '.trdate'));
@@ -120,7 +124,8 @@ class ItemReceiving extends BaseClass
                 'TransactionType.class.php',
                 'DocumentType.class.php',
                 'ItemUnit.class.php',
-                'PutAway.class.php'
+                'PutAway.class.php',
+                'ItemReceivingPlan.class.php'
             )
         );
 
@@ -139,9 +144,11 @@ class ItemReceiving extends BaseClass
                     shipper.name as shippername,
                     ' . $this->tableWarehouse . '.name as warehousename,
 					' . $this->tableStatus . '.status as statusname,
-                    ' . $this->tableWarehouseLayout . '.name as warehouselayoutname
+                    ' . $this->tableWarehouseLayout . '.name as warehouselayoutname,
+                    ' . $this->tableItemReceivingPlanHeader . '.code as itemreceivingplanheadercode
 				from 
 					' . $this->tableName . '
+                           left join ' . $this->tableItemReceivingPlanHeader . ' on ' . $this->tableName . '.refkey = ' . $this->tableItemReceivingPlanHeader . '.pkey
                            left join ' . $this->tableCustomer . '  on ' . $this->tableName . '.customerkey = ' . $this->tableCustomer . '.pkey
                            left join ' . $this->tableSupplier . '  on ' . $this->tableName . '.supplierkey = ' . $this->tableSupplier . '.pkey
                            left join ' . $this->tableSupplier . ' shipper  on ' . $this->tableName . '.shipperkey = shipper.pkey
@@ -234,8 +241,45 @@ class ItemReceiving extends BaseClass
     function validateConfirm($rsHeader){
 
         $item = new Item();
+        $itemReceivingPlan = new ItemReceivingPlan();
 
         $id = $rsHeader[0]['pkey'];
+
+        $arrErrMsg = array();
+
+        if(!empty($rsHeader[0]['refkey'])) {
+            $rsItemReceivingPlan = $itemReceivingPlan->getDataRowById($rsHeader[0]['refkey']);
+
+            if(empty($rsItemReceivingPlan)) {
+                $this->addErrorLog(false,'<strong>'.$rsHeader[0]['code'].'</strong>. '. $this->errorMsg[201].' '.$this->errorMsg['itemReceiving'][1]);
+            } else {
+
+                if(in_array($rsItemReceivingPlan[0]['statuskey'], [1,4])) {
+                    array_push($arrErrMsg, $this->lang['itemReceivingPlan'].' '.$this->errorMsg[228]);
+                }
+
+                if($rsHeader[0]['warehousekey'] <> $rsItemReceivingPlan[0]['warehousekey']) {
+                    array_push($arrErrMsg, '<strong>'.$rsItemReceivingPlan[0]['code'].' - </strong>'.$this->lang['warehouse'].' '.$this->errorMsg[905]);
+                }
+
+                if($rsHeader[0]['warehouselayoutkey'] <> $rsItemReceivingPlan[0]['warehouselayoutkey']) {
+                    array_push($arrErrMsg, '<strong>'.$rsItemReceivingPlan[0]['code'].' - </strong>'.$this->lang['warehouseLayout'].' '.$this->errorMsg[905]);
+                }
+
+                if($rsHeader[0]['customerkey'] <> $rsItemReceivingPlan[0]['customerkey']) {
+                    array_push($arrErrMsg, '<strong>'.$rsItemReceivingPlan[0]['code'].' - </strong>'.$this->errorMsg['customer'][3]);
+                }
+
+                if($rsHeader[0]['supplierkey'] <> $rsItemReceivingPlan[0]['supplierkey']) {
+                    array_push($arrErrMsg, '<strong>'.$rsItemReceivingPlan[0]['code'].' - </strong>'.$this->errorMsg['supplier'][3]);
+                }
+
+                if($rsHeader[0]['shipperkey'] <> $rsItemReceivingPlan[0]['shipperkey']) {
+                    array_push($arrErrMsg, '<strong>'.$rsItemReceivingPlan[0]['code'].' - </strong>'.$this->errorMsg['shipper'][3]);
+                }
+                
+            }
+        }
         
     
         //cek apakah ada kode barang yang sama, kalau ada tidak boleh
@@ -244,7 +288,6 @@ class ItemReceiving extends BaseClass
         
         $rsItemCodes = array_column($rsItem, 'itemcode');
 
-        $arrErrMsg = array();
         for($i=0; $i<count($rsDetail); $i++){
             
             $detailItemCode = $rsDetail[$i]['itemcode'];

@@ -273,6 +273,7 @@
                 "pallet.js",
                 "putAway.js",
                 "itemReceiving.js",
+                "itemReceivingPlan.js",
                 "purchasePricing.js"
             ], 
 			"output": "../formJS-1.317.min.js",

@@ -55,35 +55,255 @@ function ItemReceiving(tabID, fileUpload){
 
     }
 
-    this.updateWarehouseLayout = function updateWarehouseLayout()
-    {
-        var selWarehouseKey = tabObj.find("[name=selWarehouseKey]").val();
-        // var selWarehouseLayoutKey = tabObj.find("[name=selWarehouseLayoutKey]").val();
+    this.resetHeader = function resetHeader(){
+        tabObj.find("[name=selWarehouseKey]")
+        .find('option:first')
+        .prop('selected', true)
+        .closest('select')
+        .change(); 
 
-        if (!selWarehouseKey ) {
+        tabObj.find("[name=selWarehouseLayoutKey]")
+            .find('option:first')
+            .prop('selected', true)
+            .closest('select')
+            .change(); 
+
+            tabObj.find("[name=hidCustomerKey]").val(""); 
+            tabObj.find("[name=customerName]").val("");
+
+            tabObj.find("[name=hidSupplierKey]").val(""); 
+            tabObj.find("[name=supplierName]").val("");
+
+            tabObj.find("[name=hidShipperKey]").val(""); 
+            tabObj.find("[name=shipperName]").val("");
+
+            tabObj.find("[name=selDocumentType]").val("").find('option:first')
+            .prop('selected', true)
+            .closest('select')
+            .change();  
+
+            tabObj.find("[name=submissionNumber]").val(""); 
+            tabObj.find("[name=submissionDate]").val(moment().format('DD / MM / YYYY')); 
+            tabObj.find("[name=invoiceNumber]").val(""); 
+            tabObj.find("[name=invoiceDate]").val(moment().format('DD / MM / YYYY')); 
+            tabObj.find("[name=blNumber]").val(""); 
+            tabObj.find("[name=blDate]").val(moment().format('DD / MM / YYYY')); 
+            tabObj.find("[name=registrationNumber]").val(""); 
+            tabObj.find("[name=registrationDate]").val(moment().format('DD / MM / YYYY')); 
+
+            tabObj.find("[name=selCurrency]").val("").find('option:first')
+            .prop('selected', true)
+            .closest('select')
+            .change();  
+
+            tabObj.find("[name=valueType]").val("");
+            tabObj.find("[name=trDesc]").val("");
+    }
+
+    this.updateItemReceivingPlanInformation = function updateItemReceivingPlanInformation(obj,event, ui){
+            console.log("OK");
+            if (tabObj.find("[name=hidCurrentItemReceivingPlanKey]" ).val() != ''){
+					$( "#dialog-message" ).html("Merubah Rencana Penerimaan Barang akan mereset detail transaksi.");
+					$( "#dialog-message" ).dialog({
+					  width: 300,
+					  modal: true,
+					  title:"Konfirmasi Perubahan Data Rencana Penerimaan Barang", 
+					  open: function() {
+						  $(this).closest('.ui-dialog').find('.ui-dialog-buttonpane button:last').focus();
+					  },
+					  close:function() {
+							tabObj.find("[name=hidItemReceivingPlanKey]" ).val(tabObj.find("[name=hidCurrentItemReceivingPlanKey]" ).val());
+							tabObj.find("[name=itemReceivingPlanPlanCode]" ).val(tabObj.find("[name=hidCurrentItemReceivingPlanCode]" ).val());
+                          
+                          	// $(obj).closest('form').bootstrapValidator('revalidateField', $(obj).attr("name"));  
+                          
+                            thisObj.rebindEl(); // harus taro didalam, kalo gk, async, variable belum sempet berubah
+                            
+					  },
+					  buttons : {
+						  OK : function (){  
+						  		 if (ui.item == null) { 
+									clearAutoCompleteInput(obj,'hidItemReceivingPlanKey',false);	
+									tabObj.find("[name=hidCurrentItemReceivingPlanKey]" ).val(''); 
+									tabObj.find("[name=hidCurrentItemReceivingPlanCode]" ).val(''); 
+                                    
+								 }else{
+									tabObj.find("[name=hidCurrentItemReceivingPlanKey]" ).val(ui.item.pkey); 
+									tabObj.find("[name=hidCurrentItemReceivingPlanCode]" ).val(ui.item.value);
+
+                                    thisObj.updateDataFromItemReceivingPlan();
+								 } 
+								
+                                thisObj.resetHeader();
+								thisObj.resetDetails(); 
+
+                                addNewTemplateRow("detail-row-template");
+
+								$( this ).dialog( "close" );
+						  },
+						  Cancel : function (){  
+						  		$( this ).dialog( "close" );
+						  }
+					  },
+					});	 
+				}else{ 
+					 if (ui.item == null) {
+						clearAutoCompleteInput(obj,'hidItemReceivingPlanKey',false);	
+						tabObj.find("[name=hidCurrentItemReceivingPlanKey]" ).val(''); 
+						tabObj.find("[name=hidCurrentItemReceivingPlanCode]" ).val(''); 
+					 }else{ 
+						tabObj.find("[name=hidCurrentItemReceivingPlanKey]" ).val(ui.item.pkey); 
+						tabObj.find("[name=hidCurrentItemReceivingPlanCode]" ).val(ui.item.value);
+
+                        thisObj.updateDataFromItemReceivingPlan();
+                         
+					 } 	
+					  
+                    thisObj.rebindEl();
+				} 	    
+             
+    }
+
+    this.updateDataFromItemReceivingPlan = function updateDataFromItemReceiving() {
+        
+        var pkey = tabObj.find("[name=hidItemReceivingPlanKey]").val();
+    
+        if (!pkey) return;
+        console.log('   update');
+        $.ajax({
+            type: "GET",
+            url:  'ajax-item-receiving-plan.php',
+            async: false,
+            data: "action=getDataForItemReceiving&pkey=" + pkey ,  
+        }).done(function(data) { 
+
+            data = JSON.parse(data) ; 
+                     
+            if(data.length == 0){ 
+                alert(phpErrorMsg[213])
+                return;
+            };
+
+            data = data[0];
+
+            
+            tabObj.find("[name=selWarehouseKey]").val(data.warehousekey).change(); 
+
+
+            thisObj.updateWarehouseLayout(function() {
+                tabObj.find("[name=selWarehouseLayoutKey]")
+                    .val(data.warehouselayoutkey)
+                    .trigger('change');
+            });
+
+            tabObj.find("[name=hidCustomerKey]").val(data.customerkey); 
+            tabObj.find("[name=customerName]").val(data.customername);
+
+            tabObj.find("[name=hidSupplierKey]").val(data.supplierkey); 
+            tabObj.find("[name=supplierName]").val(data.suppliername);
+
+            tabObj.find("[name=hidShipperKey]").val(data.shipperkey); 
+            tabObj.find("[name=shipperName]").val(data.shippername);
+
+            tabObj.find("[name=selDocumentType]").val(data.documenttype).change(); 
+
+            tabObj.find("[name=submissionNumber]").val(data.submissionnumber); 
+            tabObj.find("[name=submissionDate]").val(moment(data.submissiondate).format(_DATE_FORMAT_)); 
+            tabObj.find("[name=invoiceNumber]").val(data.invoicenumber); 
+            tabObj.find("[name=invoiceDate]").val(moment(data.invoicedate).format(_DATE_FORMAT_)); 
+            tabObj.find("[name=blNumber]").val(data.blnumber); 
+            tabObj.find("[name=blDate]").val(moment(data.bldate).format(_DATE_FORMAT_)); 
+            tabObj.find("[name=registrationNumber]").val(data.registrationnumber); 
+            tabObj.find("[name=registrationDate]").val(moment(data.registrationdate).format(_DATE_FORMAT_)); 
+
+            tabObj.find("[name=selCurrency]").val(data.currencykey).change(); 
+            tabObj.find("[name=valueType]").val(data.valuetype);
+            tabObj.find("[name=trDesc]").val(data.trdesc) 
+
+            var detail = data.details;
+
+            if(detail.length > 0) {
+
+                
+                thisObj.resetDetails(); 
+                
+                var i;
+                for(i=0;i<detail.length;i++){  
+
+                    var arrPostValue = []; 
+                    arrPostValue.push({"selector":"itemDetailCode", "value":detail[i].itemcode});
+                    arrPostValue.push({"selector":"itemDetailName", "value":detail[i].itemname}); 
+                    arrPostValue.push({"selector":"mililiter", "value":detail[i].mililiter}); 
+                    arrPostValue.push({"selector":"hidDetailBrandKey", "value":detail[i].brandkey});
+                    arrPostValue.push({"selector":"brandName", "value":detail[i].brandname}); 
+                    arrPostValue.push({"selector":"hidDetailTypeKey", "value":detail[i].typekey}); 
+                    arrPostValue.push({"selector":"detailType", "value":detail[i].typename}); 
+                    arrPostValue.push({"selector":"qtyCarton", "value":detail[i].qtycarton}); 
+                    arrPostValue.push({"selector":"qtyPackage", "value":detail[i].qtypackage}); 
+                    arrPostValue.push({"selector":"qty", "value":detail[i].qty}); 
+                    arrPostValue.push({"selector":"alcoholContent", "value":detail[i].alcoholcontent}); 
+                    arrPostValue.push({"selector":"amount", "value":detail[i].amount}); 
+                    arrPostValue.push({"selector":"label", "value":detail[i].label}); 
+                    arrPostValue.push({"selector":"hs", "value":detail[i].hs}); 
+                    arrPostValue.push({"selector":"selTransactionType", "value":detail[i].transactiontypekey}); 
+                    arrPostValue.push({"selector":"category", "value":detail[i].category}); 
+                    arrPostValue.push({"selector":"selUnit", "value":detail[i].unit}); 
+                    arrPostValue.push({"selector":"packagingName", "value":detail[i].packaging}); 
+                    arrPostValue.push({"selector":"hidDetailCountryKey", "value":detail[i].countrykey}); 
+                    arrPostValue.push({"selector":"countryOfOriginId", "value":detail[i].countryoforiginid}); 
+                    arrPostValue.push({"selector":"containerNumber", "value":detail[i].containernumber}); 
+                    arrPostValue.push({"selector":"containerType", "value":detail[i].containertype}); 
+                    arrPostValue.push({"selector":"containerSize", "value":detail[i].containersize}); 
+                    arrPostValue.push({"selector":"containerType", "value":detail[i].containertype}); 
+                         
+                    addNewTemplateRow("detail-row-template",JSON.stringify(arrPostValue));  
+                }
+
+            } else {
+                addNewTemplateRow("detail-row-template");
+            }
+
+        });
+
+        thisObj.rebindEl();
+    }
+
+    this.resetDetails = function resetDetails(){   
+        clearAllRows(tabObj.find(".mnv-transaction"));
+        thisObj.rebindEl();
+        thisObj.calculateTotal(); 
+
+    } 
+        
+    this.updateWarehouseLayout = function updateWarehouseLayout(callback) {
+        var selWarehouseKey = tabObj.find("[name=selWarehouseKey]").val();
+
+        if (!selWarehouseKey) {
+            if(callback) callback(); 
             return;
         }
 
         $.ajax({
             type: "GET",
             url: "ajax-warehouse-layout.php",
-            data: "action=getDataLayout&warehousekey="+selWarehouseKey+'&istransit=1',
+            data: "action=getDataLayout&warehousekey=" + selWarehouseKey + '&istransit=1',
             success: function (data) {
-                if (!data) return;
+                if (!data) {
+                    if(callback) callback();
+                    return;
+                }
 
                 var data = parseJSON(data);
                 var i;
                 var newOptions = {};
                 
-                //  tabObj.find("[name=selCurrentWarehouseLayoutKey]" ).val(data[0].pkey); 
                 for (i = 0; i < data.length; i++) {
                     if (data[i].name) {
-                        newOptions[data[i].pkey] =  data[i].name; 
+                        newOptions[data[i].pkey] = data[i].name; 
                     }
                 }
                 
                 var select = $("#" + tabID + " [name=selWarehouseLayoutKey]");
-                
                 var oldValue = select.val(); 
 
                 if (select.prop) {
@@ -98,10 +318,9 @@ function ItemReceiving(tabID, fileUpload){
                     options[options.length] = new Option(text, val);
                 });
 
-            
                 var optionExists = false;
-                if(oldValue){
-                    if(select.find("option[value='"+oldValue+"']").length > 0){
+                if(oldValue) {
+                    if(select.find("option[value='" + oldValue + "']").length > 0) {
                         optionExists = true;
                     }
                 }
@@ -112,12 +331,72 @@ function ItemReceiving(tabID, fileUpload){
                     select.find('option:eq(0)').prop('selected', true).change();
                 }
 
+                if(callback) callback();
             }
         });
-    
-
-
     }
+
+    // this.updateWarehouseLayout = function updateWarehouseLayout()
+    // {
+    //     var selWarehouseKey = tabObj.find("[name=selWarehouseKey]").val();
+    //     // var selWarehouseLayoutKey = tabObj.find("[name=selWarehouseLayoutKey]").val();
+
+    //     if (!selWarehouseKey ) {
+    //         return;
+    //     }
+
+    //     $.ajax({
+    //         type: "GET",
+    //         url: "ajax-warehouse-layout.php",
+    //         data: "action=getDataLayout&warehousekey="+selWarehouseKey+'&istransit=1',
+    //         success: function (data) {
+    //             if (!data) return;
+
+    //             var data = parseJSON(data);
+    //             var i;
+    //             var newOptions = {};
+                
+    //             //  tabObj.find("[name=selCurrentWarehouseLayoutKey]" ).val(data[0].pkey); 
+    //             for (i = 0; i < data.length; i++) {
+    //                 if (data[i].name) {
+    //                     newOptions[data[i].pkey] =  data[i].name; 
+    //                 }
+    //             }
+                
+    //             var select = $("#" + tabID + " [name=selWarehouseLayoutKey]");
+                
+    //             var oldValue = select.val(); 
+
+    //             if (select.prop) {
+    //                 var options = select.prop('options');
+    //             } else {
+    //                 var options = select.attr('options');
+    //             }
+
+    //             $('option', select).remove();
+
+    //             $.each(newOptions, function(val, text) {
+    //                 options[options.length] = new Option(text, val);
+    //             });
+
+            
+    //             var optionExists = false;
+    //             if(oldValue){
+    //                 if(select.find("option[value='"+oldValue+"']").length > 0){
+    //                     optionExists = true;
+    //                 }
+    //             }
+
+    //             if (optionExists) {
+    //                 select.val(oldValue).change();
+    //             } else {
+    //                 select.find('option:eq(0)').prop('selected', true).change();
+    //             }
+
+    //         }
+    //     });
+    
+    //}
 
     this.calculateTotal = function calculateTotal()
     {

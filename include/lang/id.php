@@ -3274,6 +3274,7 @@ $this->lang['targetLocation'] = 'lokasi Tujuan';
 $this->lang['transitLocation'] = 'lokasi Transit';
 $this->lang['gol'] = 'Gol';
 $this->lang['kind'] = 'Tipe';
+$this->lang['itemReceivingPlan'] = 'Rencana Penerimaan Barang';
 
 $this->errorMsg['putAway'][1] = 'Penerimaan Barang tidak boleh kosong.';
 $this->errorMsg['putAway'][2] = 'Jumlah barang di terima harus lebih besar dari 0.';

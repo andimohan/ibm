@@ -2,8 +2,8 @@
 require_once '../_config.php';
 require_once '../_include-v2.php';
 
-includeClass(array('ItemReceiving.class.php','WarehouseLayout.class.php','ItemReceivingPlan.class.php'));
-$itemReceiving = createObjAndAddToCol(new ItemReceiving());
+includeClass(array('ItemReceivingPlan.class.php','WarehouseLayout.class.php'));
+$itemReceivingPlan = createObjAndAddToCol(new ItemReceivingPlan());
 //$item = createObjAndAddToCol(new Item());
 // $itemUnit = createObjAndAddToCol(new ItemUnit());
 $warehouse = createObjAndAddToCol(new Warehouse());
@@ -14,15 +14,14 @@ $warehouseLayout = createObjAndAddToCol(new WarehouseLayout());
 $transactionType = createObjAndAddToCol(new TransactionType());
 $documentType = createObjAndAddToCol(new DocumentType());
 $itemUnit = createObjAndAddToCol(new ItemUnit());
-$itemReceivingPlan = createObjAndAddToCol(new ItemReceivingPlan());
 
-$obj = $itemReceiving;
+$obj = $itemReceivingPlan;
 $securityObject = $obj->securityObject; // the value of security object is manually inserted to handle 
 // some modules that have different security object from that of their class
 
 if (!$security->isAdminLogin($securityObject, 10, true));
 
-$formAction = 'itemReceivingList';
+$formAction = 'itemReceivingPlanList';
 
 $isQuickAdd = (isset($_GET) && !empty($_GET['quickadd'])) ? true : false;
 
@@ -30,7 +29,7 @@ $editWarehouseInactiveCriteria = '';
 $editCurrencyInactiveCriteria = '';
 $editUnitInactiveCriteria = '';
 
-$rsItemFile = array();
+// $rsItemFile = array();
 $rsDetail = array();
 $rsWarehouseLayout = array();
 
@@ -72,17 +71,6 @@ if (!empty($_GET['id'])) {
         $_POST['shipperName'] = $rsShipper[0]['name'];
     }
 
-    if(!empty($rs[0]['refkey'])) {
-        $rsItemReceivingPlan = $itemReceivingPlan->getDataRowById($rs[0]['refkey']);
-        
-        $_POST['hidCurrentItemReceivingPlanKey'] = $rsItemReceivingPlan[0]['pkey'] ;
-        $_POST['hidCurrentItemReceivingPlanCode'] = $rsItemReceivingPlan[0]['code'] ;
-
-        $_POST['hidItemReceivingPlanKey'] = $rsItemReceivingPlan[0]['pkey'];
-        $_POST['itemReceivingPlanCode'] = $rsItemReceivingPlan[0]['code'];
-    }
-
-
     $_POST['selWarehouseKey'] = $rs[0]['warehousekey'];
     $_POST['selWarehouseLayoutKey'] = $rs[0]['warehouselayoutkey'];
     $_POST['selCurrentWarehouseLayoutKey'] = $rs[0]['warehouselayoutkey'];
@@ -98,23 +86,23 @@ if (!empty($_GET['id'])) {
     $_POST['registrationDate'] = $obj->formatDBDate($rs[0]['registrationdate'], 'd / m / Y');
     $_POST['valueType'] = $rs[0]['valuetype'];
 
-    if ($obj->useStorage) {
-        $rsFileDetail = $obj->getFileDetail($id);
-    } else {
-        $rsItemFile = array();
-        if (!empty($rs[0]['file'])) {
-            $rsItemFile[0]['file'] =  $rs[0]['file'];
+    // if ($obj->useStorage) {
+    //     $rsFileDetail = $obj->getFileDetail($id);
+    // } else {
+    //     $rsItemFile = array();
+    //     if (!empty($rs[0]['file'])) {
+    //         $rsItemFile[0]['file'] =  $rs[0]['file'];
 
-            $sourcePath = $obj->defaultDocUploadPath . $obj->uploadFileFolder . $id;
-            $destinationPath = $obj->uploadTempDoc . $obj->uploadFileFolder . $id;
-            $obj->deleteAll($destinationPath);
+    //         $sourcePath = $obj->defaultDocUploadPath . $obj->uploadFileFolder . $id;
+    //         $destinationPath = $obj->uploadTempDoc . $obj->uploadFileFolder . $id;
+    //         $obj->deleteAll($destinationPath);
 
-            if (!is_dir($destinationPath))
-                mkdir($destinationPath,  0755, true);
+    //         if (!is_dir($destinationPath))
+    //             mkdir($destinationPath,  0755, true);
 
-            $obj->fullCopy($sourcePath, $destinationPath);
-        }
-    }
+    //         $obj->fullCopy($sourcePath, $destinationPath);
+    //     }
+    // }
 
     $editWarehouseInactiveCriteria = ' or ' . $warehouse->tableName . '.pkey = ' . $obj->oDbCon->paramString($rs[0]['warehousekey']);
     
@@ -165,15 +153,15 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
             var tabID = <?php echo ($isQuickAdd) ?  $_GET['tabID'] :  'selectedTab.newPanel[0].id';  ?>;
             var tablekey = <?php echo $obj->getTableKeyAndObj($obj->tableName, array('key'))['key']; ?>;
 
-            var fileUpload = {
-                uploadFolder: "<?php echo $obj->uploadFileFolder; ?>",
-                uploaderTarget: "item-file-uploader",
-                rsFile: <?php echo json_encode($rsItemFile); ?>,
-            };
+            // var fileUpload = {
+            //     uploadFolder: "<?php echo $obj->uploadFileFolder; ?>",
+            //     uploaderTarget: "item-file-uploader",
+            //     rsFile: <?php echo json_encode($rsItemFile); ?>,
+            // };
 
-            var itemReceiving = new ItemReceiving(tabID, fileUpload);
+            var itemReceivingPlan = new ItemReceivingPlan(tabID);
 
-            prepareHandler(itemReceiving);
+            prepareHandler(itemReceivingPlan);
 
             var fieldValidation = {
                 code: {
@@ -221,8 +209,6 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
         <form id="defaultForm" method="post" class="form-horizontal" action="<?php echo $formAction; ?>">
             <?php prepareOnLoadDataForm($obj); ?>
             <?php echo $obj->inputHidden('selCurrentWarehouseLayoutKey'); ?>
-                <?php echo $obj->inputHidden('hidCurrentItemReceivingPlanKey'); ?>
-                <?php echo $obj->inputHidden('hidCurrentItemReceivingPlanCode'); ?> 
 
             <div class="div-table main-tab-table-2">
                 <div class="div-table-row">
@@ -247,29 +233,6 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
                                     <?php echo $obj->inputDate('trDate'); ?>
                                 </div>
                             </div>
-
-                            <div class="form-group coa-link">
-                                <label class="col-xs-3 control-label"><?php echo ucwords($obj->lang['itemReceivingPlan']); ?></label>
-                                <div class="col-xs-9">
-                                    <?php echo $obj->inputAutoComplete(
-                                        array(
-                                            'revalidateField' => false,
-                                            'objRefer' => $itemReceivingPlan,
-                                            'element' => array(
-                                                'value' => 'itemReceivingPlanCode',
-                                                'key' => 'hidItemReceivingPlanKey'
-                                            ),
-                                            'source' => array(
-                                                'url' => 'ajax-item-receiving-plan.php',
-                                                'data' => array('action' => 'searchData', 'statuskey' => '(2)')
-                                            ),
-                                            'callbackFunction' => 'getTabObj().updateItemReceivingPlanInformation(this,event, ui)'
-                                        )
-                                    );
-                                    ?>
-                                </div>
-                            </div>
-
                             <div class="form-group">
                                 <label class="col-xs-3 control-label"><?php echo ucwords($obj->lang['warehouse']); ?></label>
                                 <div class="col-xs-9">
@@ -436,14 +399,15 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
                         </div>
 
 
-                        <div class="div-tab-panel">
+                        <!-- <div class="div-tab-panel">
                             <div class="div-table-caption border-red"><?php echo ucwords($obj->lang['files']); ?></div>
 
                             <div class="form-group">
                                 <label class="col-xs-3 control-label"><?php echo ucwords($obj->lang['documentFiles']); ?></label>
-                                <div class="col-xs-9">
+                                <div class="col-xs-9"> -->
                                     <!-- file uploader -->
-                                    <div class="item-file-uploader">
+
+                                    <!-- <div class="item-file-uploader">
                                         <ul class="file-list"></ul>
                                         <div style="clear:both; height:1em; "></div>
                                         <div class="file-uploader">
@@ -451,15 +415,16 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
                                                 <p>Please enable JavaScript to use file uploader.</p>
                                             </noscript>
                                         </div>
-                                    </div>
+                                    </div> -->
+                                    
                                     <!-- file uploader -->
-                                    <?php if (!empty($rs) && in_array($rs[0]['statuskey'], array(2, 3))) {
+                                    <!-- <?php if (!empty($rs) && in_array($rs[0]['statuskey'], array(2, 3))) {
                                         echo $obj->inputButton('btnUpdateFile', $obj->lang['update'], array('allowedStatusForEdit' => array(1, 2, 3), 'class' => 'btn btn-primary btn-second-tone'));
                                     } ?>
                                 </div>
                             </div>
 
-                        </div>
+                        </div> -->
 
 
                     </div>
