@@ -4,6 +4,10 @@ function PutAway(tabID){
 
     this.tabID = tabID;    
 
+    var objAndValue = new Array;
+	objAndValue.push({object:'hidPalletKey[]', value :'pkey'});  
+    var objAndValueForPalletDetailAutoComplete = objAndValue; 
+
     this.importData = function importData()
     {
 
@@ -30,9 +34,7 @@ function PutAway(tabID){
                         return;
                     }
 
-                    var data = JSON.parse(data); 
-                    console.log(data);
-
+                    var data = parseJSON(data);
 
                     var i;
                     for(i=0;i<data.length;i++){  
@@ -42,7 +44,7 @@ function PutAway(tabID){
                             arrPostValue.push({"selector":"hidItemKey", "value":data[i].itemkey});
                             arrPostValue.push({"selector":"itemName", "value":data[i].itemname});
                             arrPostValue.push({"selector":"receivingQty", "value": data[i].qtyinbaseunit});
-                            arrPostValue.push({"selector":"putAwayQty", "value": data[i].putawayqty});
+                            arrPostValue.push({"selector":"putAwayQty", "value": data[i].putawayqty}); 
                             
                             addNewTemplateRow("detail-row-template",JSON.stringify(arrPostValue));  
                     }
@@ -61,12 +63,21 @@ function PutAway(tabID){
         
     }
 
+    this.updatePalletDetail = function updatePalletDetail(){
+        var palletkey = tabObj.find("[name=hidPalletKey]").val();
+        var palletName = tabObj.find("[name=palletName]").val();
+        
+        tabObj.find("[name='hidPalletDetailKey[]']").val(palletkey);
+        tabObj.find("[name='palletDetailName[]']").val(palletName);
+        
+    }
+
     this.updateItemReceivingData = function updateItemReceivingData()
     { 
         var refkey = tabObj.find("[name=hidRefKey]").val() || 0; 
         var submissionNumber = tabObj.find("[name=submissionNumber]").val() || "";
 
-        $.ajax({
+        $.ajax({    
             type: "GET",
             url:  'ajax-item-receiving.php', 
             data: "action=getDataRowById&pkey=" +  refkey,  
@@ -84,9 +95,7 @@ function PutAway(tabID){
 
       
     this.rebindEl = function rebindEl(){   
-    
-        
-
+        bindAutoCompleteForTransactionDetail('palletDetailName[]',objAndValueForPalletDetailAutoComplete,'ajax-pallet.php?action=searchData');
     } 
      
     this.loadOnReady = function loadOnReady(){ 

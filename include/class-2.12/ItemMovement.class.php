@@ -7,7 +7,7 @@ class ItemMovement extends BaseClass{
        
 		$this->tableName = 'item_movement' ;   
 		$this->tableNameDetail = 'item_movement_detail' ;   
-		$this->tableItemInWarehouse = 'item_in_warehouse' ; 
+		$this->tableItemInWarehouse = 'item_in_warehouse'; 
 		$this->tableSNMovement = 'item_sn_movement' ;  
 		$this->tableItem = 'item' ; 
 		$this->tableItemVendorPartNumber = 'item_vendor_part_number' ; 
@@ -210,9 +210,9 @@ class ItemMovement extends BaseClass{
        
        
 		$sql = 'select coalesce(sum(qtyinbaseunit),0) as "qtyinbaseunit" from '.$this->tableName.'  where statuskey = 1 and itemkey in ('. $itemkey . ') '. $criteria;	
-        $this->setLog($sql, true);
-       
+
         $rs =  $this->oDbCon->doQuery($sql);		 
+
 	 	return $rs[0]['qtyinbaseunit'];
 	}
 
@@ -375,7 +375,7 @@ class ItemMovement extends BaseClass{
         
         
 		$sql = 'select coalesce(sum(qtyinbaseunit),0) as "qtyinbaseunit" from '.$this->tableItemInWarehouse.'  where itemkey = '.$this->oDbCon->paramString($itemkey) . $criteria;		 
-      
+
 		$rs =  $this->oDbCon->doQuery($sql);		 
 	 	return $rs[0]['qtyinbaseunit'];
 	}
@@ -1427,7 +1427,7 @@ class ItemMovement extends BaseClass{
 			)';			 
          
 		$result = $this->oDbCon->execute($sql); 
-        $this->setLog($sql, true);
+        // $this->setLog($sql, true);
         //$lastMovementId = $this->oDbCon->lastInsertId();
         
         $lastMovementId = $result['lastId'];
@@ -1574,7 +1574,12 @@ class ItemMovement extends BaseClass{
 		$rsItem = $item->getDataRowById($itemkey);
 		$rsWarehouse = $warehouse->getDataRowById($warehousekey);
 		 
-        $saldoakhir = $this->sumItemMovement($itemkey, $warehousekey); 
+     
+        if (empty($warehouselayoutkey)) {
+            $saldoakhir = $this->sumItemMovement($itemkey, $warehousekey);
+        } else {
+            $saldoakhir = $this->sumItemMovementWarehouseLayout($itemkey, $warehouselayoutkey);
+        }
         
         $saldoakhirinpcs = 0 ;
         if(in_array(PLAN_TYPE['categorykey'], array(COMPANY_TYPE['jewelry'])))
@@ -1590,9 +1595,8 @@ class ItemMovement extends BaseClass{
             // others script
         }
 		
-        // $sql = 'select itemkey from '.$this->tableItemInWarehouse.' where itemkey='.$this->oDbCon->paramString($itemkey).' and  warehousekey = '.$this->oDbCon->paramString($warehousekey).' 
-        //         and warehouselayoutkey = '.$this->oDbCon->paramString($warehouselayoutkey).' limit 0,1';
-        $sql = 'select itemkey from '.$this->tableItemInWarehouse.' where itemkey='.$this->oDbCon->paramString($itemkey).' and  warehousekey = '.$this->oDbCon->paramString($warehousekey).' limit 0,1';
+        $sql = 'select itemkey from '.$this->tableItemInWarehouse.' where itemkey='.$this->oDbCon->paramString($itemkey).' and  warehousekey = '.$this->oDbCon->paramString($warehousekey).' 
+                and warehouselayoutkey = '.$this->oDbCon->paramString($warehouselayoutkey).' limit 0,1';
         $result = $this->oDbCon->doQuery($sql);
 
         if(empty($result)){ 

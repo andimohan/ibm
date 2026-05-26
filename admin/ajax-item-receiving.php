@@ -21,11 +21,28 @@ if (isset($_GET) && !empty($_GET['action'])) {
             }
 
             $rs = $obj->getDataForPutAway($pkey);
-            $obj->setLog($rs, true);
 
             echo json_encode($rs);
 
         break;
+
+        case 'getDataForZoneTransfer':
+
+            $pkey = 0;
+            if(isset($_GET['pkey']) && !empty($_GET['pkey'])){
+                $pkey = $_GET['pkey'];
+            }
+
+            $layoutoriginkey = 0;
+            if(isset($_GET['warehouselayoutoriginkey']) && !empty($_GET['warehouselayoutoriginkey'])){
+                $warehouselayoutoriginkey = $_GET['warehouselayoutoriginkey'];
+            }
+
+            $rs = $obj->getDataForZoneTransfer($pkey,$warehouselayoutoriginkey);
+            $obj->setLog($rs, true);
+            echo json_encode($rs);
+
+            break;
 
     }
 }

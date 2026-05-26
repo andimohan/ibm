@@ -18,6 +18,7 @@ class ItemReceiving extends BaseClass
         $this->tableItemCategory = 'item_category';  
         $this->tableCountry = 'country';  
         $this->tableItemReceivingPlanHeader = 'item_receiving_plan_header';  
+        $this->tableItemUnit = 'item_unit';  
 
         $this->isTransaction = true;
         $this->securityObject = 'ItemReceiving';
@@ -39,7 +40,7 @@ class ItemReceiving extends BaseClass
         $this->arrDetail['facility'] = array('facility');
         $this->arrDetail['orderlist'] = array('orderList');
         $this->arrDetail['qty'] = array('qty', 'number');
-        $this->arrDetail['unit'] = array('itemUnit');
+        $this->arrDetail['unit'] = array('selUnit');
         $this->arrDetail['category'] = array('category');
         $this->arrDetail['alcoholcontent'] = array('alcoholContent', 'number');
         $this->arrDetail['mililiter'] = array('mililiter', 'number');
@@ -109,6 +110,9 @@ class ItemReceiving extends BaseClass
         array_push($this->arrSearchColumn, array('Pemasok', $this->tableSupplier . '.name'));
         array_push($this->arrSearchColumn, array('Pengirim', 'shipper.name'));
         array_push($this->arrSearchColumn, array('Status', $this->tableStatus . '.status'));
+
+            $this->printMenu = array();  
+        array_push($this->printMenu,array('code' => 'printTransaction', 'name' => $this->lang['printTransaction'],  'icon' => 'print', 'url' => 'print/itemReceiving'));
 
 
         $this->includeClassDependencies(
@@ -187,7 +191,6 @@ class ItemReceiving extends BaseClass
         if (empty($supplierkey)) {
             $this->addErrorList($arrayToJs, false, $this->errorMsg['supplier'][1]);
         }
-        $this->setLog('testing', true);
 
         // if(empty($warehouseLayoutkey)){
         //     // $this->addErrorList($arrayToJs, false, $this->errorMsg['warehouseLayout'][1]);
@@ -209,11 +212,6 @@ class ItemReceiving extends BaseClass
                 }
             }
         }
-        $this->setLog($arrayToJs, true);
-        $this->setLog('testing', true);
-
-
-
         return $arrayToJs;
     }
 
@@ -224,12 +222,14 @@ class ItemReceiving extends BaseClass
 	   			' . $this->tableNameDetail . '.*,
                 '.$this->tableBrand.'.name as brandname,
                 '.$this->tableItemCategory.'.name as typename,
-                '.$this->tableCountry.'.name as countryname
+                '.$this->tableCountry.'.name as countryname,
+                '.$this->tableItemUnit.'.name as unitname
 			  from
 			  	' . $this->tableNameDetail . '
                 left join  '.$this->tableBrand.' on '. $this->tableNameDetail .'.brandkey = '.$this->tableBrand.'.pkey
                 left join  '.$this->tableItemCategory.' on '. $this->tableNameDetail .'.typekey = '.$this->tableItemCategory.'.pkey
                 left join  '.$this->tableCountry.' on '. $this->tableNameDetail .'.countrykey = '.$this->tableCountry.'.pkey
+                left join  '.$this->tableItemUnit.' on '. $this->tableNameDetail .'.unit = '.$this->tableItemUnit.'.pkey
 			  where
 			  	' . $this->tableNameDetail . '.refkey in (' . $this->oDbCon->paramString($pkey, ',') . ') ';
 
@@ -343,22 +343,22 @@ class ItemReceiving extends BaseClass
 
         if(empty($rsDetail)) return;
 
-        // $rsItemCategory = $itemCategory->searchDataRow(array(
-        //     $itemCategory->tableName.'.pkey',
-        //     $itemCategory->tableName.'.code',
-        //     'lower('.$itemCategory->tableName.'.name) as name',
-        //     $itemCategory->tableName.'.statuskey'
-        // ), 'and ' . $itemCategory->tableName . '.statuskey = 1');
-        // $rsItemCategoryCol = array_column($rsItemCategory,null,'name');
+        $rsItemCategory = $itemCategory->searchDataRow(array(
+            $itemCategory->tableName.'.pkey',
+            $itemCategory->tableName.'.code',
+            'lower('.$itemCategory->tableName.'.name) as name',
+            $itemCategory->tableName.'.statuskey'
+        ), 'and ' . $itemCategory->tableName . '.statuskey = 1');
+        $rsItemCategoryCol = array_column($rsItemCategory,null,'name');
             
     
         for($i=0; $i<count($rsDetail); $i++){
 
             if(empty($rsDetail[$i]['itemname'])) continue;
 
-            // $rsItem = $item->searchDataRow(array($item->tableName.'.pkey',$item->tableName.'.code',
-            // 'lower('.$item->tableName.'.name) as name',
-            // $item->tableName.'.statuskey'), ' and ' . $item->tableName . '.code = ' . $this->oDbCon->paramString($rsDetail[$i]['itemcode']));
+            $rsItem = $item->searchDataRow(array($item->tableName.'.pkey',$item->tableName.'.code',
+            'lower('.$item->tableName.'.name) as name',
+            $item->tableName.'.statuskey'), ' and ' . $item->tableName . '.code = ' . $this->oDbCon->paramString($rsDetail[$i]['itemcode']));
             $rsItem = $item->cekDuplicateData($rsDetail[$i]['itemname'], $rsDetail[$i]['brandkey'], $rsDetail[$i]['mililiter'], $rsDetail[$i]['typekey'], $rsDetail[$i]['alcoholcontent']);
 
             if (!empty($rsItem)) {
@@ -369,15 +369,15 @@ class ItemReceiving extends BaseClass
                 continue;
             }
             
-            // $rsCategoryItem = $rsItemCategoryCol[strtolower($rsDetail[$i]['typename'])];
-            // if (empty($rsCategoryItem)) {
-            //     $arrParam = array();            
-            //     $arrParam['code'] = 'xxxx';
-            //     $arrParam['name']  = $rsDetail[$i]['itemcategory'];
-            //     $arrParam['selCategory'] = 0;
+            $rsCategoryItem = $rsItemCategoryCol[strtolower($rsDetail[$i]['typename'])];
+            if (empty($rsCategoryItem)) {
+                $arrParam = array();            
+                $arrParam['code'] = 'xxxx';
+                $arrParam['name']  = $rsDetail[$i]['itemcategory'];
+                $arrParam['selCategory'] = 0;
 
-            //     $arrayToJs = $itemCategory->addData($arrParam);
-            // }
+                $arrayToJs = $itemCategory->addData($arrParam);
+            }
 
     
             $arrParam = array();            
@@ -482,10 +482,8 @@ class ItemReceiving extends BaseClass
         if(!empty($criteria)){
             $sql .= ' ' . $criteria;
         }
-        $this->setLog($sql, true);
         
         $rs = $this->oDbCon->doQuery($sql);
-        $this->setLog($rs, true);
 
         if(empty($rs)) return;
 
@@ -508,7 +506,6 @@ class ItemReceiving extends BaseClass
     function normalizeParameter($arrParam, $trim = false)
     {
         $arrParam = parent::normalizeParameter($arrParam, true);
-        $this->setLog($arrParam, true);
 
         return $arrParam;
     }
@@ -561,6 +558,47 @@ class ItemReceiving extends BaseClass
         }
 
         // $this->changeStatus($pkey, $statusKey,'',false,true); 
+    }
+
+    function getDataForZoneTransfer($pkey,$warehouselayoutoriginkey, $criteria = "")
+    {
+        $itemMovement = new ItemMovement();
+    
+        $sql = '   
+            select
+                '.$itemMovement->tableName.'.refkey,
+                '.$itemMovement->tableName.'.trdate,
+                '.$itemMovement->tableName.'.itemkey,
+                '.$itemMovement->tableName.'.qtyinbaseunit,
+                '.$itemMovement->tableName.'.warehousekey,
+                '.$itemMovement->tableName.'.warehouselayoutkey,
+                '.$itemMovement->tableName.'.note,
+                '.$this->tableWarehouseLayout.'.code as warehouselayoutcode,
+                '.$this->tableWarehouseLayout.'.name as warehouselayoutname,
+                '.$itemMovement->tableItem.'.code as itemcode,
+                '.$itemMovement->tableItem.'.name as itemname,
+                '.$this->tableName.'.submissionnumber
+            from
+                '.$itemMovement->tableName.'
+                    left join '.$itemMovement->tableItem.' on '.$itemMovement->tableName.'.itemkey = '.$itemMovement->tableItem.'.pkey
+                    left join '.$this->tableWarehouseLayout.' on '.$itemMovement->tableName.'.warehouselayoutkey = '.$this->tableWarehouseLayout.'.pkey,
+                '.$this->tableName.'
+            where
+                '.$itemMovement->tableName.'.refkey = '.$this->tableName.'.pkey and
+                '.$this->tableName.'.statuskey = '.TRANSACTION_STATUS['konfirmasi'].' and 
+                '.$itemMovement->tableName.'.reftable = '.$this->oDbCon->paramString($this->tableName).' and
+                '.$itemMovement->tableName.'.statuskey = 1 and
+                '.$itemMovement->tableName.'.refkey = '.$this->oDbCon->paramString($pkey).' and   
+                '.$itemMovement->tableName.'.warehouselayoutkey = '.$this->oDbCon->paramString($warehouselayoutoriginkey).'    
+        ';
+
+        if(!empty($criteria)){
+            $sql .= ' ' . $criteria;
+        } 
+
+        $result = $this->oDbCon->doQuery($sql);
+
+        return $result;
     }
 
     

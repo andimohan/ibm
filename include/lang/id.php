@@ -90,9 +90,13 @@ $this->errorMsg[904] = 'Duplikasi data gagal karena sedang aktif terhubung ke da
 $this->errorMsg[905] = 'Gudang tidak sama.';
 $this->errorMsg[906] = 'Nilai atau detail transaksi telah berubah.';
  
-
 // EMPTY FIELD
 //general
+$this->errorMsg['zoneTransfer'][1] = 'Tata letak gudang asal / tujuan harus diisi.';
+$this->errorMsg['zoneTransfer'][2] = 'Tata letak gudang asal / tujuan tidak boleh sama.';
+$this->errorMsg['zoneTransfer'][3] = 'No. Pengajuan harus diisi.';
+$this->errorMsg['zoneTransfer'][4] = 'No. Pengajuan tidak ditemukan.';
+
 $this->errorMsg['username'][1] = 'Username harus diisi.';
 $this->errorMsg['username'][2] = 'Username Anda telah terdaftar. Silahkan memilih username lain.';
 $this->errorMsg['username'][3] = 'Username harus diantara 5 - 30 karakter.';
@@ -3275,6 +3279,7 @@ $this->lang['transitLocation'] = 'lokasi Transit';
 $this->lang['gol'] = 'Gol';
 $this->lang['kind'] = 'Tipe';
 $this->lang['itemReceivingPlan'] = 'Rencana Penerimaan Barang';
+$this->lang['zoneTransfer'] = 'Mutasi Zona';
 
 $this->errorMsg['putAway'][1] = 'Penerimaan Barang tidak boleh kosong.';
 $this->errorMsg['putAway'][2] = 'Jumlah barang di terima harus lebih besar dari 0.';

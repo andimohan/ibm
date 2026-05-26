@@ -91,6 +91,10 @@ $this->errorMsg[905] = 'Warehouse did not match.';
 $this->errorMsg[906] = 'Value or transaction details have changed.';
   
 
+$this->errorMsg['zoneTransfer'][1] = 'Tata letak gudang asal / tujuan harus diisi.';
+$this->errorMsg['zoneTransfer'][2] = 'Tata letak gudang asal / tujuan tidak boleh sama.';
+$this->errorMsg['zoneTransfer'][3] = 'No. Pengajuan harus diisi.';
+$this->errorMsg['zoneTransfer'][4] = 'No. Pengajuan tidak ditemukan.';
 // EMPTY FIELD
 //general
 $this->errorMsg['username'][1] = 'Username cannot be empty.';
@@ -3241,6 +3245,7 @@ $this->lang['warehouseLocation'] = 'Warehouse Location';
 $this->lang['alcohol'] = 'Alcohol';
 $this->lang['gol'] = 'Gol';
 $this->lang['itemReceivingPlan'] = 'Item Receiving Plan';
+$this->lang['zoneTransfer'] = 'Mutasi Zona';
 
 $this->lang['activationEmailContent'] = 'Dear {{CUSTOMER_NAME}},
 									 <br>
