@@ -369,6 +369,20 @@ if (isset($_GET) && !empty($_GET['action'])) {
                     
             echo json_encode($rsData); 
         break;   
+
+
+        case 'getDataForZoneTransfer' :
+                    
+            // if (!isset($_GET['pkey']) || !isset($_GET['warehouselayoutoriginkey'])) die; 
+            if (!isset($_GET['pkey']) ) die; 
+            
+            $pkey = $_GET['pkey'];
+            $warehouselayoutoriginkey = $_GET['warehouselayoutoriginkey'];
+                    
+            $rsData = $obj->getDataForZoneTransfer($pkey, $warehouselayoutoriginkey);   
+                    
+            echo json_encode($rsData); 
+        break;   
             
             }
      

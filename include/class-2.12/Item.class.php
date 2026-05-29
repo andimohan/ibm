@@ -67,7 +67,8 @@ class Item extends BaseClass{
         $this->tableItemVariationDetail = 'item_variation_detail';
         $this->tableItemVariation = 'item_variation';
         $this->tableAge = 'age';
-            
+        $this->tableItemReceivingHeader = 'item_receiving_header';
+        $this->tableItemReceivingDetail = 'item_receiving_detail';
             
 		$this->uploadFolder = 'item/';
 		$this->uploadFileFolder = 'item-file/';
@@ -398,7 +399,8 @@ class Item extends BaseClass{
               'Character.class.php',
               'ItemVariation.class.php',
               'Age.class.php',
-              'Car.class.php'
+              'Car.class.php',
+              'ItemReceiving.class.php'
         ));
 	   
 	   	if($this->activeModule['itemchecklist']){
@@ -1480,7 +1482,7 @@ class Item extends BaseClass{
 		return $this->oDbCon->doQuery($sql);
     } 	
     
-    function isItemSyncToMarketplace($pkey,$marketplacekey){
+    function isItemSyncToMarketplace($pkey,$marketplacekey){    
         $rs = $this->getItemSyncMarketplace($pkey,$marketplacekey); 
         return (empty($rs) || $rs[0]['issync'] == 0) ? false : true; 
     }   
@@ -4323,6 +4325,73 @@ class Item extends BaseClass{
                 
     }
 
-  }
+    // function getDataForZoneTransfer($pkey, $warehouselayoutkey) 
+    // {
+
+    //     $sql = '
+    //         select
+    //             '.$this->tableName.'.pkey,
+    //             '.$this->tableName.'.code,
+    //             '.$this->tableName.'.name,
+    //             '.$this->tableItemReceivingHeader.'.pkey as itemreceivingheaderkey,
+    //             '.$this->tableItemReceivingHeader.'.submissionnumber,
+    //             '.$this->tableItemMovement.'.refkey,
+    //             '.$this->tableItemMovement.'.trdate,
+    //             '.$this->tableItemMovement.'.warehousekey,
+    //             '.$this->tableItemMovement.'.warehouselayoutkey
+    //         from
+    //             '.$this->tableName.'
+    //             left join '.$this->tableItemMovement.'
+    //                 on '.$this->tableItemMovement.'.itemkey = '.$this->tableName.'.pkey
+    //                 and '.$this->tableItemMovement.'.reftable = '.$this->oDbCon->paramString($this->tableItemReceivingHeader).'
+    //             left join '.$this->tableItemReceivingHeader.'
+    //                 on '.$this->tableItemReceivingHeader.'.pkey = '.$this->tableItemMovement.'.refkey
+    //         where
+    //             '.$this->tableItemMovement.'.statuskey = 1 and
+    //             '.$this->tableItemReceivingHeader.'.pkey = '.$this->oDbCon->paramString($pkey).' and
+    //             '.$this->tableItemMovement.'.warehouselayoutkey = '.$this->oDbCon->paramString($warehouselayoutkey).'
+    //     ';
+
+    //     $result = $this->oDbCon->doQuery($sql);
+    //     $this->setLog($sql, true);
+    //     $this->setLog($result, true);
+
+    //     return $result;
+    // }
+    function getDataForZoneTransfer($pkey, $warehouselayoutkey = '') 
+    {
+
+        $sql = '
+            select
+                '.$this->tableName.'.pkey,
+                '.$this->tableName.'.code,
+                '.$this->tableName.'.name,
+                '.$this->tableItemReceivingHeader.'.pkey as itemreceivingheaderkey,
+                '.$this->tableItemReceivingHeader.'.submissionnumber,
+                '.$this->tableItemMovement.'.refkey,
+                '.$this->tableItemMovement.'.trdate,
+                '.$this->tableItemMovement.'.qtyinbaseunit,
+                '.$this->tableItemMovement.'.warehousekey,
+                '.$this->tableItemMovement.'.warehouselayoutkey
+            from
+                '.$this->tableName.'
+                left join '.$this->tableItemMovement.'
+                    on '.$this->tableItemMovement.'.itemkey = '.$this->tableName.'.pkey
+                    and '.$this->tableItemMovement.'.reftable = '.$this->oDbCon->paramString($this->tableItemReceivingHeader).'
+                left join '.$this->tableItemReceivingHeader.'
+                    on '.$this->tableItemReceivingHeader.'.pkey = '.$this->tableItemMovement.'.refkey
+            where
+                '.$this->tableItemMovement.'.statuskey = 1 and
+                '.$this->tableItemReceivingHeader.'.pkey = '.$this->oDbCon->paramString($pkey).'
+        ';
+
+        $result = $this->oDbCon->doQuery($sql);
+        $this->setLog($sql, true);
+        $this->setLog($result, true);
+
+        return $result;
+    }
+
+}
 // 
 ?>

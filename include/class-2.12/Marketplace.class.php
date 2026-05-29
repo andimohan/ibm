@@ -70,7 +70,7 @@ class Marketplace extends BaseClass{
         // sebisa mungkin includeClass disesuaikan saja di file PHP tergantung kebutuhan
          
         require_once DOC_ROOT. 'lazada/LazopSdk.php';
-        require_once DOC_ROOT. 'connections/_mp-app-config.php';
+        require_once DOC_ROOT. 'connections/_mp-app-config123.php';
         
 		$this->includeClassDependencies(array( 
               'Brand.class.php' 

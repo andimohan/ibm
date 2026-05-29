@@ -10,9 +10,9 @@ function ZoneTransfer(tabID) {
 
         var warehouselayoutoriginkey = tabObj.find("[name=hidWarehouseLayoutOriginKey]").val();
 
-        if (warehouselayoutoriginkey == '') {
-            return;
-        }
+        // if (warehouselayoutoriginkey == '') {
+        //     return;
+        // }
 
         var refkey = tabObj.find("[name=hidRefKey]").val();
 
@@ -44,7 +44,7 @@ function ZoneTransfer(tabID) {
 
                     arrPostValue.push({ "selector": "hidItemKey", "value": data[i].pkey });
                     arrPostValue.push({ "selector": "itemName", "value": data[i].name });
-                    // arrPostValue.push({ "selector": "qty", "value": data[i].qtyinbaseunit });
+                    arrPostValue.push({ "selector": "qty", "value": data[i].qtyinbaseunit });
 
                     addNewTemplateRow("detail-row-template", JSON.stringify(arrPostValue));
                 }

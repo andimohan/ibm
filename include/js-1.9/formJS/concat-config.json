@@ -274,6 +274,7 @@
                 "putAway.js",
                 "itemReceiving.js",
                 "itemReceivingPlan.js",
+                "zoneTransfer.js",
                 "purchasePricing.js"
             ], 
 			"output": "../formJS-1.317.min.js",

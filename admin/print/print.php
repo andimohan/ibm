@@ -17,7 +17,7 @@ $temp = array('ap','ar','salesOrder','truckingServiceWorkOrder','emklJobHeader',
 			'activityProgress','emklWorkOrderImport','truckingServiceOrderInvoiceExcel','debitNoteTigaRaksa','shippingInstructionHBL','preAlertNotice', 'cargoReleased',
             'performaShippingInstruction','overdueOutstandingLetter','employeeCommission','emklHouseBLWSI','truckingServiceOrderInvoiceMaersk','truckingServiceOrderInvoicePeriodeTCL',
             'packagingCode', 'emklCommission','emklOrderSheetWarehouse','emklOrderSheetTrucking','emklPurchaseOrderTrucking','emklPurchaseOrderWarehouse','emklJobOrderWarehouse','emklJobOrderTrucking','truckingServiceOrderInvoiceLSI',
-            'truckingServiceOrderPointHistory','carSpareparts','truckingServiceOrderInvoiceSariRoti');
+            'truckingServiceOrderPointHistory','carSpareparts','truckingServiceOrderInvoiceSariRoti','itemReceiving');
 
 if(in_array($_GET['filename'],$temp))
     require_once '../../_include-v2.php';
@@ -40,6 +40,7 @@ $fileName = $_GET['filename'];
 if(empty($fileName)) die;  
 $ext = pathinfo($fileName, PATHINFO_EXTENSION);
 $fileName = (empty($ext)) ? $fileName .'.php' : $fileName; 
+$class->setLog($fileName, true);
 require_once DOC_ROOT.'admin/print/'.$fileName;   
 // ====================== END OF SET DEFAULT FILE  
 
