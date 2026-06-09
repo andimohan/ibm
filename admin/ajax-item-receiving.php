@@ -39,7 +39,6 @@ if (isset($_GET) && !empty($_GET['action'])) {
             }
 
             $rs = $obj->getDataForZoneTransfer($pkey,$warehouselayoutoriginkey);
-            $obj->setLog($rs, true);
             echo json_encode($rs);
 
             break;

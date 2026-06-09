@@ -197,7 +197,6 @@ class ItemReceiving extends BaseClass
         // } else {
         //     //cek apakah warehouselayout ada di warehouse
         //     $rsWarehouseLayout = $warehouseLayout->getDataByWarehouse($warehousekey, ' and ' . $warehouseLayout->tableName . '.pkey = ' . $this->oDbCon->paramString($warehouseLayoutkey));
-        //     $this->setLog($rsWarehouseLayout, true);
         //     if (empty($rsWarehouseLayout)) {
         //         $this->addErrorList($arrayToJs, false, $this->errorMsg['warehouseLayout'][2]);
         //     }
@@ -493,9 +492,9 @@ class ItemReceiving extends BaseClass
         $arrResult = array();   
         foreach($rs as $row)
         {
-            $rsItemQOH = $itemMovement->getItemQOH($row['itemkey'], $arrWarehouse, $arrWarehouseLayout);
+            // $rsItemQOH = $itemMovement->getItemQOH($row['itemkey'], $arrWarehouse, $arrWarehouseLayout);
 
-            $row['qtyinbaseunit'] = $rsItemQOH;
+            $row['qtyinbaseunit'] = $row['qty'];
 
             $arrResult[] = $row;
         }
