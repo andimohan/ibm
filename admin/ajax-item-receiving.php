@@ -42,6 +42,34 @@ if (isset($_GET) && !empty($_GET['action'])) {
             echo json_encode($rs);
 
             break;
+            
+        case 'getDataForLabeling':
+
+            $pkey = 0;
+            if (isset($_GET['pkey']) && !empty($_GET['pkey'])) {
+                $pkey = $_GET['pkey'];
+            }
+
+
+            $rs = $obj->getDataForLabeling($pkey);
+
+            echo json_encode($rs);
+
+            break;
+            
+        case 'getDataForGoodsOut':
+
+            $pkey = 0;
+            if (isset($_GET['pkey']) && !empty($_GET['pkey'])) {
+                $pkey = $_GET['pkey'];
+            }
+
+
+            $rs = $obj->getDataForGoodsOut($pkey);
+
+            echo json_encode($rs);
+
+            break;
 
     }
 }

@@ -89,6 +89,8 @@ $this->errorMsg[903] = 'Alasan pembatalan harus diisi.';
 $this->errorMsg[904] = 'Duplikasi data gagal karena sedang aktif terhubung ke data lain.';
 $this->errorMsg[905] = 'Gudang tidak sama.';
 $this->errorMsg[906] = 'Nilai atau detail transaksi telah berubah.';
+
+$this->errorMsg['labeling'][1] = 'Jumlah labeling melebihi sisa yang tersedia';
  
 // EMPTY FIELD
 //general
@@ -3280,6 +3282,9 @@ $this->lang['gol'] = 'Gol';
 $this->lang['kind'] = 'Tipe';
 $this->lang['itemReceivingPlan'] = 'Rencana Penerimaan Barang';
 $this->lang['zoneTransfer'] = 'Mutasi Zona';
+$this->lang['qtyLabeled'] = 'Jml. Dilabel';
+$this->lang['qtyItem'] = 'Jml. Barang';
+$this->lang['labeling'] = 'Proses Labeling';
 
 $this->errorMsg['putAway'][1] = 'Penerimaan Barang tidak boleh kosong.';
 $this->errorMsg['putAway'][2] = 'Jumlah barang di terima harus lebih besar dari 0.';

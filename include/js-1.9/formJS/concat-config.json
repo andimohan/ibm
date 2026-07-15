@@ -275,6 +275,8 @@
                 "itemReceiving.js",
                 "itemReceivingPlan.js",
                 "zoneTransfer.js",
+                "labeling.js",
+                "goodsOut.js",
                 "purchasePricing.js"
             ], 
 			"output": "../formJS-1.317.min.js",

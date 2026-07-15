@@ -89,8 +89,9 @@ $this->errorMsg[903] = 'Cancel reason cannot be empty.';
 $this->errorMsg[904] = 'Duplication failed due to active connection with another data.';
 $this->errorMsg[905] = 'Warehouse did not match.';
 $this->errorMsg[906] = 'Value or transaction details have changed.';
-  
 
+$this->errorMsg['labeling'][1] = 'Jumlah labeling melebihi sisa yang tersedia';
+  
 $this->errorMsg['zoneTransfer'][1] = 'Tata letak gudang asal / tujuan harus diisi.';
 $this->errorMsg['zoneTransfer'][2] = 'Tata letak gudang asal / tujuan tidak boleh sama.';
 $this->errorMsg['zoneTransfer'][3] = 'No. Pengajuan harus diisi.';
@@ -3246,6 +3247,9 @@ $this->lang['alcohol'] = 'Alcohol';
 $this->lang['gol'] = 'Gol';
 $this->lang['itemReceivingPlan'] = 'Item Receiving Plan';
 $this->lang['zoneTransfer'] = 'Mutasi Zona';
+$this->lang['qtyLabeled'] = 'Qty. Labeled';
+$this->lang['qtyItem'] = 'Qty. Item';
+$this->lang['labeling'] = 'Labeling';
 
 $this->lang['activationEmailContent'] = 'Dear {{CUSTOMER_NAME}},
 									 <br>
