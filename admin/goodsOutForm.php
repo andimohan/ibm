@@ -389,7 +389,7 @@ $arrStatus = $obj->generateComboboxOpt(array('data' => $obj->getAllStatus(), 'la
                             <?php echo $obj->inputNumber('issuedQty[]', array('readonly' => true, 'overwritePost' => $overwrite, 'etc' => 'style="text-align:right;" ' . $etc)); ?>
                         </div>
                         <div class="div-table-col detail-col-detail">
-                            <?php echo $obj->inputNumber('qty[]', array('readonly' => false, 'overwritePost' => $overwrite, 'etc' => 'style="text-align:right;" ' . $etc)); ?>
+                            <?php echo $obj->inputNumber('qty[]', array('allowedStatusForEdit' => array(1,2),'readonly' => false, 'overwritePost' => $overwrite, 'etc' => 'style="text-align:right;" ' . $etc)); ?>
                         </div>
                         <div class="div-table-col detail-col-detail icon-col <?php echo $obj->hideOnDisabled(); ?>">
                             <?php echo $obj->inputLinkButton('btnDeleteRows', '<i class="fas fa-times"></i>', array('etc' => 'tabIndex="-1"', 'class' => 'btn btn-link remove-button')); ?>

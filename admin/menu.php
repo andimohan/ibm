@@ -214,11 +214,12 @@
      pushMenuItem($submenuitem , array('label' => $class->lang['putAway'],   'securityObject' => 'PutAway',   'phplist' => 'putAwayList', 'target' => 'tab')); 
      pushMenuItem($submenuitem , array('label' => $class->lang['zoneTransfer'],   'securityObject' => 'ZoneTransfer',   'phplist' => 'zoneTransferList', 'target' => 'tab'));
      pushMenuItem($submenuitem , array('label' => $class->lang['labeling'], 'securityObject' => 'Labeling', 'phplist' => 'labelingList', 'target' => 'tab'));
+     pushMenuItem($submenuitem , array('label' => $class->lang['itemOut'], 'securityObject' => 'GoodsOut', 'phplist' => 'goodsOutList', 'target' => 'tab'));
      pushMenuItem($submenuitem , array ('label' => $class->lang['itemInReceive'],   'securityObject' => 'ItemInReceive',   'phplist' => 'itemInReceiveList', 'target' => 'tab' ));
-     pushMenuItem($submenuitem , array ('label' => $class->lang['itemOut'],   'securityObject' => 'ItemOut',   'phplist' => 'itemOutList', 'target' => 'tab' ));
-     pushMenuItem($submenuitem , array ('label' => $class->lang['itemOutDelivery'],   'securityObject' => 'ItemOutDelivery',   'phplist' => 'itemOutDeliveryList', 'target' => 'tab' ));
-     pushMenuItem($submenuitem , array ('label' => $class->lang['itemAdjustment'],   'securityObject' => 'ItemAdjustment',   'phplist' => 'itemAdjustmentList', 'target' => 'tab' ));
-     pushMenuItem($submenuitem , array ('label' => $class->lang['warehouseTransfer'],   'securityObject' => 'WarehouseTransfer',   'phplist' => 'warehouseTransferList', 'target' => 'tab' ));
+    //  pushMenuItem($submenuitem , array ('label' => $class->lang['itemOut'],   'securityObject' => 'ItemOut',   'phplist' => 'itemOutList', 'target' => 'tab' ));
+    //  pushMenuItem($submenuitem , array ('label' => $class->lang['itemOutDelivery'],   'securityObject' => 'ItemOutDelivery',   'phplist' => 'itemOutDeliveryList', 'target' => 'tab' ));
+    //  pushMenuItem($submenuitem , array ('label' => $class->lang['itemAdjustment'],   'securityObject' => 'ItemAdjustment',   'phplist' => 'itemAdjustmentList', 'target' => 'tab' ));
+    //  pushMenuItem($submenuitem , array ('label' => $class->lang['warehouseTransfer'],   'securityObject' => 'WarehouseTransfer',   'phplist' => 'warehouseTransferList', 'target' => 'tab' ));
      pushMenuItem($arrSubMenu['menu'], $submenuitem);  
      pushMenuItem($menuitem , $arrSubMenu);  
 

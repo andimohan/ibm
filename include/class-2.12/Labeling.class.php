@@ -157,7 +157,7 @@ class Labeling extends BaseClass
         $arrDetails = array();
 
         $arrItemReceivingHeaderKey = array_column($rsDetail, 'refreceivingheaderkey');
-        $rsReceiving = $this->searchDataRow(array(
+        $rsReceiving = $itemReceiving->searchDataRow(array(
             $itemReceiving->tableName . '.pkey',
             $itemReceiving->tableName . '.code',
             $itemReceiving->tableName . '.statuskey'
@@ -173,7 +173,7 @@ class Labeling extends BaseClass
             }
 
             //cek apakah status penerimaan masih konfirmasi / selesai ?
-            if (isset($rsReceivingCol[$rsDetail[$i]['refreceivingheaderkey']])) {
+            if (!isset($rsReceivingCol[$rsDetail[$i]['refreceivingheaderkey']])) {
                 array_push($arrErrMsg, '<strong>' . $rsDetail[$i]['receivingcode'] . '. ' . $rsDetail[$i]['submissionnumber'] . ' - ' . $rsDetail[$i]['itemcode'] . '. </strong>' . $this->errorMsg[228]);
             }
 

@@ -9,6 +9,7 @@ function Labeling(tabID)
         thisObj.activeAjaxConnections = 0;
         
         var pkey = tabObj.find("[name=hidItemReceivingKey]").val();
+		console.log(pkey);
 
 		if (!pkey) {
 			alert("Nomor penerimaan harus diisi!");

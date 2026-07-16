@@ -52,6 +52,7 @@ if (isset($_GET) && !empty($_GET['action'])) {
 
 
             $rs = $obj->getDataForLabeling($pkey);
+            $obj->setLog($rs, true);
 
             echo json_encode($rs);
 

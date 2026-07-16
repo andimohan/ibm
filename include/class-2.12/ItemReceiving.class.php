@@ -140,7 +140,7 @@ class ItemReceiving extends BaseClass
     function getQuery()
     {
 
-        return '
+        $sql =  '
 				select
 					' . $this->tableName . '.*,
 					' . $this->tableCustomer . '.name as customername,
@@ -163,6 +163,8 @@ class ItemReceiving extends BaseClass
                     ' . $this->tableName . '.warehousekey = ' . $this->tableWarehouse . '.pkey and
 					' . $this->tableName . '.statuskey = ' . $this->tableStatus . '.pkey  
  		' . $this->criteria;
+
+        return $sql;
     }
 
     function validateForm($arr, $pkey = '')
@@ -600,7 +602,7 @@ class ItemReceiving extends BaseClass
         return $result;
     }
 
-        function getDataForLabeling($pkey)
+    function getDataForLabeling($pkey)
     {
         if (!is_array($pkey))
             $pkey = array($pkey);
@@ -630,7 +632,7 @@ class ItemReceiving extends BaseClass
                 ' . $this->tableName . '.statuskey in (' . TRANSACTION_STATUS['konfirmasi'] . ',' . TRANSACTION_STATUS['selesai'] . ') and
                 ' . $this->tableName . '.pkey in (' . $this->oDbCon->paramString($pkey, ',') . ')
         ';
-
+        $this->setLog($sql, true);
         $result = $this->oDbCon->doQuery($sql);
 
         return $result;
@@ -659,6 +661,8 @@ class ItemReceiving extends BaseClass
     function getTotalQtyLabeled($detailkey)
     {
         $labeling = new Labeling();
+        $this->setLog('testing', true);
+        
 
         $sql = '
                     select
@@ -671,6 +675,8 @@ class ItemReceiving extends BaseClass
                         ' . $labeling->tableNameDetail . '.refreceivingdetailkey = ' . $this->oDbCon->paramString($detailkey) . ' and
                         ' . $labeling->tableName . '.statuskey in (2,3)        
             ';
+        $this->setLog($sql, true);
+        $this->setLog($rsTotal, true);
 
         $rs = $this->oDbCon->doQuery($sql);
 
@@ -685,6 +691,102 @@ class ItemReceiving extends BaseClass
                     ' . $this->tableNameDetail . ' 
                 set  
                     qtylabeled = ' . $this->oDbCon->paramString($rsTotal) . '
+                where 
+                    pkey = ' . $this->oDbCon->paramString($detailkey) . '
+            ';
+        
+
+        $this->oDbCon->execute($sql);
+    }
+
+
+        function getDataForGoodsOut($pkey)
+    {
+        if (!is_array($pkey))
+            $pkey = array($pkey);
+
+        $sql = '
+            select
+                ' . $this->tableName . '.*,
+                ' . $this->tableNameDetail . '.pkey as detailkey,
+                ' . $this->tableNameDetail . '.itemkey,
+                ' . $this->tableNameDetail . '.itemcode,
+                ' . $this->tableNameDetail . '.itemname,
+                ' . $this->tableNameDetail . '.label,
+                ' . $this->tableNameDetail . '.unit,
+                ' . $this->tableItemUnit . '.name as unitname,
+                ' . $this->tableNameDetail . '.qtycarton,
+                ' . $this->tableNameDetail . '.qtypackage,
+                ' . $this->tableNameDetail . '.qty,
+                ' . $this->tableNameDetail . '.qtylabeled,
+                ' . $this->tableNameDetail . '.issuedqty,
+                ' . $this->tableNameDetail . '.qtylabeled - ' . $this->tableNameDetail . '.issuedqty as outstanding
+            from
+                ' . $this->tableName . ',
+                ' . $this->tableNameDetail . '
+                    left join ' . $this->tableItemUnit . ' on ' . $this->tableNameDetail . '.unit = ' . $this->tableItemUnit . '.pkey
+            where
+                ' . $this->tableName . '.pkey = ' . $this->tableNameDetail . '.refkey and
+                ' . $this->tableNameDetail . '.qtylabeled - ' . $this->tableNameDetail . '.issuedqty > 0 and
+                ' . $this->tableName . '.statuskey in (' . TRANSACTION_STATUS['konfirmasi'] . ',' . TRANSACTION_STATUS['selesai'] . ') and
+                ' . $this->tableName . '.pkey in (' . $this->oDbCon->paramString($pkey, ',') . ')
+        ';
+
+        $result = $this->oDbCon->doQuery($sql);
+
+        return $result;
+
+    }
+
+    function getTotalUnIssuedItemReceiving($detailkey)
+    {
+        $sql = '
+            select
+                ' . $this->tableNameDetail . '.qtylabeled - ' . $this->tableNameDetail . '.issuedqty as outstandingqty
+            from
+                ' . $this->tableNameDetail . ',
+                ' . $this->tableName . '
+            where
+               ' . $this->tableName . '.pkey = ' . $this->tableNameDetail . '.refkey and
+                ' . $this->tableNameDetail . '.pkey = ' . $this->oDbCon->paramString($detailkey) . ' and
+                ' . $this->tableName . '.statuskey in (2,3)
+        ';
+
+        $result = $this->oDbCon->doQuery($sql);
+
+        return $result[0]['outstandingqty'];
+    }
+
+
+    function getTotalIssuedQty($detailkey)
+    {
+        $goodsOut = new GoodsOut();
+
+        $sql = '
+                    select
+                         coalesce(sum(qty),0) as totalissuedqty
+                    from
+                          ' . $goodsOut->tableName . ',
+                         ' . $goodsOut->tableNameDetail . '
+                    where
+                        ' . $goodsOut->tableName . '.pkey = ' . $goodsOut->tableNameDetail . '.refkey and
+                        ' . $goodsOut->tableNameDetail . '.refreceivingdetailkey = ' . $this->oDbCon->paramString($detailkey) . ' and
+                        ' . $goodsOut->tableName . '.statuskey = 3        
+            ';
+
+        $rs = $this->oDbCon->doQuery($sql);
+
+        return $rs[0]['totalissuedqty'];
+    }
+
+    function updateIssuedQty($detailkey)
+    {
+        $rsTotal = $this->getTotalIssuedQty($detailkey);
+
+        $sql = 'update 
+                    ' . $this->tableNameDetail . ' 
+                set  
+                    issuedqty = ' . $this->oDbCon->paramString($rsTotal) . '
                 where 
                     pkey = ' . $this->oDbCon->paramString($detailkey) . '
             ';
