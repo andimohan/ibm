@@ -14,6 +14,7 @@ class GoodsOut extends BaseClass
         $this->tableItemUnit = 'item_unit';
         $this->tableItemReceivingHeader = 'item_receiving_header';
         $this->tableItemReceivingDetail = 'item_receiving_detail';
+        $this->tableDocumentType = 'document_type';
 
         $this->securityObject = 'GoodsOut';
 
@@ -27,6 +28,7 @@ class GoodsOut extends BaseClass
         $this->arrDataDetail['refkey'] = array('pkey', 'ref');
         $this->arrDataDetail['refreceivingheaderkey'] = array('hidRefReceivingHeaderKey');
         $this->arrDataDetail['refreceivingdetailkey'] = array('hidRefReceivingDetailKey');
+        $this->arrDataDetail['warehouselayoutkey'] = array('selWarehouseLayoutDetail');
         $this->arrDataDetail['submissionnumber'] = array('submissionDetailNumber');
         $this->arrDataDetail['itemcode'] = array('itemCode');
         $this->arrDataDetail['itemname'] = array('itemName');
@@ -34,6 +36,7 @@ class GoodsOut extends BaseClass
         $this->arrDataDetail['itemqty'] = array('itemQty', 'number');
         $this->arrDataDetail['issuedqty'] = array('issuedQty', 'number');
         $this->arrDataDetail['qty'] = array('qty', 'number');
+        $this->arrDataDetail['amount'] = array('amount', 'number');
 
         $arrDetails = array();
         array_push($arrDetails, array('dataset' => $this->arrDataDetail, 'tableName' => $this->tableNameDetail));
@@ -67,6 +70,9 @@ class GoodsOut extends BaseClass
         array_push($this->arrSearchColumn, array('Kode', $this->tableName . '.code'));
         array_push($this->arrSearchColumn, array('Penerima', $this->tableName . '.recipient'));
         array_push($this->arrSearchColumn, array('Status', $this->tableStatus . '.status'));
+
+        $this->printMenu = array();
+        array_push($this->printMenu, array('code' => 'printTransaction', 'name' => $this->lang['printTransaction'], 'icon' => 'print', 'url' => 'print/goodsOut'));
 
         $this->includeClassDependencies(array(
             'ItemReceiving.class.php',
@@ -106,10 +112,15 @@ class GoodsOut extends BaseClass
         $sql = 'select
 	   			' . $this->tableNameDetail . '.*,
                 ' . $this->tableItemReceivingHeader . '.code as receivingcode,
-                ' . $this->tableItemReceivingHeader . '.submissionnumber
+                ' . $this->tableItemReceivingDetail . '.unit,
+                ' . $this->tableItemUnit . '.name as unitname,
+                ' . $this->tableDocumentType . '.name as documenttypename 
                  from
 			  	    ' . $this->tableNameDetail . '
                         left join ' . $this->tableItemReceivingHeader . ' on ' . $this->tableNameDetail . '.refreceivingheaderkey = ' . $this->tableItemReceivingHeader . '.pkey
+                        left join ' . $this->tableDocumentType . ' on ' . $this->tableItemReceivingHeader . '.documenttype = ' . $this->tableDocumentType . '.pkey
+                        left join ' . $this->tableItemReceivingDetail . ' on ' . $this->tableNameDetail . '.refreceivingdetailkey = ' . $this->tableItemReceivingDetail . '.pkey
+                        left join ' . $this->tableItemUnit . ' on ' . $this->tableItemReceivingDetail . '.unit = ' . $this->tableItemUnit . '.pkey
                 where
                     ' . $this->tableNameDetail . '.refkey in (' . $this->oDbCon->paramString($pkey, ',') . ') ';
 

@@ -3250,6 +3250,8 @@ $this->lang['zoneTransfer'] = 'Mutasi Zona';
 $this->lang['qtyLabeled'] = 'Qty. Labeled';
 $this->lang['qtyItem'] = 'Qty. Item';
 $this->lang['labeling'] = 'Labeling';
+$this->lang['isNonLabeling'] = 'Non Labeling';
+$this->lang['picking'] = 'Picking';
 
 $this->lang['activationEmailContent'] = 'Dear {{CUSTOMER_NAME}},
 									 <br>

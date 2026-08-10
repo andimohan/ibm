@@ -112,6 +112,7 @@ RewriteRule ^import/importTruckingServiceOrderAndCost$ /tools/import/importTruck
 RewriteRule ^import/importTruckingServiceWorkOrder$ /tools/import/importTruckingServiceWorkOrder.php [NC,L]
 RewriteRule ^import/importCostRatePraja$ /tools/import/importCostRatePraja.php [NC,L]
 RewriteRule ^import/importItemReceiving$ /tools/import/importItemReceiving.php [NC,L]
+RewriteRule ^import/importItemReceivingPlan$ /tools/import/importItemReceivingPlan.php [NC,L]
 
 #MTI
 RewriteRule ^import/importJobOrderAndSPKMTI$ /tools/import/importJobOrderAndSPKMTI.php [NC,L]

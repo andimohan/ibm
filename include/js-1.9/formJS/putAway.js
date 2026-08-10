@@ -5,19 +5,30 @@ function PutAway(tabID){
     this.tabID = tabID;    
 
     var objAndValue = new Array;
-	objAndValue.push({object:'hidPalletKey[]', value :'pkey'});  
+	objAndValue.push({object:'hidPalletDetailKey[]', value :'pkey'});  
     var objAndValueForPalletDetailAutoComplete = objAndValue; 
 
-    this.importData = function importData()
+    this.importData = function importData(typekey)
     {
 
         // loadOverlayScreen({content: _LOADING_TEMPLATE_});
         thisObj.activeAjaxConnections = 0;
         
-        var refkey = tabObj.find("[name=hidRefKey]").val() || 0; 
-        thisObj.updateItemReceivingData();
-        var submissionNumber = tabObj.find("[name=submissionNumber]").val() || "";
-        
+        var refkey = tabObj.find("[name=hidRefKey]").val() || 0;
+
+        var action = "";
+        if (typekey == 1) {
+            thisObj.updateItemReceivingData();
+            var submissionNumber = tabObj.find("[name=submissionNumber]").val() || "";
+            action = "action=getDataForPutAway&pkey=" + refkey;
+        } else if (typekey == 2) {
+            var warehouselayoutoriginkey = tabObj.find("[name=hidWarehouseLayoutOriginKey]").val();
+            action = "action=getDataForZoneTransfer&pkey=" + refkey + "&warehouselayoutoriginkey=" + warehouselayoutoriginkey;
+        } else {
+            var warehouselayoutkey = tabObj.find("[name=hidWarehouseLayoutKey]").val();
+            action = "action=getDataForZoneTransfer&pkey=" + refkey + "&warehouselayoutoriginkey=" + warehouselayoutkey;
+        }
+
         if(!refkey) return;
 
         $.ajax({
@@ -27,7 +38,7 @@ function PutAway(tabID){
                 clearAllRows(tabObj.find(".mnv-transaction"));
                 thisObj.activeAjaxConnections++; 
             },
-            data: "action=getDataForPutAway&pkey=" + refkey ,
+            data: action,
             success: function(data){ 
     
                     if(!data) {                        
@@ -39,14 +50,25 @@ function PutAway(tabID){
                     var i;
                     for(i=0;i<data.length;i++){  
                         
-                            var arrPostValue = []; 
-                            arrPostValue.push({"selector":"hidItemReceivingDetailKey", "value":data[i].pkey});
-                            arrPostValue.push({"selector":"hidItemKey", "value":data[i].itemkey});
-                            arrPostValue.push({"selector":"itemName", "value":data[i].itemname});
-                            arrPostValue.push({"selector":"receivingQty", "value": data[i].qtyinbaseunit});
-                            arrPostValue.push({"selector":"putAwayQty", "value": data[i].putawayqty}); 
+                        var arrPostValue = []; 
+                        
+                        arrPostValue.push({"selector":"hidItemKey", "value":data[i].itemkey});
+                        arrPostValue.push({ "selector": "itemName", "value": data[i].itemname });
+                        
+                        if (typekey == 1) {
+                            arrPostValue.push({ "selector": "hidItemReceivingDetailKey", "value": data[i].pkey });
+                            arrPostValue.push({ "selector": "receivingQty", "value": data[i].qtyinbaseunit });
+                            arrPostValue.push({ "selector": "putAwayQty", "value": data[i].putawayqty });
+                        } else if (typekey == 2) {
+                             arrPostValue.push({ "selector": "hidItemReceivingHeaderKey", "value": data[i].refkey });
+                            arrPostValue.push({ "selector": "qty", "value": data[i].qtyinbaseunit });
+                        } else {
+                            arrPostValue.push({ "selector": "hidItemReceivingHeaderKey", "value": data[i].refkey });
+                            arrPostValue.push({ "selector": "qty", "value": data[i].qtyinbaseunit });
+                        }
                             
-                            addNewTemplateRow("detail-row-template",JSON.stringify(arrPostValue));  
+                        
+                        addNewTemplateRow("detail-row-template", JSON.stringify(arrPostValue));  
                     }
 
                    thisObj.rebindEl(); 
@@ -94,7 +116,8 @@ function PutAway(tabID){
     }
 
       
-    this.rebindEl = function rebindEl(){   
+    this.rebindEl = function rebindEl() {   
+        
         bindAutoCompleteForTransactionDetail('palletDetailName[]',objAndValueForPalletDetailAutoComplete,'ajax-pallet.php?action=searchData');
     } 
      

@@ -181,7 +181,7 @@ $generateReportContent = function ($dataset){
                     <td style="width: 150px;border-top:1px solid black;"><span>- '.$category.'</span><br><span>- '.$facility.' - '.$orderList.'</span></td>
                     <td style="width: 190px;border-top:1px solid black;"><span>- '.$qty.' '.$unit.'</span><br><span>- '.$qtyPackaging.' '.$packagingUnit.'</span><br><span>- '.$alcoholContent.'%</span><br><span>- '.$type.'</span><br><span>- '.$mililiter.'</span><br><span>- '.$qtyCarton.'</span>
                     </td>
-                    <td style="border-right:1px solid black;width: 110px;border-top:1px solid black;"><span>- CFR : '.$amount.'</span>
+                    <td style="border-right:1px solid black;width: 110px;border-top:1px solid black;"><span>- '.$amount.'</span>
                     </td>
                 </tr>';
             }

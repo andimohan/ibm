@@ -2,13 +2,13 @@
 require_once '../_config.php';
 require_once '../_include-v2.php';
 
-includeClass(array('GoodsOut.class.php', 'ItemReceiving.class.php', 'Currency.class.php', 'ItemUnit.class.php', 'Customer.class.php', 'DocumentType.class.php'));
+includeClass(array('GoodsOut.class.php', 'ItemReceiving.class.php', 'Currency.class.php', 'ItemUnit.class.php', 'Customer.class.php', 'DocumentType.class.php', 'WarehouseLayout.class.php'));
 $goodsOut = createObjAndAddToCol(new GoodsOut());
 $customer = createObjAndAddToCol(new Customer());
 $itemReceiving = createObjAndAddToCol(new ItemReceiving());
 $documentType = createObjAndAddToCol(new DocumentType());
 $currency = createObjAndAddToCol(new Currency());
-
+$warehouseLayout = createObjAndAddToCol(new WarehouseLayout());
 
 $obj = $goodsOut;
 $securityObject = $obj->securityObject; // the value of security object is manually inserted to handle 
@@ -63,6 +63,9 @@ if (!empty($_GET['id'])) {
 $arrCurrency = $currency->generateComboboxOpt(null, array('criteria' => ' and (' . $currency->tableName . '.statuskey = 1' . $editCurrencyInactiveCriteria . ')'));
 $arrDocumentType = $documentType->generateComboboxOpt(null, array('criteria' => ' and (' . $documentType->tableName . '.statuskey = 1 )'));
 $arrStatus = $obj->generateComboboxOpt(array('data' => $obj->getAllStatus(), 'label' => 'status'));
+
+$rsWarehouseLayout = $warehouseLayout->searchData('', '', true, ' and (' . $warehouseLayout->tableName . '.statuskey = 1 and ' . $warehouseLayout->tableName . '.istransit = 1)');
+$arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name');
 
 ?>
 
@@ -307,6 +310,9 @@ $arrStatus = $obj->generateComboboxOpt(array('data' => $obj->getAllStatus(), 'la
                         <?php echo ucwords($obj->lang['itemReceiving']); ?>
                     </div>
                     <div class=" div-table-col detail-col-header" style="width:150px;">
+                        <?php echo ucwords($obj->lang['warehouseLayout']); ?>
+                    </div>
+                    <div class=" div-table-col detail-col-header" style="width:150px;">
                         <?php echo ucwords($obj->lang['submissionNumber']); ?>
                     </div>
                     <div class=" div-table-col detail-col-header" style="width:150px;">
@@ -323,6 +329,9 @@ $arrStatus = $obj->generateComboboxOpt(array('data' => $obj->getAllStatus(), 'la
                     </div>
                     <div class="div-table-col detail-col-header" style="width:120px; text-align:right;">
                         <?php echo ucwords($obj->lang['qty']); ?>
+                    </div>
+                    <div class="div-table-col detail-col-header" style="width:150px; text-align:right;">
+                        <?php echo ucwords($obj->lang['value']); ?>
                     </div>
                     <div class="div-table-col detail-col-header  icon-col <?php echo $obj->hideOnDisabled(); ?>">
                     </div>
@@ -352,14 +361,16 @@ $arrStatus = $obj->generateComboboxOpt(array('data' => $obj->getAllStatus(), 'la
                         $_POST['hidDetailKey[]'] = $rsDetail[$i]['pkey'];
                         $_POST['hidRefReceivingHeaderKey[]'] = $rsDetail[$i]['refreceivingheaderkey'];
                         $_POST['hidRefReceivingDetailKey[]'] = $rsDetail[$i]['refreceivingdetailkey'];
+                        $_POST['selWarehouseLayoutDetail[]'] = $rsDetail[$i]['warehouselayoutkey'];
                         $_POST['itemReceiving[]'] = $rsDetail[$i]['receivingcode'];
                         $_POST['submissionDetailNumber[]'] = $rsDetail[$i]['submissionnumber'];
                         $_POST['hidItemKey[]'] = $rsDetail[$i]['itemkey'];
                         $_POST['itemCode[]'] = $rsDetail[$i]['itemcode'];
                         $_POST['itemName[]'] = $rsDetail[$i]['itemname'];
                         $_POST['itemQty[]'] = $obj->formatNumber($rsDetail[$i]['itemqty']);
-                        $_POST['issuedQty[]'] = $obj->formatNumber($rsDetail[$i]['qtyissued']);
+                        $_POST['issuedQty[]'] = $obj->formatNumber($rsDetail[$i]['issuedqty']);
                         $_POST['qty[]'] = $obj->formatNumber($rsDetail[$i]['qty']);
+                        $_POST['amount[]'] = $obj->formatNumber($rsDetail[$i]['amount']);
 
                     }
 
@@ -371,6 +382,9 @@ $arrStatus = $obj->generateComboboxOpt(array('data' => $obj->getAllStatus(), 'la
                             <?php echo $obj->inputHidden('hidRefReceivingHeaderKey[]', array('overwritePost' => $overwrite, 'etc' => $etc, )); ?>
                             <?php echo $obj->inputHidden('hidRefReceivingDetailKey[]', array('overwritePost' => $overwrite, 'etc' => $etc, )); ?>
                             <?php echo $obj->inputText('itemReceiving[]', array('overwritePost' => $overwrite, 'readonly' => true, 'etc' => $etc, 'class' => 'form-control mnv-barcode-input')); ?>
+                        </div>
+                        <div class="div-table-col detail-col-detail">
+                            <?php echo $obj->inputSelect('selWarehouseLayoutDetail[]', $arrWarehouseLayout, array('overwritePost' => $overwrite, 'etc' => $etc . ' placeholder="' . $obj->lang['warehouseLayout'] . '" ', 'add-class' => '')); ?>
                         </div>
                         <div class="div-table-col detail-col-detail">
                             <?php echo $obj->inputText('submissionDetailNumber[]', array('overwritePost' => $overwrite, 'readonly' => true, 'etc' => $etc, 'class' => 'form-control mnv-barcode-input')); ?>
@@ -389,7 +403,10 @@ $arrStatus = $obj->generateComboboxOpt(array('data' => $obj->getAllStatus(), 'la
                             <?php echo $obj->inputNumber('issuedQty[]', array('readonly' => true, 'overwritePost' => $overwrite, 'etc' => 'style="text-align:right;" ' . $etc)); ?>
                         </div>
                         <div class="div-table-col detail-col-detail">
-                            <?php echo $obj->inputNumber('qty[]', array('allowedStatusForEdit' => array(1,2),'readonly' => false, 'overwritePost' => $overwrite, 'etc' => 'style="text-align:right;" ' . $etc)); ?>
+                            <?php echo $obj->inputNumber('qty[]', array('allowedStatusForEdit' => array(1, 2), 'readonly' => false, 'overwritePost' => $overwrite, 'etc' => 'style="text-align:right;" ' . $etc)); ?>
+                        </div>
+                        <div class="div-table-col detail-col-detail">
+                            <?php echo $obj->inputNumber('amount[]', array('allowedStatusForEdit' => array(1, 2), 'readonly' => false, 'overwritePost' => $overwrite, 'etc' => 'style="text-align:right;" ' . $etc)); ?>
                         </div>
                         <div class="div-table-col detail-col-detail icon-col <?php echo $obj->hideOnDisabled(); ?>">
                             <?php echo $obj->inputLinkButton('btnDeleteRows', '<i class="fas fa-times"></i>', array('etc' => 'tabIndex="-1"', 'class' => 'btn btn-link remove-button')); ?>

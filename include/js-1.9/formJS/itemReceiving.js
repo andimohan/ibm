@@ -262,6 +262,8 @@ function ItemReceiving(tabID, fileUpload){
             } else {
                 addNewTemplateRow("detail-row-template");
             }
+            // tabObj.find(".inputnumber, .input-integer").blur();  
+            tabObj.find(".inputnumber, .input-integer, .inputdecimal").blur();  
 
         });
 

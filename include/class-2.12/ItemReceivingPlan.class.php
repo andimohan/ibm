@@ -15,14 +15,14 @@ class ItemReceivingPlan extends BaseClass
         $this->tableWarehouseLayout = 'warehouse_layout';
         $this->tableStatus = 'transaction_status';
         $this->tableBrand = 'brand';
-        $this->tableItemCategory = 'item_category';  
-        $this->tableCountry = 'country';  
+        $this->tableItemCategory = 'item_category';
+        $this->tableCountry = 'country';
 
         $this->isTransaction = true;
         $this->securityObject = 'ItemReceivingPlan';
 
         $this->uploadFileFolder = 'item-receiving-plan/';
-        $this->useStorage  =  array(); //$this->useStorage('S3');
+        $this->useStorage = array(); //$this->useStorage('S3');
 
         $this->arrDetail = array();
         $this->arrDetail['pkey'] = array('hidDetailKey');
@@ -81,9 +81,9 @@ class ItemReceivingPlan extends BaseClass
         $this->arrData['trdesc'] = array('trDesc');
         $this->arrData['statuskey'] = array('selStatus');
 
-        $this->importUrl = 'import/itemReceiving';
+        $this->importUrl = 'import/itemReceivingPlan';
 
-        $this->arrData['file'] = array('item-file-uploader', array('datatype' => 'file', 'uploadFolder' => $this->uploadFileFolder,  'token' => 'token-item-file-uploader', 'fileName' => 'item-file-uploader'));
+        $this->arrData['file'] = array('item-file-uploader', array('datatype' => 'file', 'uploadFolder' => $this->uploadFileFolder, 'token' => 'token-item-file-uploader', 'fileName' => 'item-file-uploader'));
 
         $this->arrDataListAvailableColumn = array();
         array_push($this->arrDataListAvailableColumn, array('code' => 'code', 'title' => 'code', 'dbfield' => 'code', 'default' => true, 'width' => 100));
@@ -166,7 +166,7 @@ class ItemReceivingPlan extends BaseClass
 
         $arrItemCode = $arr['itemDetailCode'];
         $arrItemName = $arr['itemDetailName'];
-        
+
         if (empty($customerkey)) {
             $this->addErrorList($arrayToJs, false, $this->errorMsg['customer'][1]);
         }
@@ -182,13 +182,13 @@ class ItemReceivingPlan extends BaseClass
         if (empty($arrItemName[0])) {
             $this->addErrorList($arrayToJs, false, $this->errorMsg[501]);
         } else {
-            for ($i=0; $i < count($arrItemName); $i++) {
+            for ($i = 0; $i < count($arrItemName); $i++) {
                 if (empty($arrItemName[$i])) {
                     $this->addErrorList($arrayToJs, false, $this->errorMsg['item'][1]);
                 }
             }
         }
-        
+
         return $arrayToJs;
     }
 
@@ -197,14 +197,14 @@ class ItemReceivingPlan extends BaseClass
     {
         $sql = 'select
 	   			' . $this->tableNameDetail . '.*,
-                '.$this->tableBrand.'.name as brandname,
-                '.$this->tableItemCategory.'.name as typename,
-                '.$this->tableCountry.'.name as countryname
+                ' . $this->tableBrand . '.name as brandname,
+                ' . $this->tableItemCategory . '.name as typename,
+                ' . $this->tableCountry . '.name as countryname
 			  from
 			  	' . $this->tableNameDetail . '
-                left join  '.$this->tableBrand.' on '. $this->tableNameDetail .'.brandkey = '.$this->tableBrand.'.pkey
-                left join  '.$this->tableItemCategory.' on '. $this->tableNameDetail .'.typekey = '.$this->tableItemCategory.'.pkey
-                left join  '.$this->tableCountry.' on '. $this->tableNameDetail .'.countrykey = '.$this->tableCountry.'.pkey
+                left join  ' . $this->tableBrand . ' on ' . $this->tableNameDetail . '.brandkey = ' . $this->tableBrand . '.pkey
+                left join  ' . $this->tableItemCategory . ' on ' . $this->tableNameDetail . '.typekey = ' . $this->tableItemCategory . '.pkey
+                left join  ' . $this->tableCountry . ' on ' . $this->tableNameDetail . '.countrykey = ' . $this->tableCountry . '.pkey
 			  where
 			  	' . $this->tableNameDetail . '.refkey in (' . $this->oDbCon->paramString($pkey, ',') . ') ';
 
@@ -213,36 +213,38 @@ class ItemReceivingPlan extends BaseClass
         return $this->oDbCon->doQuery($sql);
     }
 
-    function validateConfirm($rsHeader){
+    function validateConfirm($rsHeader)
+    {
 
         $item = new Item();
 
         $id = $rsHeader[0]['pkey'];
-        
-    
+
+
         //cek apakah ada kode barang yang sama, kalau ada tidak boleh
         $rsDetail = $this->getDetailWithRelatedInformation($id);
-        $rsItem = $item->searchData('','',true);
-        
+        $rsItem = $item->searchData('', '', true);
+
         $rsItemCodes = array_column($rsItem, 'itemcode');
 
         $arrErrMsg = array();
-        for($i=0; $i<count($rsDetail); $i++){
-            
+        for ($i = 0; $i < count($rsDetail); $i++) {
+
             $detailItemCode = $rsDetail[$i]['itemcode'];
 
-            if(empty($detailItemCode)) continue;
+            if (empty($detailItemCode))
+                continue;
 
-            if(in_array($detailItemCode, $rsItemCodes)){
-                array_push($arrErrMsg, '<strong>'.$detailItemCode.'.</strong> '.$this->errorMsg['itemReceiving'][1]);
+            if (in_array($detailItemCode, $rsItemCodes)) {
+                array_push($arrErrMsg, '<strong>' . $detailItemCode . '.</strong> ' . $this->errorMsg['itemReceiving'][1]);
             }
         }
 
-        if(!empty($arrErrMsg)){
-            $this->addErrorLog(false,'<strong>'.$rsHeader[0]['code'].'</strong>. '. $this->errorMsg[201] .'<br>'.implode('<br>', $arrErrMsg));
+        if (!empty($arrErrMsg)) {
+            $this->addErrorLog(false, '<strong>' . $rsHeader[0]['code'] . '</strong>. ' . $this->errorMsg[201] . '<br>' . implode('<br>', $arrErrMsg));
         }
-		  
-	}
+
+    }
 
 
     function confirmTrans($rsHeader)
@@ -251,19 +253,21 @@ class ItemReceivingPlan extends BaseClass
 
     }
 
-    function validateCancel($rsHeader,$autoChangeStatus=false){  
-		
-	 }
-    
-     function cancelTrans($rsHeader,$copy){  
-         
+    function validateCancel($rsHeader, $autoChangeStatus = false)
+    {
+
+    }
+
+    function cancelTrans($rsHeader, $copy)
+    {
+
         $pkey = $rsHeader[0]['pkey'];
 
-		
-		if ($copy){ 			
-			$this->copyDataOnCancel($pkey);
+
+        if ($copy) {
+            $this->copyDataOnCancel($pkey);
         }
-	}    
+    }
 
 
     function normalizeParameter($arrParam, $trim = false)
@@ -272,5 +276,5 @@ class ItemReceivingPlan extends BaseClass
 
         return $arrParam;
     }
-    
+
 }

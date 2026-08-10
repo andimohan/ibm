@@ -3,7 +3,7 @@ require_once '../../_config.php';
 require_once '_include.php';
 require_once 'function-v2.php';
 
-require_once DOC_ROOT . 'include/' . CLASS_VERSION . '/ItemReceiving.class.php';
+require_once DOC_ROOT . 'include/' . CLASS_VERSION . '/ItemReceivingPlan.class.php';
 require_once DOC_ROOT . 'include/' . CLASS_VERSION . '/Warehouse.class.php';
 require_once DOC_ROOT . 'include/' . CLASS_VERSION . '/Customer.class.php';
 require_once DOC_ROOT . 'include/' . CLASS_VERSION . '/Supplier.class.php';
@@ -16,7 +16,7 @@ require_once DOC_ROOT . 'include/' . CLASS_VERSION . '/Country.class.php';
 require_once DOC_ROOT . 'include/' . CLASS_VERSION . '/ItemUnit.class.php';
 
 
-$OBJ = new ItemReceiving();
+$OBJ = new ItemReceivingPlan();
 $customer = new Customer();
 $supplier = new Supplier();
 $warehouse = new Warehouse();

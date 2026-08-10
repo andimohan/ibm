@@ -3,7 +3,7 @@ require_once '../_config.php';
 require_once '../_include-v2.php';
 
 includeClass(array('PutAway.class.php', 'WarehouseLayout.class.php', 'Pallet.class.php', 'ItemReceiving.class.php', 'Pallet.class.php'));
-$putAway = createObjAndAddToCol(new PutAway(1));
+$putAway = createObjAndAddToCol(new PutAway(3));
 $warehouse = createObjAndAddToCol(new Warehouse());
 $warehouseLayout = createObjAndAddToCol(new WarehouseLayout());
 $pallet = createObjAndAddToCol(new Pallet());
@@ -17,7 +17,7 @@ $securityObject = $obj->securityObject; // the value of security object is manua
 if (!$security->isAdminLogin($securityObject, 10, true))
     ;
 
-$formAction = 'putAwayList';
+$formAction = 'pickingList';
 
 $isQuickAdd = (isset($_GET) && !empty($_GET['quickadd'])) ? true : false;
 
@@ -28,20 +28,17 @@ $rsItemFile = array();
 $rsDetail = array();
 
 $_POST['trDate'] = date('d / m / Y');
-$_POST['trPutAwayDate'] = date('d / m / Y');
-$_POST['selTypeKey'] = 1;
+$_POST['selTypeKey'] = 3;
 
 $rs = prepareOnLoadData($obj);
 
-
+$arrPalletDetail = array();
 if (!empty($_GET['id'])) {
     $id = $_GET['id'];
 
-    $rsWarehouseLayout = $warehouseLayout->getDataByWarehouse($rs[0]['warehousekey']);
     $rsDetail = $obj->getDetailWithRelatedInformation($id);
 
     $_POST['trDate'] = $obj->formatDBDate($rs[0]['trdate'], 'd / m / Y');
-    $_POST['trPutAwayDate'] = $obj->formatDBDate($rs[0]['putawaydate'], 'd / m / Y');
 
     if (!empty($rs[0]['warehouselayoutkey'])) {
 
@@ -50,11 +47,11 @@ if (!empty($_GET['id'])) {
         $_POST['warehouseLayoutName'] = $rsLocation[0]['name'];
     }
 
-    if (!empty($rs[0]['warehouselayoutoriginkey'])) {
+    if (!empty($rs[0]['warehouselayoutkey'])) {
 
-        $rsLocation = $warehouseLayout->getDataRowById($rs[0]['warehouselayoutoriginkey']);
-        $_POST['hidWarehouseLayoutOriginKey'] = $rsLocation[0]['pkey'];
-        $_POST['warehouseLayoutOriginName'] = $rsLocation[0]['name'];
+        $rsLocation = $warehouseLayout->getDataRowById($rs[0]['warehouselayoutkey']);
+        $_POST['hidWarehouseLayoutKey'] = $rsLocation[0]['pkey'];
+        $_POST['warehouseLayoutName'] = $rsLocation[0]['name'];
     }
 
     $_POST['selWarehouseKey'] = $rs[0]['warehousekey'];
@@ -62,18 +59,21 @@ if (!empty($_GET['id'])) {
     if (!empty($rs[0]['palletkey'])) {
         $rsPallet = $pallet->getDataRowById($rs[0]['palletkey']);
         $_POST['hidPalletKey'] = $rsPallet[0]['pkey'];
-        $_POST['palletName'] = $rsPallet[0]['name'];
+        $_POST['palletName'] = $rsPallet[0]['code'] . ' - ' . $rsPallet[0]['name'];
     }
 
     if (!empty($rs[0]['refkey'])) {
         $rsRef = $itemReceiving->getDataRowById($rs[0]['refkey']);
         $_POST['hidRefKey'] = $rsRef[0]['pkey'];
-        $_POST['refCode'] = $rsRef[0]['code'];
+        $_POST['refCode'] = $rsRef[0]['submissionnumber'];
     }
 
-    $_POST['submissionNumber'] = $rs[0]['submissionnumber'];
+    //$_POST['submissionNumber'] = $rs[0]['submissionnumber'];
 
-    $_POST['selTypeKey'] = 1;
+    $_POST['selStatus'] = $rs[0]['statuskey'];
+    $_POST['selTypeKey'] = 3;
+
+
 
 }
 
@@ -81,6 +81,7 @@ $arrStatus = $obj->generateComboboxOpt(array('data' => $obj->getAllStatus(), 'la
 $arrWarehouse = $warehouse->generateComboboxOpt(null, array('criteria' => ' and (' . $warehouse->tableName . '.statuskey = 1)'));
 
 ?>
+
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -124,9 +125,7 @@ $arrWarehouse = $warehouse->generateComboboxOpt(null, array('criteria' => ' and 
 
         <form id="defaultForm" method="post" class="form-horizontal" action="<?php echo $formAction; ?>">
             <?php prepareOnLoadDataForm($obj); ?>
-
             <?php echo $obj->inputHidden('selTypeKey', array('readonly' => true)); ?>
-
             <div class="div-table main-tab-table-2">
                 <div class="div-table-row">
                     <div class="div-table-col">
@@ -156,14 +155,37 @@ $arrWarehouse = $warehouse->generateComboboxOpt(null, array('criteria' => ' and 
 
                             <div class="form-group">
                                 <label
-                                    class="col-xs-3 control-label"><?php echo ucwords($obj->lang['putAwayDate']); ?></label>
+                                    class="col-xs-3 control-label"><?php echo ucwords($obj->lang['warehouse']); ?></label>
                                 <div class="col-xs-9">
-                                    <?php echo $obj->inputDate('trPutAwayDate'); ?>
+                                    <?php echo $obj->inputSelect('selWarehouseKey', $arrWarehouse); ?>
                                 </div>
                             </div>
+
+                            <div class="form-group">
+                                <label
+                                    class="col-xs-3 control-label"><?php echo ucwords($obj->lang['warehouseLayout']); ?></label>
+                                <div class="col-xs-9">
+                                    <?php echo $obj->inputAutoComplete(
+                                        array(
+                                            'objRefer' => $warehouseLayout,
+                                            'element' => array(
+                                                'value' => 'warehouseLayoutName',
+                                                'key' => 'hidWarehouseLayoutKey'
+                                            ),
+                                            'source' => array(
+                                                'url' => 'ajax-warehouse-layout.php',
+                                                'data' => array('action' => 'searchData', 'statuskey' => '(1)', 'searchField' => 'code,name')
+                                            ),
+                                            'readonly' => false
+                                        )
+                                    );
+                                    ?>
+                                </div>
+                            </div>
+
                             <div class="form-group coa-link">
                                 <label
-                                    class="col-xs-3 control-label"><?php echo ucwords($obj->lang['itemReceiving']); ?></label>
+                                    class="col-xs-3 control-label"><?php echo ucwords($obj->lang['submissionNumber']); ?></label>
                                 <div class="col-xs-9">
                                     <?php echo $obj->inputAutoComplete(
                                         array(
@@ -174,85 +196,9 @@ $arrWarehouse = $warehouse->generateComboboxOpt(null, array('criteria' => ' and 
                                             ),
                                             'source' => array(
                                                 'url' => 'ajax-item-receiving.php',
-                                                'data' => array('action' => 'searchData', 'statuskey' => '(2)', 'searchField' => 'code,submissionnumber')
+                                                'data' => array('action' => 'searchData', 'statuskey' => '(2)', 'searchField' => 'submissionnumber')
                                             ),
-                                            'callbackFunction' => 'getTabObj().importData(1)'
-                                        )
-                                    );
-                                    ?>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label
-                                    class="col-xs-3 control-label"><?php echo ucwords($obj->lang['submissionNumber']); ?></label>
-                                <div class="col-xs-9">
-                                    <?php echo $obj->inputText('submissionNumber', array('readonly' => true)); ?>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label
-                                    class="col-xs-3 control-label"><?php echo ucwords($obj->lang['warehouse']); ?></label>
-                                <div class="col-xs-9">
-                                    <?php echo $obj->inputSelect('selWarehouseKey', $arrWarehouse); ?>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label
-                                    class="col-xs-3 control-label"><?php echo ucwords($obj->lang['warehouseLayout']); ?></label>
-                                <div class="col-xs-9">
-                                    <div class="flex">
-                                        <div class="consume">
-                                            <?php echo $obj->inputAutoComplete(
-                                                array(
-                                                    'objRefer' => $warehouseLayout,
-                                                    'element' => array(
-                                                        'value' => 'warehouseLayoutOriginName',
-                                                        'key' => 'hidWarehouseLayoutOriginKey'
-                                                    ),
-                                                    'source' => array(
-                                                        'url' => 'ajax-warehouse-layout.php',
-                                                        'data' => array('action' => 'searchData', 'statuskey' => '(1)', 'searchField' => 'code,name')
-                                                    ),
-                                                    'readonly' => true
-                                                )
-                                            );
-                                            ?>
-                                        </div>
-                                        <div>-</div>
-                                        <div class="consume">
-                                            <?php echo $obj->inputAutoComplete(
-                                                array(
-                                                    'objRefer' => $warehouseLayout,
-                                                    'element' => array(
-                                                        'value' => 'warehouseLayoutName',
-                                                        'key' => 'hidWarehouseLayoutKey'
-                                                    ),
-                                                    'source' => array(
-                                                        'url' => 'ajax-warehouse-layout.php',
-                                                        'data' => array('action' => 'searchData', 'statuskey' => '(1)', 'searchField' => 'code,name')
-                                                    )
-                                                )
-                                            );
-                                            ?>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group coa-link">
-                                <label
-                                    class="col-xs-3 control-label"><?php echo ucwords($obj->lang['pallet']); ?></label>
-                                <div class="col-xs-9">
-                                    <?php echo $obj->inputAutoComplete(
-                                        array(
-                                            'objRefer' => $pallet,
-                                            'element' => array(
-                                                'value' => 'palletName',
-                                                'key' => 'hidPalletKey'
-                                            ),
-                                            'source' => array(
-                                                'url' => 'ajax-pallet.php',
-                                                'data' => array('action' => 'searchData', 'statuskey' => '(1)', 'searchField' => 'name')
-                                            )
+                                            'callbackFunction' => 'getTabObj().importData(3)'
                                         )
                                     );
                                     ?>
@@ -282,16 +228,6 @@ $arrWarehouse = $warehouse->generateComboboxOpt(null, array('criteria' => ' and 
 
                 <div class="div-table-row">
                     <div class=" div-table-col detail-col-header"><?php echo ucwords($obj->lang['itemName']); ?></div>
-                    <!-- <div class=" div-table-col detail-col-header"  style="width:150px;"><?php echo ucwords($obj->lang['containerNumber']); ?></div> -->
-                    <div class=" div-table-col detail-col-header" style="width:150px;">
-                        <?php echo ucwords($obj->lang['pallet']); ?>
-                    </div>
-                    <div class="div-table-col detail-col-header" style="width:150px; text-align:right;">
-                        <?php echo ucwords($obj->lang['receivedQty']); ?>
-                    </div>
-                    <div class="div-table-col detail-col-header" style="width:150px; text-align:right;">
-                        <?php echo ucwords($obj->lang['afterPutAwayQty']); ?>
-                    </div>
                     <div class="div-table-col detail-col-header" style="width:150px; text-align:right;">
                         <?php echo ucwords($obj->lang['qty']); ?>
                     </div>
@@ -305,6 +241,7 @@ $arrWarehouse = $warehouse->generateComboboxOpt(null, array('criteria' => ' and 
 
                     $class = 'transaction-detail-row';
                     $overwrite = true;
+                    $readonly = true;
                     $etc = '';
                     $txtSN = '';
                     $showOptions = false;
@@ -312,21 +249,16 @@ $arrWarehouse = $warehouse->generateComboboxOpt(null, array('criteria' => ' and 
                     if ($i == $totalRows) {
                         $class = 'detail-row-template';
                         $overwrite = false;
+                        $readonly = false;
                         $etc = 'disabled="disabled"';
                     } else {
 
                         $baseunitname = $rsDetail[$i]['baseunitname'];
 
                         $_POST['hidDetailKey[]'] = $rsDetail[$i]['pkey'];
-                        $_POST['hidItemReceivingDetailKey[]'] = $rsDetail[$i]['itemreceivingdetailkey'];
-
-                        $_POST['hidPalletDetailKey[]'] = $rsDetail[$i]['palletkey'];
-                        $_POST['palletDetailName[]'] = $rsDetail[$i]['palletname'];
+                        $_POST['hidItemReceivingHeaderKey[]'] = $rsDetail[$i]['itemreceivingheaderkey'];
                         $_POST['hidItemKey[]'] = $rsDetail[$i]['itemkey'];
                         $_POST['itemName[]'] = $rsDetail[$i]['itemname'];
-                        $_POST['containerNumber[]'] = $rsDetail[$i]['containernumber'];
-                        $_POST['receivingQty[]'] = $obj->formatNumber($rsDetail[$i]['receivingqty']);
-                        $_POST['putAwayQty[]'] = $obj->formatNumber($rsDetail[$i]['putawayqty']);
                         $_POST['qty[]'] = $obj->formatNumber($rsDetail[$i]['qty']);
 
                     }
@@ -336,23 +268,12 @@ $arrWarehouse = $warehouse->generateComboboxOpt(null, array('criteria' => ' and 
                     <div class="div-table-row  <?php echo $class; ?>">
                         <div class="div-table-col detail-col-detail" style="vertical-align:top;">
                             <?php echo $obj->inputHidden('hidDetailKey[]', array('overwritePost' => $overwrite, 'etc' => $etc, )); ?>
-                            <?php echo $obj->inputHidden('hidItemReceivingDetailKey[]', array('overwritePost' => $overwrite, 'etc' => $etc, )); ?>
+                            <?php echo $obj->inputHidden('hidItemReceivingHeaderKey[]', array('overwritePost' => $overwrite, 'etc' => $etc, )); ?>
                             <?php echo $obj->inputHidden('hidItemKey[]', array('overwritePost' => $overwrite, 'etc' => $etc, )); ?>
                             <?php echo $obj->inputText('itemName[]', array('overwritePost' => $overwrite, 'readonly' => true, 'etc' => $etc, 'class' => 'form-control mnv-barcode-input')); ?>
                         </div>
-                        <!-- <div class="div-table-col detail-col-detail"><?php echo $obj->inputText('containerNumber[]', array('overwritePost' => $overwrite, 'etc' => 'style="text-align:right;" ' . $etc)); ?></div> -->
-                        <div class="div-table-col detail-col-detail" style="vertical-align:top;">
-                            <?php echo $obj->inputHidden('hidPalletDetailKey[]', array('overwritePost' => $overwrite, 'etc' => $etc, )); ?>
-                            <?php echo $obj->inputText('palletDetailName[]', array('overwritePost' => $overwrite, 'readonly' => false, 'etc' => $etc, 'class' => 'form-control mnv-barcode-input')); ?>
-                        </div>
                         <div class="div-table-col detail-col-detail">
-                            <?php echo $obj->inputNumber('receivingQty[]', array('overwritePost' => $overwrite, 'readonly' => true, 'etc' => 'style="text-align:right;" ' . $etc)); ?>
-                        </div>
-                        <div class="div-table-col detail-col-detail">
-                            <?php echo $obj->inputNumber('putAwayQty[]', array('overwritePost' => $overwrite, 'readonly' => true, 'etc' => 'style="text-align:right;" ' . $etc)); ?>
-                        </div>
-                        <div class="div-table-col detail-col-detail">
-                            <?php echo $obj->inputNumber('qty[]', array('allowedStatusForEdit' => array(1, 2), 'overwritePost' => $overwrite, 'etc' => 'style="text-align:right;" ' . $etc)); ?>
+                            <?php echo $obj->inputNumber('qty[]', array('readonly' => $readonly, 'overwritePost' => $overwrite, 'etc' => 'style="text-align:right;" ' . $etc)); ?>
                         </div>
 
                         <div class="div-table-col detail-col-detail icon-col <?php echo $obj->hideOnDisabled(); ?>">

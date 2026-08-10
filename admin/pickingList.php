@@ -3,7 +3,7 @@ require_once '../_config.php';
 require_once '../_include-v2.php';
 
 includeClass('PutAway.class.php');
-$putAway = createObjAndAddToCol(new PutAway(2));
+$putAway = createObjAndAddToCol(new PutAway(3));
 
 $obj = $putAway;
 $securityObject = $obj->securityObject; // the value of security object is manually inserted to handle 
@@ -12,7 +12,7 @@ $securityObject = $obj->securityObject; // the value of security object is manua
 if (!$security->isAdminLogin($securityObject, 10, true))
     ;
 
-$addDataFile = 'zoneTransferForm';
+$addDataFile = 'pickingForm';
 $quickView = false;
 
 $overwriteContextMenu['showDetail'] = '';

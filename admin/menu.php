@@ -213,6 +213,7 @@
      pushMenuItem($submenuitem , array('label' => $class->lang['itemReceiving'],   'securityObject' => 'ItemReceiving',   'phplist' => 'itemReceivingList', 'target' => 'tab'));
      pushMenuItem($submenuitem , array('label' => $class->lang['putAway'],   'securityObject' => 'PutAway',   'phplist' => 'putAwayList', 'target' => 'tab')); 
      pushMenuItem($submenuitem , array('label' => $class->lang['zoneTransfer'],   'securityObject' => 'ZoneTransfer',   'phplist' => 'zoneTransferList', 'target' => 'tab'));
+     pushMenuItem($submenuitem  , array('label' => $class->lang['picking'], 'securityObject' => 'PutAway', 'phplist' => 'pickingList', 'target' => 'tab'));
      pushMenuItem($submenuitem , array('label' => $class->lang['labeling'], 'securityObject' => 'Labeling', 'phplist' => 'labelingList', 'target' => 'tab'));
      pushMenuItem($submenuitem , array('label' => $class->lang['itemOut'], 'securityObject' => 'GoodsOut', 'phplist' => 'goodsOutList', 'target' => 'tab'));
      pushMenuItem($submenuitem , array ('label' => $class->lang['itemInReceive'],   'securityObject' => 'ItemInReceive',   'phplist' => 'itemInReceiveList', 'target' => 'tab' ));

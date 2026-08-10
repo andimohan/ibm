@@ -61,6 +61,7 @@ $importModule['costRatePraja'] = array('title' => $class->lang['costRate'], 'fil
 $importModule['jobOrderAndSpkMTI'] = array('title' => $class->lang['jobOrder'], 'file' => 'importJobOrderAndSPKMTI', 'templateFile' => '../report/reportTruckingServiceOrder', 'securityObj' => 'TruckingServiceOrder');
 $importModule['purchasePricing'] = array('title' => $class->lang['purchasePricing'], 'file' => 'importPurchasePricing', 'templateFile' => '../report/reportPurchasePricing', 'securityObj' => 'PurchasePricing');
 $importModule['itemReceiving'] = array('title' => $class->lang['itemReceiving'], 'file' => 'importItemReceiving', 'templateFile' => '../report/reportItemReceiving', 'securityObj' => 'ItemReceiving');
+$importModule['itemReceivingPlan'] = array('title' => $class->lang['itemReceivingPlan'], 'file' => 'importItemReceivingPlan', 'templateFile' => '../report/reportItemReceivingPlan', 'securityObj' => 'ItemReceivingPlan');
 
 $module = $importModule[$moduleIndex]; 
 if(!$security->isAdminLogin($module['securityObj'],11,true)); 

@@ -44,20 +44,24 @@ function GoodsOut(tabID)
 							
 							var arrPostValue = []; 
 							
-							var outstanding = parseInt(data[i].qtylabeled) - parseInt(data[i].issuedqty);
+								// var outstanding = parseInt(data[i].qtylabeled) - parseInt(data[i].issuedqty);
 
 	                            arrPostValue.push({"selector":"hidRefReceivingHeaderKey", "value":data[i].pkey});
-	                            arrPostValue.push({"selector":"hidRefReceivingDetailKey", "value":data[i].detailkey});
+								arrPostValue.push({ "selector": "hidRefReceivingDetailKey", "value": data[i].detailkey });
+							 	arrPostValue.push({"selector":"selWarehouseLayoutDetail", "value":data[i].warehouselayoutkey});
 	                            arrPostValue.push({"selector":"itemReceiving", "value":data[i].code});
 	                            arrPostValue.push({"selector":"submissionDetailNumber", "value":data[i].submissionnumber});  
 	                            arrPostValue.push({"selector":"hidItemKey", "value":data[i].itemkey});  
 	                            arrPostValue.push({"selector":"itemCode", "value":data[i].itemcode});  
 	                            arrPostValue.push({"selector":"itemName", "value":data[i].label});  
-	                            arrPostValue.push({"selector":"itemQty", "value":data[i].qtylabeled});  
+	                            arrPostValue.push({"selector":"itemQty", "value":data[i].quantity});  
 								arrPostValue.push({ "selector": "issuedQty", "value": data[i].issuedqty });  
-								arrPostValue.push({ "selector": "qty", "value": outstanding});  
+								arrPostValue.push({ "selector": "qty", "value": data[i].outstanding });  
+								arrPostValue.push({ "selector": "amount", "value": data[i].amount});  
+								
 	                            
-							newrow = addNewTemplateRow("detail-row-template", JSON.stringify(arrPostValue)); 
+							newrow = addNewTemplateRow("detail-row-template", JSON.stringify(arrPostValue));
+							newrow.find("[name='selWarehouseLayoutDetail[]']").val(data[i].warehouselayoutkey).attr("selected", true).trigger("change");
                          
 	                    }
 
@@ -82,7 +86,8 @@ function GoodsOut(tabID)
     this.rebindEl = function rebindEl() {   
     } 
          
-    this.loadOnReady = function loadOnReady() {  
+	this.loadOnReady = function loadOnReady() {  
+		tabObj.find("[name='selWarehouseLayoutDetail[]']").attr('readonly', true);
         tabObj.find("[name=btnImport]").on('click', function() { thisObj.importData(); }); 
         thisObj.rebindEl(); 
     }
