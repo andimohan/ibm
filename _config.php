@@ -62,7 +62,7 @@
     if(in_array(DOMAIN_NAME,array('okl.wintera.co.id','eagle.wintera.co.id','trioeaglelogistic.wintera.co.id','marvel.wintera.co.id','airtel.wintera.co.id'))) 
         $apiVersion = 'v2/';
   
-    define('API_URL', (IS_DEVELOPMENT) ? 'https://minerva.local/api/'.$apiVersion : HTTP_HOST.'api/'.$apiVersion );
+    define('API_URL', (IS_DEVELOPMENT) ? 'https://ibm.local/api/'.$apiVersion : HTTP_HOST.'api/'.$apiVersion );
  
     define('DOMAIN_FOLDER',strtolower(DOMAIN_NAME).'/');
     define('UPLOAD_TEMP_DOC', DOC_ROOT. '../_temp/' .DOMAIN_FOLDER);

@@ -1595,7 +1595,6 @@ class Customer extends BaseClass{
 			$arrParam['hidICACOAKey'] = 0;
 			$arrParam['hidAPICACOAKey'] = 0;
 		}
-		 
 		
         $arrParam = parent::normalizeParameter($arrParam,true); 
         
@@ -1775,7 +1774,6 @@ class Customer extends BaseClass{
 			
 				// ambil semua transaksi karena perlu hitung ulang total brp thn user perpanjang ?
 			 	$arrActivePeriod = $this->calculateActiveSubscriptionPeriod($pkey);
- 				//$this->setLog($arrActivePeriod,true);
 			
 				$totalSubscription = $arrActivePeriod['totalsubscription'];
 				$totalActivePeriod = $arrActivePeriod['activeperiodmonth'];
@@ -1802,7 +1800,6 @@ class Customer extends BaseClass{
 					'.$this->tableName.'.membershiplevel = '.$this->oDbCon->paramString($lastLevel).'
 				where  
 					'.$this->tableName.'.pkey = ' . $this->oDbCon->paramString($pkey);  
- 				//$this->setLog($sql,true);
 				$this->oDbCon->execute($sql);
  
 				$this->oDbCon->endTrans();  
@@ -2188,7 +2185,6 @@ class Customer extends BaseClass{
     	foreach($rsShippingAddress as $row)
 			array_push($arrAddress, array('pkey' => $row['pkey'], 'name' => $row['name'], 'value' => $row['address'], 'longdescription' =>  $row['name'].', '.$row['address']));
 		
-		//$this->setLog($arrAddress,true);
 		return $arrAddress;
 	}
 	
@@ -2455,7 +2451,6 @@ class Customer extends BaseClass{
 					$this->oDbCon->execute($sql);
 			}
 			
-			// $this->setLog($sql,true);
 	  
 			$this->setTransactionLog(UPDATE_DATA,$id);
 			
@@ -2511,7 +2506,6 @@ class Customer extends BaseClass{
 	
  
 function delMultiaddress($arr){
-		// $this->setLog($arr,true);
 		
 		$arrayToJs =  array();
 		
