@@ -1,5 +1,5 @@
 <?php
-
+die('This script is disabled. Please contact the administrator for assistance.');
 include_once '../../_config.php'; 
 include_once '../../_include-v2.php';
 
