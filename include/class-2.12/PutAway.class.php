@@ -30,6 +30,7 @@ class PutAway extends BaseClass
         $this->arrDataDetail['itemreceivingheaderkey'] = array('hidItemReceivingHeaderKey');
         $this->arrDataDetail['itemreceivingdetailkey'] = array('hidItemReceivingDetailKey');
         $this->arrDataDetail['itemkey'] = array('hidItemKey');
+        $this->arrDataDetail['containernumber'] = array('containerNumber');
         $this->arrDataDetail['palletkey'] = array('hidPalletDetailKey');
         $this->arrDataDetail['receivingqty'] = array('receivingQty', 'number');
         $this->arrDataDetail['putawayqty'] = array('putAwayQty', 'number');
@@ -147,6 +148,7 @@ class PutAway extends BaseClass
 
         $sql = 'select
 	   			' . $this->tableNameDetail . '.*,
+                 ' . $this->tableItem . '.code as itemcode,
                 ' . $this->tableItem . '.name as itemname,
                 ' . $this->tablePallet . '.code as palletcode,
                 ' . $this->tablePallet . '.name as palletname,
@@ -301,28 +303,35 @@ class PutAway extends BaseClass
 
         $itemMovement = new itemMovement();
         $itemReceiving = new ItemReceiving();
+        $warehouseLayout = new WarehouseLayout();
 
 
         $rsDetail = $this->getDetailWithRelatedInformation($id);
 
         if ($this->typekey == 1) {
 
-            // if(empty($rsDetail)) {
-            //     $this->addErrorLog(false,'<strong>'.$rsHeader[0]['code'].'</strong>. '. $this->errorMsg[501]);
-            // } else {
-            //     for($i=0; $i<count($rsDetail); $i++) {
-            //         if($rsDetail[$i]['receivingqty'] <= 0) {
-            //             $this->addErrorLog(false,'<strong>'.$rsHeader[0]['code'].'</strong>. '. $rsDetail[$i]['itemname'] .'. '. $this->errorMsg['putAway'][2]);    
-            //         }
-            //         if($rsDetail[$i]['qty'] <=0){
-            //             $this->addErrorLog(false,'<strong>'.$rsHeader[0]['code'].'</strong>. '. $rsDetail[$i]['itemname'] .'. '. $this->errorMsg['putAway'][2]); 
-            //         }else {
-            //             if($rsDetail[$i]['qty'] > $rsDetail[$i]['receivingqty']) {
-            //                 $this->addErrorLog(false,'<strong>'.$rsHeader[0]['code'].'</strong>. '. $rsDetail[$i]['itemname'] .'. '. $this->errorMsg['putAway'][3]); 
-            //             }
-            //         }
-            //     }
-            // }
+            if (empty($rsDetail)) {
+                $this->addErrorLog(false, '<strong>' . $rsHeader[0]['code'] . '</strong>. ' . $this->errorMsg[501]);
+            } else {
+                for ($i = 0; $i < count($rsDetail); $i++) {
+                    if ($rsDetail[$i]['receivingqty'] <= 0) {
+                        $this->addErrorLog(false, '<strong>' . $rsHeader[0]['code'] . '</strong>. ' . $rsDetail[$i]['itemname'] . '. ' . $this->errorMsg['putAway'][2]);
+                    }
+                    if ($rsDetail[$i]['qty'] <= 0) {
+                        $this->addErrorLog(false, '<strong>' . $rsHeader[0]['code'] . '</strong>. ' . $rsDetail[$i]['itemname'] . '. ' . $this->errorMsg['putAway'][2]);
+                    } else {
+                        if ($rsDetail[$i]['qty'] > $rsDetail[$i]['receivingqty']) {
+                            $this->addErrorLog(false, '<strong>' . $rsHeader[0]['code'] . '</strong>. ' . $rsDetail[$i]['itemname'] . '. ' . $this->errorMsg['putAway'][3]);
+                        }
+                        $outstadingPutAwayQty = $itemReceiving->getTotalUnPutAwayItemReceiving($rsDetail[$i]['itemreceivingdetailkey']);
+                        //apakah qty lebih besar dari outstanding put away
+                        if ($rsDetail[$i]['qty'] > $outstadingPutAwayQty) {
+                            $this->addErrorLog(false, '<strong>' . $rsHeader[0]['code'] . '</strong>. ' . $rsDetail[$i]['itemname'] . '. ' . $this->errorMsg['putAway'][4]);
+                        }
+
+                    }
+                }
+            }
 
         } else if ($this->typekey == 2) {
 
@@ -332,18 +341,54 @@ class PutAway extends BaseClass
                 $this->addErrorLog(false, '<strong>' . $rsHeader[0]['code'] . '</strong>. ' . $this->errorMsg[201] . '<br>' . $this->errorMsg['zoneTransfer'][4]);
             }
 
-            $rsDetail = $this->getDetailById($id);
 
-            //validasi stock
+            $rsDetail = $this->getDetailWithRelatedInformation($id);
+
+            $arrErrMsg = array();
+
             for ($i = 0; $i < count($rsDetail); $i++) {
 
-                $saldoakhir = $itemMovement->getItemQOH($rsDetail[$i]['itemkey'], '', $rsHeader[0]['warehouselayoutoriginkey']);
+
+                //cek stok di zona
+                $saldoakhir = $itemMovement->getItemQOH($rsDetail[$i]['itemkey'], $rsHeader[0]['warehousekey'], $rsHeader[0]['warehouselayoutoriginkey']);
                 $totalqty = $saldoakhir - $rsDetail[$i]['qty'];
                 if ($totalqty < 0) {
-                    $item = new Item();
-                    $rsItem = $item->getDataRowById($rsDetail[$i]['itemkey']);
-                    $this->addErrorLog(false, '<strong>' . $rsItem[0]['name'] . '</strong>. ' . $this->errorMsg[402]);
+                    array_push($arrErrMsg, '<strong>. ' . $rsDetail[$i]['itemcode'] . ' - ' . $rsDetail[$i]['itemname'] . '</strong>, ' . $this->errorMsg[402]);
                 }
+
+                //cek apakah posisiwarehouse terakhir sama dengan asal mutasi?
+                $sql = '
+                    select
+                        ' . $itemMovement->tableName . '.pkey,
+                        ' . $itemMovement->tableName . '.refkey,
+                        ' . $itemMovement->tableName . '.refkey2,
+                        ' . $itemMovement->tableName . '.itemkey,
+                        ' . $itemMovement->tableName . '.warehousekey,
+                        ' . $itemMovement->tableName . '.warehouselayoutkey
+                    from
+                        ' . $itemMovement->tableName . '
+                    where
+                     ' . $itemMovement->tableName . '.statuskey = 1 and
+                      ' . $itemMovement->tableName . '.reftable = ' . $this->oDbCon->paramString($this->tableName) . ' and 
+                      ' . $itemMovement->tableName . '.warehousekey = ' . $this->oDbCon->paramString($rsHeader[0]['warehousekey']) . ' and 
+                      ' . $itemMovement->tableName . '.itemkey = ' . $this->oDbCon->paramString($rsDetail[$i]['itemkey']) . ' order by  ' . $itemMovement->tableName . '.pkey desc limit 1 
+                ';
+
+                $rs = $this->oDbCon->doQuery($sql);
+
+                if (!empty($rs)) {
+                    $rsData = $this->getDataRowById($rs[0]['refkey']);
+                    if (($rsHeader[0]['warehouselayoutoriginkey'] != $rs[0]['warehouselayoutkey']) && $rsData[0]['typekey'] == 2) {
+                        $rsLayout = $warehouseLayout->getDataRowById($rs[0]['warehouselayoutkey']);
+                        array_push($arrErrMsg, '<strong>' . $rsDetail[$i]['itemcode'] . ' - ' . $rsDetail[$i]['itemname'] . '</strong>. ' . $this->errorMsg['putAway'][5] . ' ke <strong>' . $rsLayout[0]['name'] . '</strong>');
+                    }
+                }
+
+            }
+
+
+            if (!empty($arrErrMsg)) {
+                $this->addErrorLog(false, '<strong>' . $rsHeader[0]['code'] . '</strong>. ' . $this->errorMsg[201] . '<br>' . implode(',<br>', $arrErrMsg));
             }
 
         } else if ($this->typekey == 3) {
@@ -351,6 +396,8 @@ class PutAway extends BaseClass
 
 
         }
+
+
 
     }
 
@@ -363,15 +410,52 @@ class PutAway extends BaseClass
 
         $itemMovement = new ItemMovement();
         $warehouseLayout = new WarehouseLayout();
+        $itemReceiving = new ItemReceiving();
+
+        $rsItemReceiving = $itemReceiving->getDataRowById($rsHeader[0]['refkey']);
 
         if ($this->typekey == 1) {
 
-            // $itemMovement = new ItemMovement();  
-            // $note = $rsHeader[0]['code'].'. '.$this->ucFirst($this->lang['putAway']. ' ' .  $this->lang['from']) . ' '.$rsHeader[0]['itemReceiving']; 
-            // for($i=0;$i<count($rsDetail); $i++){	 
-            //    if ($rsDetail[$i]['qty'] != 0)
-            //     $itemMovement->updateItemMovement($id,$rsDetail[$i]['itemkey'],-$rsDetail[$i]['qty'],0,$this->tableName, array('warehouselayoutkey'=> $rsHeader[0]['warehouselayoutkey'],'warehousekey' => $rsHeader[0]['warehousekey']), $note,$rsHeader[0]['trdate']);
-            // }	
+            $rsWarehouseLayoutFrom = $warehouseLayout->getDataRowById($rsHeader[0]['warehouselayoutoriginkey']);
+            $rsWarehouseLayoutTo = $warehouseLayout->getDataRowById($rsHeader[0]['warehouselayoutkey']);
+            $note = $rsHeader[0]['code'] . '. ' . $this->ucFirst($this->lang['putAway'] . ' ' . $this->lang['from']) . ' ' . $this->lang['itemReceiving'] . ' : ' . $rsItemReceiving[0]['code'] . '. Dari Zona ' . $rsWarehouseLayoutFrom[0]['name'] . ' ke ' . $rsWarehouseLayoutTo[0]['name'];
+
+            for ($i = 0; $i < count($rsDetail); $i++) {
+                if ($rsDetail[$i]['qty'] != 0) {
+                    $itemMovement->updateItemMovement(
+                        array(
+                            'refkey' => $id,
+                            'refkey2' => $rsDetail[$i]['itemreceivingheaderkey'],
+                        ),
+                        $rsDetail[$i]['itemkey'],
+                        -$rsDetail[$i]['qty'],
+                        0,
+                        $this->tableName,
+                        array(
+                            'warehousekey' => $rsHeader[0]['warehousekey'],
+                            'warehouselayoutkey' => $rsHeader[0]['warehouselayoutoriginkey']
+                        ),
+                        $note,
+                        $rsHeader[0]['trdate']
+                    );
+                    $itemMovement->updateItemMovement(
+                        array(
+                            'refkey' => $id,
+                            'refkey2' => $rsDetail[$i]['itemreceivingheaderkey'],
+                        ),
+                        $rsDetail[$i]['itemkey'],
+                        $rsDetail[$i]['qty'],
+                        0,
+                        $this->tableName,
+                        array(
+                            'warehousekey' => $rsHeader[0]['warehousekey'],
+                            'warehouselayoutkey' => $rsHeader[0]['warehouselayoutkey']
+                        ),
+                        $note,
+                        $rsHeader[0]['trdate']
+                    );
+                }
+            }
 
         } else if ($this->typekey == 2) {
 
@@ -382,11 +466,17 @@ class PutAway extends BaseClass
             $note = $rsHeader[0]['code'] . '. Perpindahan Zona dari ' . $rsWarehouseLayoutFrom[0]['name'] . ' ke ' . $rsWarehouseLayoutTo[0]['name'];
 
             for ($i = 0; $i < count($rsDetail); $i++) {
-                $itemMovement->updateItemMovement($id, $rsDetail[$i]['itemkey'], -$rsDetail[$i]['qty'], 0, $this->tableName, array(
+                $itemMovement->updateItemMovement(array(
+                    'refkey' => $id,
+                    'refkey2' => $rsDetail[$i]['itemreceivingheaderkey'],
+                ), $rsDetail[$i]['itemkey'], -$rsDetail[$i]['qty'], 0, $this->tableName, array(
                     'warehousekey' => $rsHeader[0]['warehousekey'],
                     'warehouselayoutkey' => $rsHeader[0]['warehouselayoutoriginkey']
                 ), $note, $rsHeader[0]['trdate']);
-                $itemMovement->updateItemMovement($id, $rsDetail[$i]['itemkey'], $rsDetail[$i]['qty'], 0, $this->tableName, array(
+                $itemMovement->updateItemMovement(array(
+                    'refkey' => $id,
+                    'refkey2' => $rsDetail[$i]['itemreceivingheaderkey'],
+                ), $rsDetail[$i]['itemkey'], $rsDetail[$i]['qty'], 0, $this->tableName, array(
                     'warehousekey' => $rsHeader[0]['warehousekey'],
                     'warehouselayoutkey' => $rsHeader[0]['warehouselayoutkey']
                 ), $note, $rsHeader[0]['trdate']);
@@ -401,6 +491,47 @@ class PutAway extends BaseClass
     function validateCancel($rsHeader, $autoChangeStatus = false)
     {
         $id = $rsHeader[0]['pkey'];
+
+        $itemMovement = new ItemMovement();
+        $warehouseLayout = new WarehouseLayout();
+
+        $rsDetail = $this->getDetailWithRelatedInformation($id);
+
+        $arrErrMsg = array();
+
+        for ($i = 0; $i < count($rsDetail); $i++) {
+
+            $sql = '
+                    select
+                        ' . $itemMovement->tableName . '.pkey,
+                        ' . $itemMovement->tableName . '.refkey,
+                        ' . $itemMovement->tableName . '.refkey2,
+                        ' . $itemMovement->tableName . '.itemkey,
+                        ' . $itemMovement->tableName . '.warehousekey,
+                        ' . $itemMovement->tableName . '.warehouselayoutkey
+                    from
+                        ' . $itemMovement->tableName . '
+                    where
+                     ' . $itemMovement->tableName . '.statuskey = 1 and
+                      ' . $itemMovement->tableName . '.reftable = ' . $this->oDbCon->paramString($this->tableName) . ' and 
+                      ' . $itemMovement->tableName . '.warehousekey = ' . $this->oDbCon->paramString($rsHeader[0]['warehousekey']) . ' and 
+                      ' . $itemMovement->tableName . '.itemkey = ' . $this->oDbCon->paramString($rsDetail[$i]['itemkey']) . ' order by  ' . $itemMovement->tableName . '.pkey desc limit 1 
+                ';
+
+            $rs = $this->oDbCon->doQuery($sql);
+
+            if (!empty($rs)) {
+                if ($rsHeader[0]['warehouselayoutkey'] != $rs[0]['warehouselayoutkey']) {
+                    $rsLayout = $warehouseLayout->getDataRowById($rs[0]['warehouselayoutkey']);
+                    array_push($arrErrMsg, '<strong>' . $rsDetail[$i]['itemcode'] . ' - ' . $rsDetail[$i]['itemname'] . '</strong>. ' . $this->errorMsg['putAway'][5] . ' ke <strong>' . $rsLayout[0]['name'] . '</strong>');
+                }
+            }
+
+        }
+
+        if (!empty($arrErrMsg)) {
+            $this->addErrorLog(false, '<strong>' . $rsHeader[0]['code'] . '</strong>. ' . $this->errorMsg[201] . '<br>' . implode(',<br>', $arrErrMsg));
+        }
     }
 
 
@@ -430,9 +561,14 @@ class PutAway extends BaseClass
 
     function afterStatusChanged($rsHeader)
     {
-        if ($this->typeket == 1) {
-            $itemReceiving = new ItemReceiving();
+        $itemReceiving = new ItemReceiving();
+
+        if ($this->typekey == 1) {
             $itemReceiving->updateQtyPutAway($rsHeader[0]['refkey']);
+        } else if ($this->typekey == 2) {
+
+        } else if ($this->typekey == 3) {
+
         }
     }
 

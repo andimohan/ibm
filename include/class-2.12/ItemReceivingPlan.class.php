@@ -53,6 +53,8 @@ class ItemReceivingPlan extends BaseClass
         $this->arrDetail['containertype'] = array('containerType');
         $this->arrDetail['containersize'] = array('containerSize');
         $this->arrDetail['containerkind'] = array('containerKind');
+        $this->arrDetail['size'] = array('size', 'number');
+        $this->arrDetail['sizeunitkey'] = array('selSizeUnit');
 
         $arrDetails = array();
         array_push($arrDetails, array('dataset' => $this->arrDetail, 'tableName' => $this->tableNameDetail));
@@ -118,7 +120,8 @@ class ItemReceivingPlan extends BaseClass
                 'WarehouseLayout.class.php',
                 'TransactionType.class.php',
                 'DocumentType.class.php',
-                'ItemUnit.class.php'
+                'ItemUnit.class.php',
+                'ItemReceiving.class.php'
             )
         );
 
@@ -256,13 +259,42 @@ class ItemReceivingPlan extends BaseClass
     function validateCancel($rsHeader, $autoChangeStatus = false)
     {
 
+        $itemReceiving = new ItemReceiving();
+
+        //cek apakah rencana penerimaan telah di gunakan di penerimaan barang, 
+        //jika sudah maka tidak bisa konfirmasi
+
+        $rsReceiving = $itemReceiving->searchDataRow(array(
+            $itemReceiving->tableName . '.pkey',
+            $itemReceiving->tableName . '.code',
+            $itemReceiving->tableName . '.refkey',
+            $itemReceiving->tableName . '.statuskey'
+        ), ' and ' . $itemReceiving->tableName . '.refkey = ' . $this->oDbCon->paramString($rsHeader[0]['pkey']) . ' and ' . $itemReceiving->tableName . '.statuskey in (' . TRANSACTION_STATUS['konfirmasi'] . ',' . TRANSACTION_STATUS['selesai'] . ')');
+
+        if (!empty($rsReceiving)) {
+            $this->addErrorLog(false, '<strong>' . $rsHeader[0]['code'] . '</strong>. ' . $this->errorMsg[201] . '<br><strong>' . $rsReceiving[0]['code'] . '</strong>. ' . $this->errorMsg[203]);
+        }
+
     }
 
     function cancelTrans($rsHeader, $copy)
     {
-
+        $itemReceiving = new ItemReceiving();
         $pkey = $rsHeader[0]['pkey'];
 
+        //cancel kalau status menunggu
+        $rsReceiving = $itemReceiving->searchDataRow(array(
+            $itemReceiving->tableName . '.pkey',
+            $itemReceiving->tableName . '.code',
+            $itemReceiving->tableName . '.refkey',
+            $itemReceiving->tableName . '.statuskey'
+        ), ' and ' . $itemReceiving->tableName . '.refkey = ' . $this->oDbCon->paramString($rsHeader[0]['pkey']) . ' and ' . $itemReceiving->tableName . '.statuskey  = ' . $this->oDbCon->paramString(TRANSACTION_STATUS['menunggu']));
+
+        for ($i = 0; $i < count($rsReceiving); $i++) {
+            $arrayToJs = $itemReceiving->changeStatus($rsReceiving[$i]['pkey'], 4, '', false, true);
+            if (!$arrayToJs[0]['valid'])
+                throw new Exception('<strong>' . $rsHeader[0]['code'] . '</strong>. ' . $arrayToJs[0]['message']);
+        }
 
         if ($copy) {
             $this->copyDataOnCancel($pkey);

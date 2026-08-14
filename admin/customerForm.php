@@ -11,7 +11,8 @@ $customerCategory = createObjAndAddToCol(new CustomerCategory());
 $city = createObjAndAddToCol(new City());
 $currency = createObjAndAddToCol(new Currency());
 $supplier =  createObjAndAddToCol(new Supplier());
-	
+$warehouse = createObjAndAddToCol(new Warehouse());
+
 $isActiveCOA = $class->isActiveModule('chartOfAccount'); 
 if($isActiveCOA && USE_GL)
 	$chartOfAccount = createObjAndAddToCol(new ChartOfAccount());
@@ -30,6 +31,7 @@ $isQuickAdd = ( isset($_GET) && !empty($_GET['quickadd'])) ? true : false;
 $editCategoryInactiveCriteria = '';
 $editTermOfPaymentInactiveCriteria = '';
 $editPaymentMethodInactiveCriteria = '';
+$editWarehouseInactiveCriteria = '';
 
 $rs = prepareOnLoadData($obj); 
 $_POST['dob'] = '01 / 01 / 2000';
@@ -88,6 +90,7 @@ if (!empty($_GET['id'])){
     $_POST['nik'] = $rs[0]['nik'];
     $_POST['passport'] = $rs[0]['passport'];
     $_POST['chkDisplayTax23InInvoice'] = $rs[0]['displaytax23ininvoice'];
+    $_POST['selWarehouseKey'] = $rs[0]['warehousekey'];
 	
 	if (!empty($rs[0]['citykey'])){
 		$rsCity = $city->searchData('city.pkey',$rs[0]['citykey'],true);
@@ -158,7 +161,7 @@ if (!empty($_GET['id'])){
 	$editPaymentMethodInactiveCriteria = ' or '.$paymentMethod->tableName.'.pkey =' .$obj->oDbCon->paramString($rs[0]['companybankkey']);	 
 	$editTermOfPaymentInactiveCriteria = ' or '.$termOfPayment->tableName.'.pkey = ' . $obj->oDbCon->paramString($rs[0]['termofpaymentkey']);
 	$editCategoryInactiveCriteria = ' or '.$customerCategory->tableName.'.pkey = ' . $obj->oDbCon->paramString($rs[0]['categorykey']);
-  
+    $editWarehouseInactiveCriteria = ' or ' . $warehouse->tableName . '.pkey = ' . $obj->oDbCon->paramString($rs[0]['warehousekey']);
 } 
 $arrStatus = $obj->generateComboboxOpt(array('data' => $obj->getAllStatus(),'label' => 'status')); 
 $arrCategory = $customerCategory->generateComboboxOpt(null,array('criteria' =>' and ('.$customerCategory->tableName.'.statuskey = 1 '. $editCategoryInactiveCriteria.')')); 
@@ -166,7 +169,8 @@ $arrTOP = $termOfPayment->generateComboboxOpt(null,array('criteria' =>' and ('.$
 $arrPaymentMethod = $paymentMethod->generateComboboxOpt(null,array('criteria' =>' and ('.$paymentMethod->tableName.'.statuskey = 1' . $editPaymentMethodInactiveCriteria.')')); 
 $arrCurrency = $currency->generateComboboxOpt(null,array('criteria' =>' and ('.$currency->tableName.'.statuskey = 1)')); 
 $arrSex = $obj->generateComboboxOpt(array('data' => $obj->getSex()));	
-$arrTinType = $obj->generateComboboxOpt(array('data' => $obj->getTinType()));	
+$arrTinType = $obj->generateComboboxOpt(array('data' => $obj->getTinType()));
+$arrWarehouse = $warehouse->generateComboboxOpt(null, array('criteria' => ' and (' . $warehouse->tableName . '.statuskey = 1)' . $editWarehouseInactiveCriteria));
 
 $arrLoginType = array();
 foreach(LOGIN_TYPE as $key=>$row)
@@ -294,6 +298,12 @@ $arrCustomerAccountRoleType = $obj->generateComboboxOpt(array('data' => $arrLogi
                                        <?php echo  $obj->inputSelect('selCategory', $arrCategory); ?> 
                                 </div> 
                             </div>     
+                            <div class="form-group">
+                                <label class="col-xs-3 control-label"><?php echo ucwords($obj->lang['warehouse']); ?></label>
+                                <div class="col-xs-9">
+                                    <?php echo $obj->inputSelect('selWarehouseKey', $arrWarehouse); ?>
+                                </div>
+                            </div>
                             <div class="form-group">
                                 <label class="col-xs-3 control-label"><?php echo ucwords($obj->lang['salesman']); ?></label> 
                                 <div class="col-xs-9"> 

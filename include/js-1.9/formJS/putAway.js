@@ -16,16 +16,34 @@ function PutAway(tabID){
         
         var refkey = tabObj.find("[name=hidRefKey]").val() || 0;
 
-        var action = "";
+         if (!refkey) {
+                alert('No. Pengajuan harus diisi.');
+                return;
+            }
+
+        var action = ""; 
+        thisObj.updateItemReceivingData();
         if (typekey == 1) {
-            thisObj.updateItemReceivingData();
+            
             var submissionNumber = tabObj.find("[name=submissionNumber]").val() || "";
             action = "action=getDataForPutAway&pkey=" + refkey;
         } else if (typekey == 2) {
             var warehouselayoutoriginkey = tabObj.find("[name=hidWarehouseLayoutOriginKey]").val();
+
+            if(!warehouselayoutoriginkey) {
+                alert('Tata Letak Gudang Asal harus diisi.');
+                return;
+            }
+
             action = "action=getDataForZoneTransfer&pkey=" + refkey + "&warehouselayoutoriginkey=" + warehouselayoutoriginkey;
         } else {
             var warehouselayoutkey = tabObj.find("[name=hidWarehouseLayoutKey]").val();
+
+            if(!warehouselayoutkey) {
+                alert('Tata Letak Gudang harus diisi.');
+                return;
+            }
+
             action = "action=getDataForZoneTransfer&pkey=" + refkey + "&warehouselayoutoriginkey=" + warehouselayoutkey;
         }
 
@@ -41,14 +59,15 @@ function PutAway(tabID){
             data: action,
             success: function(data){ 
     
-                    if(!data) {                        
+                if (!data) {    
+                        addNewTemplateRow("detail-row-template",'','',thisObj.rebindEl);  
                         return;
                     }
 
                     var data = parseJSON(data);
 
                     var i;
-                    for(i=0;i<data.length;i++){  
+                    for(i=0;i<data.length;i++){      
                         
                         var arrPostValue = []; 
                         
@@ -56,14 +75,16 @@ function PutAway(tabID){
                         arrPostValue.push({ "selector": "itemName", "value": data[i].itemname });
                         
                         if (typekey == 1) {
+                            arrPostValue.push({ "selector": "hidItemReceivingHeaderKey", "value": data[i].refkey });
                             arrPostValue.push({ "selector": "hidItemReceivingDetailKey", "value": data[i].pkey });
+                            arrPostValue.push({ "selector": "containerNumber", "value": data[i].containernumber });
                             arrPostValue.push({ "selector": "receivingQty", "value": data[i].qtyinbaseunit });
                             arrPostValue.push({ "selector": "putAwayQty", "value": data[i].putawayqty });
                         } else if (typekey == 2) {
-                             arrPostValue.push({ "selector": "hidItemReceivingHeaderKey", "value": data[i].refkey });
+                            arrPostValue.push({ "selector": "hidItemReceivingHeaderKey", "value": data[i].refkey2 });
                             arrPostValue.push({ "selector": "qty", "value": data[i].qtyinbaseunit });
                         } else {
-                            arrPostValue.push({ "selector": "hidItemReceivingHeaderKey", "value": data[i].refkey });
+                            arrPostValue.push({ "selector": "hidItemReceivingHeaderKey", "value": data[i].refkey2 });
                             arrPostValue.push({ "selector": "qty", "value": data[i].qtyinbaseunit });
                         }
                             
@@ -109,7 +130,8 @@ function PutAway(tabID){
                 data = data[0];
 				tabObj.find("[name=submissionNumber]").val(data.submissionnumber) 
 				tabObj.find("[name=warehouseLayoutOriginName]").val(data.warehouselayoutname) 
-				tabObj.find("[name=hidWarehouseLayoutOriginKey]").val(data.warehouselayoutkey) 
+                tabObj.find("[name=hidWarehouseLayoutOriginKey]").val(data.warehouselayoutkey) 
+                tabObj.find("[name=selWarehouseKey]").val(data.warehousekey).change(); 
                 // tabObj.find(".baseunitname").html(data[0].baseunitname);  
             }
         });

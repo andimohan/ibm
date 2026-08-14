@@ -2,7 +2,7 @@
 require_once '../_config.php';
 require_once '../_include-v2.php';
 
-includeClass(array('ItemReceiving.class.php','WarehouseLayout.class.php','ItemReceivingPlan.class.php'));
+includeClass(array('ItemReceiving.class.php', 'WarehouseLayout.class.php', 'ItemReceivingPlan.class.php'));
 $itemReceiving = createObjAndAddToCol(new ItemReceiving());
 //$item = createObjAndAddToCol(new Item());
 // $itemUnit = createObjAndAddToCol(new ItemUnit());
@@ -20,7 +20,8 @@ $obj = $itemReceiving;
 $securityObject = $obj->securityObject; // the value of security object is manually inserted to handle 
 // some modules that have different security object from that of their class
 
-if (!$security->isAdminLogin($securityObject, 10, true));
+if (!$security->isAdminLogin($securityObject, 10, true))
+    ;
 
 $formAction = 'itemReceivingList';
 
@@ -48,7 +49,7 @@ if (!empty($_GET['id'])) {
     $id = $_GET['id'];
 
     // $rsWarehouseLayout = $warehouseLayout->getDataByWarehouse($rs[0]['warehousekey']);
-    
+
     $rsDetail = $obj->getDetailWithRelatedInformation($id);
 
     $_POST['trDate'] = $obj->formatDBDate($rs[0]['trdate'], 'd / m / Y');
@@ -72,16 +73,17 @@ if (!empty($_GET['id'])) {
         $_POST['shipperName'] = $rsShipper[0]['name'];
     }
 
-    if(!empty($rs[0]['refkey'])) {
+    if (!empty($rs[0]['refkey'])) {
         $rsItemReceivingPlan = $itemReceivingPlan->getDataRowById($rs[0]['refkey']);
-        
-        $_POST['hidCurrentItemReceivingPlanKey'] = $rsItemReceivingPlan[0]['pkey'] ;
-        $_POST['hidCurrentItemReceivingPlanCode'] = $rsItemReceivingPlan[0]['code'] ;
+
+        $_POST['hidCurrentItemReceivingPlanKey'] = $rsItemReceivingPlan[0]['pkey'];
+        $_POST['hidCurrentItemReceivingPlanCode'] = $rsItemReceivingPlan[0]['code'];
 
         $_POST['hidItemReceivingPlanKey'] = $rsItemReceivingPlan[0]['pkey'];
         $_POST['itemReceivingPlanCode'] = $rsItemReceivingPlan[0]['code'];
     }
 
+    $_POST['selCurrency'] = $rs[0]['currencykey'];
 
     $_POST['selWarehouseKey'] = $rs[0]['warehousekey'];
     $_POST['selWarehouseLayoutKey'] = $rs[0]['warehouselayoutkey'];
@@ -103,41 +105,41 @@ if (!empty($_GET['id'])) {
     } else {
         $rsItemFile = array();
         if (!empty($rs[0]['file'])) {
-            $rsItemFile[0]['file'] =  $rs[0]['file'];
+            $rsItemFile[0]['file'] = $rs[0]['file'];
 
             $sourcePath = $obj->defaultDocUploadPath . $obj->uploadFileFolder . $id;
             $destinationPath = $obj->uploadTempDoc . $obj->uploadFileFolder . $id;
             $obj->deleteAll($destinationPath);
 
             if (!is_dir($destinationPath))
-                mkdir($destinationPath,  0755, true);
+                mkdir($destinationPath, 0755, true);
 
             $obj->fullCopy($sourcePath, $destinationPath);
         }
     }
 
     $editWarehouseInactiveCriteria = ' or ' . $warehouse->tableName . '.pkey = ' . $obj->oDbCon->paramString($rs[0]['warehousekey']);
-    
+
     $editCurrencyInactiveCriteria = ' or ' . $currency->tableName . '.pkey = ' . $obj->oDbCon->paramString($rs[0]['currencykey']);
 }
-$rsWarehouse = $warehouse->searchData('','',true,' and ('.$warehouse->tableName.'.statuskey = 1' .$editWarehouseInactiveCriteria.')');
+$rsWarehouse = $warehouse->searchData('', '', true, ' and (' . $warehouse->tableName . '.statuskey = 1' . $editWarehouseInactiveCriteria . ')');
 $editWarehouseLayoutInactiveCriteria = '';
 $obj->setLog($rs, true);
 if (!empty($rs[0]['warehouselayoutkey'])) {
     $editWarehouseLayoutInactiveCriteria = ' and ' . $warehouseLayout->tableName . '.warehousekey = ' . $obj->oDbCon->paramString($rs[0]['warehousekey']);
 } else {
-    $editWarehouseLayoutInactiveCriteria = ' and ' . $warehouseLayout->tableName . '.warehousekey = ' . $obj->oDbCon->paramString($rsWarehouse[0]['pkey']);    
+    $editWarehouseLayoutInactiveCriteria = ' and ' . $warehouseLayout->tableName . '.warehousekey = ' . $obj->oDbCon->paramString($rsWarehouse[0]['pkey']);
 }
 
 $obj->setLog($editWarehouseLayoutInactiveCriteria, true);
 
-$rsWarehouseLayout = $warehouseLayout->searchData('','',true,' and ('.$warehouseLayout->tableName.'.statuskey = 1 and '.$warehouseLayout->tableName.'.istransit = 1'.$editWarehouseLayoutInactiveCriteria.')');
+$rsWarehouseLayout = $warehouseLayout->searchData('', '', true, ' and (' . $warehouseLayout->tableName . '.statuskey = 1 and ' . $warehouseLayout->tableName . '.istransit = 1' . $editWarehouseLayoutInactiveCriteria . ')');
 
 $arrStatus = $obj->generateComboboxOpt(array('data' => $obj->getAllStatus(), 'label' => 'status'));
 $arrWarehouse = $warehouse->generateComboboxOpt(null, array('criteria' => ' and (' . $warehouse->tableName . '.statuskey = 1' . $editWarehouseInactiveCriteria . ')'));
-$arrWarehouse = $class->convertForCombobox($rsWarehouse,'pkey','name'); 
-$arrTransactionType = $transactionType->generateComboboxOpt(null,array('criteria' =>' and ('.$transactionType->tableName.'.statuskey = 1 )')); 
-$arrDocumentType = $documentType->generateComboboxOpt(null,array('criteria' =>' and ('.$documentType->tableName.'.statuskey = 1 )')); 
+$arrWarehouse = $class->convertForCombobox($rsWarehouse, 'pkey', 'name');
+$arrTransactionType = $transactionType->generateComboboxOpt(null, array('criteria' => ' and (' . $transactionType->tableName . '.statuskey = 1 )'));
+$arrDocumentType = $documentType->generateComboboxOpt(null, array('criteria' => ' and (' . $documentType->tableName . '.statuskey = 1 )'));
 $arrUnit = $itemUnit->generateComboboxOpt(null, array('criteria' => ' and (' . $itemUnit->tableName . '.statuskey = 1 ' . $editUnitInactiveCriteria . ')'));
 
 $arrCurrency = $currency->generateComboboxOpt(null, array('criteria' => ' and (' . $currency->tableName . '.statuskey = 1' . $editCurrencyInactiveCriteria . ')'));
@@ -149,7 +151,8 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
 // $arrDocumentType = array(array('pkey' => 1, 'name' => 'BC 1.6'));
 // $arrDocumentType = $obj->generateComboboxOpt(array('data' => $arrDocumentType, 'label' => 'name'));
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
@@ -161,8 +164,8 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
     ?>
 
     <script type="text/javascript">
-        jQuery(document).ready(function() {
-            var tabID = <?php echo ($isQuickAdd) ?  $_GET['tabID'] :  'selectedTab.newPanel[0].id';  ?>;
+        jQuery(document).ready(function () {
+            var tabID = <?php echo ($isQuickAdd) ? $_GET['tabID'] : 'selectedTab.newPanel[0].id'; ?>;
             var tablekey = <?php echo $obj->getTableKeyAndObj($obj->tableName, array('key'))['key']; ?>;
 
             var fileUpload = {
@@ -221,18 +224,21 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
         <form id="defaultForm" method="post" class="form-horizontal" action="<?php echo $formAction; ?>">
             <?php prepareOnLoadDataForm($obj); ?>
             <?php echo $obj->inputHidden('selCurrentWarehouseLayoutKey'); ?>
-                <?php echo $obj->inputHidden('hidCurrentItemReceivingPlanKey'); ?>
-                <?php echo $obj->inputHidden('hidCurrentItemReceivingPlanCode'); ?> 
+            <?php echo $obj->inputHidden('hidCurrentItemReceivingPlanKey'); ?>
+            <?php echo $obj->inputHidden('hidCurrentItemReceivingPlanCode'); ?>
 
             <div class="div-table main-tab-table-2">
                 <div class="div-table-row">
                     <div class="div-table-col">
                         <div class="div-tab-panel">
-                            <div class="div-table-caption border-orange"><?php echo ucwords($obj->lang['generalInformation']); ?></div>
+                            <div class="div-table-caption border-orange">
+                                <?php echo ucwords($obj->lang['generalInformation']); ?>
+                            </div>
                             <div class="form-group">
-                                <label class="col-xs-3 control-label"><?php echo ucwords($obj->lang['status']); ?></label>
+                                <label
+                                    class="col-xs-3 control-label"><?php echo ucwords($obj->lang['status']); ?></label>
                                 <div class="col-xs-9">
-                                    <?php echo  $obj->inputSelect('selStatus', $arrStatus, array('disabled' => true)); ?>
+                                    <?php echo $obj->inputSelect('selStatus', $arrStatus, array('disabled' => true)); ?>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -249,7 +255,8 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
                             </div>
 
                             <div class="form-group coa-link">
-                                <label class="col-xs-3 control-label"><?php echo ucwords($obj->lang['itemReceivingPlan']); ?></label>
+                                <label
+                                    class="col-xs-3 control-label"><?php echo ucwords($obj->lang['itemReceivingPlan']); ?></label>
                                 <div class="col-xs-9">
                                     <?php echo $obj->inputAutoComplete(
                                         array(
@@ -271,19 +278,21 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
                             </div>
 
                             <div class="form-group">
-                                <label class="col-xs-3 control-label"><?php echo ucwords($obj->lang['warehouse']); ?></label>
+                                <label
+                                    class="col-xs-3 control-label"><?php echo ucwords($obj->lang['warehouse']); ?></label>
                                 <div class="col-xs-9">
                                     <?php echo $obj->inputSelect('selWarehouseKey', $arrWarehouse); ?>
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="col-xs-3 control-label"><?php echo ucwords($obj->lang['warehouseLayout']); ?></label>
+                                <label
+                                    class="col-xs-3 control-label"><?php echo ucwords($obj->lang['warehouseLayout']); ?></label>
                                 <div class="col-xs-9">
                                     <?php echo $obj->inputSelect('selWarehouseLayoutKey', $arrWarehouseLayout); ?>
                                 </div>
                             </div>
-                            
+
 
                             <!-- <div class="form-group">
                                 <label class="col-xs-3 control-label"><?php echo ucwords($obj->lang['receivedDate']); ?></label>
@@ -293,7 +302,8 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
                             </div> -->
 
                             <div class="form-group coa-link">
-                                <label class="col-xs-3 control-label"><?php echo ucwords($obj->lang['customer']); ?></label>
+                                <label
+                                    class="col-xs-3 control-label"><?php echo ucwords($obj->lang['customer']); ?></label>
                                 <div class="col-xs-9">
                                     <?php echo $obj->inputAutoComplete(
                                         array(
@@ -313,7 +323,8 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
                             </div>
 
                             <div class="form-group coa-link">
-                                <label class="col-xs-3 control-label"><?php echo ucwords($obj->lang['supplier']); ?></label>
+                                <label
+                                    class="col-xs-3 control-label"><?php echo ucwords($obj->lang['supplier']); ?></label>
                                 <div class="col-xs-9">
                                     <?php echo $obj->inputAutoComplete(
                                         array(
@@ -333,7 +344,8 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
                             </div>
 
                             <div class="form-group coa-link">
-                                <label class="col-xs-3 control-label"><?php echo ucwords($obj->lang['shipper']); ?></label>
+                                <label
+                                    class="col-xs-3 control-label"><?php echo ucwords($obj->lang['shipper']); ?></label>
                                 <div class="col-xs-9">
                                     <?php echo $obj->inputAutoComplete(
                                         array(
@@ -357,10 +369,12 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
                     </div>
                     <div class="div-table-col">
                         <div class="div-tab-panel">
-                            <div class="div-table-caption border-blue"><?php echo ucwords($obj->lang['document']); ?></div>
+                            <div class="div-table-caption border-blue"><?php echo ucwords($obj->lang['document']); ?>
+                            </div>
 
                             <div class="form-group">
-                                <label class="col-xs-3 control-label"><?php echo ucwords($obj->lang['documentType']); ?></label>
+                                <label
+                                    class="col-xs-3 control-label"><?php echo ucwords($obj->lang['documentType']); ?></label>
                                 <div class="col-xs-9">
                                     <?php echo $obj->inputSelect('selDocumentType', $arrDocumentType); ?>
                                     <!-- <?php echo $obj->inputText('documentType'); ?> -->
@@ -368,58 +382,72 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
                             </div>
 
                             <div class="form-group">
-                                <label class="col-xs-3 control-label"><?php echo ucwords($obj->lang['submissionNumber'] . ' / ' . $obj->lang['submissionDate']); ?></label>
+                                <label
+                                    class="col-xs-3 control-label"><?php echo ucwords($obj->lang['submissionNumber'] . ' / ' . $obj->lang['submissionDate']); ?></label>
                                 <div class="col-xs-9">
                                     <div class="flex">
                                         <div class="consume"><?php echo $obj->inputText('submissionNumber'); ?></div>
                                         <div>/</div>
-                                        <div class="consume"><?php echo $obj->inputDate('submissionDate', array('etc' => 'style="text-align:center;"')); ?></div>
+                                        <div class="consume">
+                                            <?php echo $obj->inputDate('submissionDate', array('etc' => 'style="text-align:center;"')); ?>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="col-xs-3 control-label"><?php echo ucwords($obj->lang['invoiceNumber'] . ' / ' . $obj->lang['invoiceDate']); ?></label>
+                                <label
+                                    class="col-xs-3 control-label"><?php echo ucwords($obj->lang['invoiceNumber'] . ' / ' . $obj->lang['invoiceDate']); ?></label>
                                 <div class="col-xs-9">
                                     <div class="flex">
                                         <div class="consume"><?php echo $obj->inputText('invoiceNumber'); ?></div>
                                         <div>/</div>
-                                        <div class="consume"><?php echo $obj->inputDate('invoiceDate', array('etc' => 'style="text-align:center;"')); ?></div>
+                                        <div class="consume">
+                                            <?php echo $obj->inputDate('invoiceDate', array('etc' => 'style="text-align:center;"')); ?>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="col-xs-3 control-label"><?php echo ucwords($obj->lang['blNumber'] . ' / ' . $obj->lang['blDate']); ?></label>
+                                <label
+                                    class="col-xs-3 control-label"><?php echo ucwords($obj->lang['blNumber'] . ' / ' . $obj->lang['blDate']); ?></label>
                                 <div class="col-xs-9">
                                     <div class="flex">
                                         <div class="consume"><?php echo $obj->inputText('blNumber'); ?></div>
                                         <div>/</div>
-                                        <div class="consume"><?php echo $obj->inputDate('blDate', array('etc' => 'style="text-align:center;"')); ?></div>
+                                        <div class="consume">
+                                            <?php echo $obj->inputDate('blDate', array('etc' => 'style="text-align:center;"')); ?>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="col-xs-3 control-label"><?php echo ucwords($obj->lang['registerNumber'] . ' / ' . $obj->lang['registerDate']); ?></label>
+                                <label
+                                    class="col-xs-3 control-label"><?php echo ucwords($obj->lang['registerNumber'] . ' / ' . $obj->lang['registerDate']); ?></label>
                                 <div class="col-xs-9">
                                     <div class="flex">
                                         <div class="consume"><?php echo $obj->inputText('registrationNumber'); ?></div>
                                         <div>/</div>
-                                        <div class="consume"><?php echo $obj->inputDate('registrationDate', array('etc' => 'style="text-align:center;"')); ?></div>
+                                        <div class="consume">
+                                            <?php echo $obj->inputDate('registrationDate', array('etc' => 'style="text-align:center;"')); ?>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="col-xs-3 control-label"><?php echo ucwords($obj->lang['currency']); ?></label>
+                                <label
+                                    class="col-xs-3 control-label"><?php echo ucwords($obj->lang['currency']); ?></label>
                                 <div class="col-xs-9">
                                     <?php echo $obj->inputSelect('selCurrency', $arrCurrency); ?>
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="col-xs-3 control-label"><?php echo ucwords($obj->lang['valueType']); ?></label>
+                                <label
+                                    class="col-xs-3 control-label"><?php echo ucwords($obj->lang['valueType']); ?></label>
                                 <div class="col-xs-9">
                                     <?php echo $obj->inputText('valueType'); ?>
                                 </div>
@@ -428,7 +456,7 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
                             <div class="form-group">
                                 <label class="col-xs-3 control-label"><?php echo ucwords($obj->lang['note']); ?></label>
                                 <div class="col-xs-9">
-                                    <?php echo  $obj->inputTextArea('trDesc', array('etc' => 'style="height:10em;"')); ?>
+                                    <?php echo $obj->inputTextArea('trDesc', array('etc' => 'style="height:10em;"')); ?>
                                 </div>
                             </div>
 
@@ -440,7 +468,8 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
                             <div class="div-table-caption border-red"><?php echo ucwords($obj->lang['files']); ?></div>
 
                             <div class="form-group">
-                                <label class="col-xs-3 control-label"><?php echo ucwords($obj->lang['documentFiles']); ?></label>
+                                <label
+                                    class="col-xs-3 control-label"><?php echo ucwords($obj->lang['documentFiles']); ?></label>
                                 <div class="col-xs-9">
                                     <!-- file uploader -->
                                     <div class="item-file-uploader">
@@ -465,43 +494,69 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
                     </div>
                 </div>
             </div>
-            <div class="div-table mnv-transaction mnv-job transaction-detail" style="width:100%; border-bottom:1px solid #333; ">
-                <div class="div-table-row"> 
+            <div class="div-table mnv-transaction mnv-job transaction-detail"
+                style="width:100%; border-bottom:1px solid #333; ">
+                <div class="div-table-row">
                     <div class="div-table-col" style="padding:0">
                         <div class="div-table" style="width:100%">
-                <div class="div-table-row">
-                    <!-- <div class="div-table-col detail-col-header" style="width:170px;"><?php echo ucwords($obj->lang['itemBarcode']); ?></div> -->
-                    <div class=" div-table-col detail-col-header" style="width:180px;"><?php echo ucwords($obj->lang['itemCode']); ?></div>
-                    <div class=" div-table-col detail-col-header"><?php echo ucwords($obj->lang['itemName']); ?></div>
-                    <div class=" div-table-col detail-col-header" style="width:60px;text-align:right;"><?php echo ucwords($obj->lang['mililiter']); ?></div>
-                    <div class=" div-table-col detail-col-header" style="width:170px;"><?php echo ucwords($obj->lang['brand']); ?></div>
-                    <div class=" div-table-col detail-col-header" style="width:120px;"><?php echo ucwords($obj->lang['kind']); ?></div>
-                    <div class=" div-table-col detail-col-header" style="width:70px;text-align:right;"><?php echo ucwords($obj->lang['qtyCarton']); ?></div>
-                    <div class=" div-table-col detail-col-header" style="width:100px;text-align:right;"><?php echo ucwords($obj->lang['qtyPackage']); ?></div>
-                    <div class=" div-table-col detail-col-header" style="width:80px; text-align:right;"><?php echo ucwords($obj->lang['qty']); ?></div>
-                    <div class=" div-table-col detail-col-header" style="width:80px;text-align:right;"><?php echo ucwords($obj->lang['alcohol'] . ' %'); ?></div>
-                    <!-- <div class=" div-table-col detail-col-header" style="width:120px;"><?php echo ucwords($obj->lang['country']); ?></div> -->
-                    <!-- <div class=" div-table-col detail-col-header" style="width:100px;"><?php echo ucwords($obj->lang['unit']); ?></div> -->
-                    <div class="div-table-col detail-col-header" style="width:100px;text-align:right;"><?php echo ucwords($obj->lang['value']); ?></div>
-                    <div class="div-table-col detail-col-header  icon-col <?php echo $obj->hideOnDisabled(); ?>"></div>
-                        </div>
+                            <div class="div-table-row">
+                                <!-- <div class="div-table-col detail-col-header" style="width:170px;"><?php echo ucwords($obj->lang['itemBarcode']); ?></div> -->
+                                <div class=" div-table-col detail-col-header" style="width:150px;">
+                                    <?php echo ucwords($obj->lang['itemCode']); ?>
+                                </div>
+                                <div class=" div-table-col detail-col-header" style="width:180px;">
+                                    <?php echo ucwords($obj->lang['itemName']); ?>
+                                </div>
+                                <div class=" div-table-col detail-col-header" style="width:60px;text-align:right;">
+                                    <?php echo ucwords($obj->lang['size']); ?>
+                                </div>
+                                <div class=" div-table-col detail-col-header" style="width:55px;">
+                                    <?php echo ucwords($obj->lang['unit']); ?>
+                                </div>
+                                <div class=" div-table-col detail-col-header" style="width:170px;">
+                                    <?php echo ucwords($obj->lang['brand']); ?>
+                                </div>
+                                <div class=" div-table-col detail-col-header" style="width:120px;">
+                                    <?php echo ucwords($obj->lang['kind']); ?>
+                                </div>
+                                <div class=" div-table-col detail-col-header" style="width:70px;text-align:right;">
+                                    <?php echo ucwords($obj->lang['qtyCarton']); ?>
+                                </div>
+                                <div class=" div-table-col detail-col-header" style="width:100px;text-align:right;">
+                                    <?php echo ucwords($obj->lang['qtyPackage']); ?>
+                                </div>
+                                <div class=" div-table-col detail-col-header" style="width:80px; text-align:right;">
+                                    <?php echo ucwords($obj->lang['qty']); ?>
+                                </div>
+                                <div class=" div-table-col detail-col-header" style="width:80px;text-align:right;">
+                                    <?php echo ucwords($obj->lang['alcohol'] . ' %'); ?>
+                                </div>
+                                <!-- <div class=" div-table-col detail-col-header" style="width:120px;"><?php echo ucwords($obj->lang['country']); ?></div> -->
+                                <!-- <div class=" div-table-col detail-col-header" style="width:100px;"><?php echo ucwords($obj->lang['unit']); ?></div> -->
+                                <div class="div-table-col detail-col-header" style="width:100px;text-align:right;">
+                                    <?php echo ucwords($obj->lang['value']); ?>
+                                </div>
+                                <div
+                                    class="div-table-col detail-col-header  icon-col <?php echo $obj->hideOnDisabled(); ?>">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-        
+
                 <?php
                 $totalRows = count($rsDetail);
                 $obj->setLog($rsDetail, true);
 
                 for ($i = 0; $i <= $totalRows; $i++) {
 
-                    $class =  'transaction-detail-row';
+                    $class = 'transaction-detail-row';
                     $overwrite = true;
                     $etc = '';
                     $txtSN = '';
                     $disable = '';
-                //    $arrUnit = $arrDefaultUnit;
-
+                    //    $arrUnit = $arrDefaultUnit;
+                
                     if ($i == $totalRows) {
                         $class = 'detail-row-template';
                         $overwrite = false;
@@ -512,24 +567,26 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
 
                         $baseunitname = $rsDetail[$i]['baseunitname'];
 
-                        $_POST['hidDetailKey[]'] =  $rsDetail[$i]['pkey'];
+                        $_POST['hidDetailKey[]'] = $rsDetail[$i]['pkey'];
                         $_POST['itemDetailBarcode[]'] = $rsDetail[$i]['itembarcode'];
                         $_POST['itemDetailCode[]'] = $rsDetail[$i]['itemcode'];
                         $_POST['itemDetailName[]'] = $rsDetail[$i]['itemname'];
-                        $_POST['selUnit[]'] =  $rsDetail[$i]['unit'];
+                        $_POST['selUnit[]'] = $rsDetail[$i]['unit'];
                         $_POST['hs[]'] = $rsDetail[$i]['hs'];
                         $_POST['countryOfOriginId[]'] = $rsDetail[$i]['countryoforiginid'];
                         $_POST['itemCategoryName[]'] = $rsDetail[$i]['itemcategory'];
                         $_POST['packagingName[]'] = $rsDetail[$i]['packaging'];
                         $_POST['facility[]'] = $rsDetail[$i]['facility'];
                         $_POST['orderList[]'] = $rsDetail[$i]['orderlist'];
-                        $_POST['qty[]'] =   $obj->formatNumber($rsDetail[$i]['qty']);
+                        $_POST['qty[]'] = $obj->formatNumber($rsDetail[$i]['qty']);
                         $_POST['category[]'] = $rsDetail[$i]['category'];
-                        $_POST['alcoholContent[]'] =   $obj->formatNumber($rsDetail[$i]['alcoholcontent'], 2);
-                        $_POST['mililiter[]'] =   $obj->formatNumber($rsDetail[$i]['mililiter']);
-                        $_POST['qtyCarton[]'] =   $obj->formatNumber($rsDetail[$i]['qtycarton']);
-                        $_POST['qtyPackage[]'] =   $obj->formatNumber($rsDetail[$i]['qtypackage']);
-                        $_POST['amount[]'] =   $obj->formatNumber($rsDetail[$i]['amount']);
+                        $_POST['alcoholContent[]'] = $obj->formatNumber($rsDetail[$i]['alcoholcontent'], 2);
+                        // $_POST['mililiter[]'] = $obj->formatNumber($rsDetail[$i]['mililiter']);
+                        $_POST['size[]'] = $obj->formatNumber($rsDetail[$i]['size']);
+                        $_POST['selSizeUnit[]'] = $rsDetail[$i]['sizeunitkey'];
+                        $_POST['qtyCarton[]'] = $obj->formatNumber($rsDetail[$i]['qtycarton']);
+                        $_POST['qtyPackage[]'] = $obj->formatNumber($rsDetail[$i]['qtypackage']);
+                        $_POST['amount[]'] = $obj->formatNumber($rsDetail[$i]['amount']);
                         $_POST['hidDetailTypeKey[]'] = $rsDetail[$i]['typekey'];
                         $_POST['detailType[]'] = $rsDetail[$i]['typename'];
                         $_POST['hidDetailBrandKey[]'] = $rsDetail[$i]['brandkey'];
@@ -545,7 +602,7 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
                     }
 
 
-                ?>
+                    ?>
 
                     <div class="div-table-row odd-style-adjustment <?php echo $class; ?> ">
                         <div class="div-table-col" style="padding:0">
@@ -555,84 +612,125 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
                                         <div class="div-table" style="width: 100%">
                                             <div class="div-table-row">
                                                 <!-- <div class="div-table-col detail-col-detail" style="width:170px;" style="vertical-align:top;">
-                                                    <?php echo $obj->inputText('itemDetailBarcode[]', array('overwritePost' => $overwrite, 'etc' => $etc,  'class' => 'form-control mnv-barcode-input', 'disabled' =>  $disable)); ?>
+                                                    <?php echo $obj->inputText('itemDetailBarcode[]', array('overwritePost' => $overwrite, 'etc' => $etc, 'class' => 'form-control mnv-barcode-input', 'disabled' => $disable)); ?>
                                                 </div> -->
-                                                <div class="div-table-col detail-col-detail" style="width:180px;" style="vertical-align:top;">
+                                                <div class="div-table-col detail-col-detail" style="width:150px;"
+                                                    style="vertical-align:top;">
                                                     <?php echo $obj->inputHidden('hidDetailKey[]', array('overwritePost' => $overwrite, 'etc' => $etc, 'disabled' => $disabled)); ?>
-                                                    <?php echo $obj->inputText('itemDetailCode[]', array('overwritePost' => $overwrite, 'etc' => $etc,  'class' => 'form-control mnv-barcode-input', 'disabled' =>  $disable)); ?>
+                                                    <?php echo $obj->inputText('itemDetailCode[]', array('overwritePost' => $overwrite, 'etc' => $etc, 'class' => 'form-control mnv-barcode-input', 'disabled' => $disable)); ?>
                                                 </div>
-                                                <div class="div-table-col detail-col-detail" style="vertical-align:top;">
+                                                <div class="div-table-col detail-col-detail" style="width:180px;"
+                                                    style="vertical-align:top;">
                                                     <?php echo $obj->inputHidden('hidItemDetailKey[]', array('overwritePost' => $overwrite, 'etc' => $etc, 'disabled' => $disabled)); ?>
-                                                    <?php echo $obj->inputText('itemDetailName[]', array('overwritePost' => $overwrite, 'etc' => $etc,  'class' => 'form-control mnv-barcode-input', 'disabled' =>  $disable)); ?>
+                                                    <?php echo $obj->inputText('itemDetailName[]', array('overwritePost' => $overwrite, 'etc' => $etc, 'class' => 'form-control mnv-barcode-input', 'disabled' => $disable)); ?>
                                                 </div>
-                                                <div class="div-table-col detail-col-detail" style="vertical-align:top; width:60px; "><?php echo $obj->inputNumber('mililiter[]', array('overwritePost' => $overwrite, 'etc' => 'style="text-align:right;" ' . $etc, 'disabled' =>  $disable)); ?></div>
-                                                <div class="div-table-col detail-col-detail" style="width:170px;" style="vertical-align:top;">
+                                                <div class="div-table-col detail-col-detail"
+                                                    style="vertical-align:top; width:55px; ">
+                                                    <?php echo $obj->inputNumber('size[]', array('overwritePost' => $overwrite, 'etc' => 'style="text-align:right;" ' . $etc, 'disabled' => $disable)); ?>
+                                                </div>
+                                                <div class="div-table-col detail-col-detail"
+                                                    style="vertical-align:top; width:55px; ">
+                                                    <?php echo $obj->inputSelect('selSizeUnit[]', $arrUnit, array('overwritePost' => $overwrite, 'etc' => 'style="" ' . $etc, 'disabled' => $disable)); ?>
+                                                </div>
+                                                <div class="div-table-col detail-col-detail" style="width:170px;"
+                                                    style="vertical-align:top;">
                                                     <?php echo $obj->inputHidden('hidDetailBrandKey[]', array('overwritePost' => $overwrite, 'etc' => $etc, 'disabled' => $disabled)); ?>
-                                                    <?php echo $obj->inputText('brandName[]', array('overwritePost' => $overwrite, 'etc' => $etc,  'class' => 'form-control', 'disabled' =>  $disable)); ?>
+                                                    <?php echo $obj->inputText('brandName[]', array('overwritePost' => $overwrite, 'etc' => $etc, 'class' => 'form-control', 'disabled' => $disable)); ?>
                                                 </div>
-                                                <div class="div-table-col detail-col-detail" style="width:120px;" style="vertical-align:top;">
-                                                    <!-- <?php echo $obj->inputText('detailType[]', array('overwritePost' => $overwrite, 'etc' => $etc,  'class' => 'form-control', 'disabled' =>  $disable)); ?> -->
+                                                <div class="div-table-col detail-col-detail" style="width:120px;"
+                                                    style="vertical-align:top;">
+                                                    <!-- <?php echo $obj->inputText('detailType[]', array('overwritePost' => $overwrite, 'etc' => $etc, 'class' => 'form-control', 'disabled' => $disable)); ?> -->
                                                     <?php echo $obj->inputHidden('hidDetailTypeKey[]', array('overwritePost' => $overwrite, 'etc' => $etc, 'disabled' => $disabled)); ?>
-                                                    <?php echo $obj->inputText('detailType[]', array('overwritePost' => $overwrite, 'etc' => $etc,  'class' => 'form-control', 'disabled' =>  $disable)); ?>
+                                                    <?php echo $obj->inputText('detailType[]', array('overwritePost' => $overwrite, 'etc' => $etc, 'class' => 'form-control', 'disabled' => $disable)); ?>
                                                 </div>
-                                                <div class="div-table-col detail-col-detail" style="vertical-align:top; width:70px; "><?php echo $obj->inputNumber('qtyCarton[]', array('overwritePost' => $overwrite, 'etc' => 'style="text-align:right;" ' . $etc, 'disabled' =>  $disable)); ?></div>
-                                                <div class="div-table-col detail-col-detail" style="vertical-align:top; width:100px; "><?php echo $obj->inputNumber('qtyPackage[]', array('overwritePost' => $overwrite, 'etc' => 'style="text-align:right;" ' . $etc, 'disabled' =>  $disable)); ?></div>
-                                                <div class="div-table-col detail-col-detail" style="vertical-align:top; width:80px; "><?php echo $obj->inputNumber('qty[]', array('readonly' => true,'overwritePost' => $overwrite, 'etc' => 'style="text-align:right;" ' . $etc, 'disabled' =>  $disable)); ?></div>
-                                                <div class="div-table-col detail-col-detail" style="vertical-align:top; width:80px; "><?php echo $obj->inputDecimal('alcoholContent[]', array('overwritePost' => $overwrite, 'etc' => 'style="text-align:right;" ' . $etc, 'disabled' =>  $disable)); ?></div>
-                                                <div class="div-table-col detail-col-detail" style="vertical-align:top; width:100px;"><?php echo $obj->inputDecimal('amount[]', array('overwritePost' => $overwrite, 'etc' => 'style="text-align:right;" ' . $etc, 'disabled' =>  $disable)); ?></div>
+                                                <div class="div-table-col detail-col-detail"
+                                                    style="vertical-align:top; width:70px; ">
+                                                    <?php echo $obj->inputNumber('qtyCarton[]', array('overwritePost' => $overwrite, 'etc' => 'style="text-align:right;" ' . $etc, 'disabled' => $disable)); ?>
+                                                </div>
+                                                <div class="div-table-col detail-col-detail"
+                                                    style="vertical-align:top; width:100px; ">
+                                                    <?php echo $obj->inputNumber('qtyPackage[]', array('overwritePost' => $overwrite, 'etc' => 'style="text-align:right;" ' . $etc, 'disabled' => $disable)); ?>
+                                                </div>
+                                                <div class="div-table-col detail-col-detail"
+                                                    style="vertical-align:top; width:80px; ">
+                                                    <?php echo $obj->inputNumber('qty[]', array('readonly' => true, 'overwritePost' => $overwrite, 'etc' => 'style="text-align:right;" ' . $etc, 'disabled' => $disable)); ?>
+                                                </div>
+                                                <div class="div-table-col detail-col-detail"
+                                                    style="vertical-align:top; width:80px; ">
+                                                    <?php echo $obj->inputDecimal('alcoholContent[]', array('overwritePost' => $overwrite, 'etc' => 'style="text-align:right;" ' . $etc, 'disabled' => $disable)); ?>
+                                                </div>
+                                                <div class="div-table-col detail-col-detail"
+                                                    style="vertical-align:top; width:100px;">
+                                                    <?php echo $obj->inputDecimal('amount[]', array('overwritePost' => $overwrite, 'etc' => 'style="text-align:right;" ' . $etc, 'disabled' => $disable)); ?>
+                                                </div>
                                                 <!-- <div class="div-table-col detail-col-detail" style="width:120px;" style="vertical-align:top;">
                                                     <?php echo $obj->inputHidden('hidDetailCountryKey[]', array('overwritePost' => $overwrite, 'etc' => $etc, 'disabled' => $disabled)); ?>
-                                                    <?php echo $obj->inputText('countryOfOriginId[]', array('overwritePost' => $overwrite, 'etc' => $etc,  'class' => 'form-control', 'disabled' =>  $disable)); ?>
+                                                    <?php echo $obj->inputText('countryOfOriginId[]', array('overwritePost' => $overwrite, 'etc' => $etc, 'class' => 'form-control', 'disabled' => $disable)); ?>
                                                 </div> -->
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="div-table-col detail-col-detail icon-col <?php echo $obj->hideOnDisabled(); ?>"><?php echo $obj->inputLinkButton('btnDeleteRows', '<i class="fas fa-times"></i>', array('etc' => 'tabIndex="-1"', 'class' => 'btn btn-link remove-button')); ?></div>
+                                    <div
+                                        class="div-table-col detail-col-detail icon-col <?php echo $obj->hideOnDisabled(); ?>">
+                                        <?php echo $obj->inputLinkButton('btnDeleteRows', '<i class="fas fa-times"></i>', array('etc' => 'tabIndex="-1"', 'class' => 'btn btn-link remove-button')); ?>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="div-table" style="width:100%"> 
-                                 <div class="div-table-row">
+                            <div class="div-table" style="width:100%">
+                                <div class="div-table-row">
                                     <div class="div-table-col" style="padding:0">
-                                         <?php echo $obj->inputText('label[]', array('readonly' => true, 'overwritePost' => $overwrite, 'etc' => $etc . ' placeholder="' . $obj->lang['label'] . '" ', 'add-class' => 'label-style', 'disabled' =>  $disable)); ?>
+                                        <?php echo $obj->inputText('label[]', array('readonly' => true, 'overwritePost' => $overwrite, 'etc' => $etc . ' placeholder="' . $obj->lang['label'] . '" ', 'add-class' => 'label-style', 'disabled' => $disable)); ?>
                                         <div class="flex" style="margin-top: 1em;">
                                             <div>
-                                                <div style="font-weight:bold; padding-left: 0.5em;"><?php echo $obj->lang['hs']; ?></div>
+                                                <div style="font-weight:bold; padding-left: 0.5em;">
+                                                    <?php echo $obj->lang['hs']; ?>
+                                                </div>
                                                 <div>
-                                                    <?php echo $obj->inputText('hs[]', array('overwritePost' => $overwrite, 'etc' => $etc . ' placeholder="' . $obj->lang['hs'] . '" ', 'add-class' => 'label-style', 'disabled' =>  $disable)); ?>
+                                                    <?php echo $obj->inputText('hs[]', array('overwritePost' => $overwrite, 'etc' => $etc . ' placeholder="' . $obj->lang['hs'] . '" ', 'add-class' => 'label-style', 'disabled' => $disable)); ?>
                                                 </div>
                                             </div>
                                             <div>
-                                                <div style="font-weight:bold; padding-left: 0.5em;"><?php echo $obj->lang['transactionType']; ?></div>
+                                                <div style="font-weight:bold; padding-left: 0.5em;">
+                                                    <?php echo $obj->lang['transactionType']; ?>
+                                                </div>
                                                 <div>
-                                                    <?php echo $obj->inputSelect('selTransactionType[]', $arrTransactionType, array('overwritePost' => $overwrite, 'etc' => $etc . ' placeholder="' . $obj->lang['transactionType'] . '" ', 'add-class' => 'label-style', 'disabled' =>  $disable)); ?>
+                                                    <?php echo $obj->inputSelect('selTransactionType[]', $arrTransactionType, array('overwritePost' => $overwrite, 'etc' => $etc . ' placeholder="' . $obj->lang['transactionType'] . '" ', 'add-class' => 'label-style', 'disabled' => $disable)); ?>
                                                 </div>
                                             </div>
                                             <div style="width:70px">
-                                                <div style="font-weight:bold; padding-left: 0.5em;"><?php echo $obj->lang['gol']; ?></div>
+                                                <div style="font-weight:bold; padding-left: 0.5em;">
+                                                    <?php echo $obj->lang['gol']; ?>
+                                                </div>
                                                 <div>
-                                                    <?php echo $obj->inputText('category[]', array('overwritePost' => $overwrite, 'etc' => $etc . ' placeholder="' . $obj->lang['gol'] . '" ', 'add-class' => 'label-style', 'disabled' =>  $disable)); ?>
+                                                    <?php echo $obj->inputText('category[]', array('overwritePost' => $overwrite, 'etc' => $etc . ' placeholder="' . $obj->lang['gol'] . '" ', 'add-class' => 'label-style', 'disabled' => $disable)); ?>
                                                 </div>
                                             </div>
                                             <div>
-                                                <div style="font-weight:bold; padding-left: 0.5em;"><?php echo $obj->lang['unit']; ?></div>
+                                                <div style="font-weight:bold; padding-left: 0.5em;">
+                                                    <?php echo $obj->lang['unit']; ?>
+                                                </div>
                                                 <div>
-                                                    <?php echo $obj->inputSelect('selUnit[]', $arrUnit, array('overwritePost' => $overwrite, 'etc' => $etc . ' placeholder="' . $obj->lang['unit'] . '" ', 'add-class' => 'label-style', 'disabled' =>  $disable)); ?>
+                                                    <?php echo $obj->inputSelect('selUnit[]', $arrUnit, array('overwritePost' => $overwrite, 'etc' => $etc . ' placeholder="' . $obj->lang['unit'] . '" ', 'add-class' => 'label-style', 'disabled' => $disable)); ?>
                                                 </div>
                                             </div>
                                             <div>
-                                                <div style="font-weight:bold; padding-left: 0.5em;"><?php echo $obj->lang['packaging']; ?></div>
+                                                <div style="font-weight:bold; padding-left: 0.5em;">
+                                                    <?php echo $obj->lang['packaging']; ?>
+                                                </div>
                                                 <div>
-                                                    <?php echo $obj->inputText('packagingName[]', array('overwritePost' => $overwrite, 'etc' => $etc . ' placeholder="' . $obj->lang['packaging'] . '" ', 'add-class' => 'label-style', 'disabled' =>  $disable)); ?>
+                                                    <?php echo $obj->inputText('packagingName[]', array('overwritePost' => $overwrite, 'etc' => $etc . ' placeholder="' . $obj->lang['packaging'] . '" ', 'add-class' => 'label-style', 'disabled' => $disable)); ?>
                                                 </div>
                                             </div>
                                             <div>
-                                                <div style="font-weight:bold; padding-left: 0.5em;"><?php echo $obj->lang['country']; ?></div>
+                                                <div style="font-weight:bold; padding-left: 0.5em;">
+                                                    <?php echo $obj->lang['country']; ?>
+                                                </div>
                                                 <div>
-                                                    <?php echo $obj->inputHidden('hidDetailCountryKey[]', array('overwritePost' => $overwrite, 'etc' => $etc, 'add-class' => 'label-style', 'disabled' =>  $disable)); ?>
-                                                    <?php echo $obj->inputText('countryOfOriginId[]', array('overwritePost' => $overwrite, 'etc' => $etc . ' placeholder="' . $obj->lang['country'] . '" ', 'add-class' => 'label-style', 'disabled' =>  $disable)); ?>
+                                                    <?php echo $obj->inputHidden('hidDetailCountryKey[]', array('overwritePost' => $overwrite, 'etc' => $etc, 'add-class' => 'label-style', 'disabled' => $disable)); ?>
+                                                    <?php echo $obj->inputText('countryOfOriginId[]', array('overwritePost' => $overwrite, 'etc' => $etc . ' placeholder="' . $obj->lang['country'] . '" ', 'add-class' => 'label-style', 'disabled' => $disable)); ?>
                                                 </div>
                                             </div>
-                                        </div>  
+                                        </div>
                                     </div>
                                     <div class="div-table-col" style="padding:0; width:1em;">
                                     </div>
@@ -640,30 +738,32 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
                                         <b><?php echo $obj->lang['container']; ?></b><br>
                                         <div class="flex">
                                             <div class="consume">
-                                                <?php echo $obj->inputText('containerNumber[]', array('overwritePost' => $overwrite, 'etc' => $etc . ' placeholder="' . $obj->lang['containerNumber'] . '" ', 'add-class' => 'label-style', 'disabled' =>  $disable)); ?>
+                                                <?php echo $obj->inputText('containerNumber[]', array('overwritePost' => $overwrite, 'etc' => $etc . ' placeholder="' . $obj->lang['containerNumber'] . '" ', 'add-class' => 'label-style', 'disabled' => $disable)); ?>
                                             </div>
                                         </div>
-                                         <div class="flex">
+                                        <div class="flex">
                                             <div class="consume">
-                                                <?php echo $obj->inputText('containerSize[]', array('overwritePost' => $overwrite, 'etc' => $etc . ' placeholder="' . $obj->lang['size'] . '" ', 'add-class' => 'label-style', 'disabled' =>  $disable)); ?>
+                                                <?php echo $obj->inputText('containerSize[]', array('overwritePost' => $overwrite, 'etc' => $etc . ' placeholder="' . $obj->lang['size'] . '" ', 'add-class' => 'label-style', 'disabled' => $disable)); ?>
                                             </div>
                                             <div class="consume">
-                                                <?php echo $obj->inputText('containerType[]', array('overwritePost' => $overwrite, 'etc' => $etc . ' placeholder="' . $obj->lang['containerType'] . '" ', 'add-class' => 'label-style', 'disabled' =>  $disable)); ?>
+                                                <?php echo $obj->inputText('containerType[]', array('overwritePost' => $overwrite, 'etc' => $etc . ' placeholder="' . $obj->lang['containerType'] . '" ', 'add-class' => 'label-style', 'disabled' => $disable)); ?>
 
                                             </div>
                                         </div>
                                     </div>
-                                 </div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                <?php  } ?>
+                <?php } ?>
 
-             </div>
-            
+            </div>
+
             <div style=" clear:both; height:1em;"></div>
-            <div style="float:left; display:inline-block;"><?php echo $obj->inputButton('btnAddRow', $obj->lang['addRows'], array('class' => 'btn btn-primary btn-second-tone')); ?></div>
+            <div style="float:left; display:inline-block;">
+                <?php echo $obj->inputButton('btnAddRow', $obj->lang['addRows'], array('class' => 'btn btn-primary btn-second-tone')); ?>
+            </div>
 
             <div class="form-button-margin"></div>
             <div class="form-button-panel">

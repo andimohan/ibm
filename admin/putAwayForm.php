@@ -286,6 +286,9 @@ $arrWarehouse = $warehouse->generateComboboxOpt(null, array('criteria' => ' and 
                     <div class=" div-table-col detail-col-header" style="width:150px;">
                         <?php echo ucwords($obj->lang['pallet']); ?>
                     </div>
+                    <div class=" div-table-col detail-col-header" style="width:150px;">
+                        <?php echo ucwords($obj->lang['containerNumber']); ?>
+                    </div>
                     <div class="div-table-col detail-col-header" style="width:150px; text-align:right;">
                         <?php echo ucwords($obj->lang['receivedQty']); ?>
                     </div>
@@ -318,8 +321,8 @@ $arrWarehouse = $warehouse->generateComboboxOpt(null, array('criteria' => ' and 
                         $baseunitname = $rsDetail[$i]['baseunitname'];
 
                         $_POST['hidDetailKey[]'] = $rsDetail[$i]['pkey'];
+                        $_POST['hidItemReceivingHeaderKey[]'] = $rsDetail[$i]['itemreceivingheaderkey'];
                         $_POST['hidItemReceivingDetailKey[]'] = $rsDetail[$i]['itemreceivingdetailkey'];
-
                         $_POST['hidPalletDetailKey[]'] = $rsDetail[$i]['palletkey'];
                         $_POST['palletDetailName[]'] = $rsDetail[$i]['palletname'];
                         $_POST['hidItemKey[]'] = $rsDetail[$i]['itemkey'];
@@ -336,14 +339,17 @@ $arrWarehouse = $warehouse->generateComboboxOpt(null, array('criteria' => ' and 
                     <div class="div-table-row  <?php echo $class; ?>">
                         <div class="div-table-col detail-col-detail" style="vertical-align:top;">
                             <?php echo $obj->inputHidden('hidDetailKey[]', array('overwritePost' => $overwrite, 'etc' => $etc, )); ?>
+                            <?php echo $obj->inputHidden('hidItemReceivingHeaderKey[]', array('overwritePost' => $overwrite, 'etc' => $etc, )); ?>
                             <?php echo $obj->inputHidden('hidItemReceivingDetailKey[]', array('overwritePost' => $overwrite, 'etc' => $etc, )); ?>
                             <?php echo $obj->inputHidden('hidItemKey[]', array('overwritePost' => $overwrite, 'etc' => $etc, )); ?>
                             <?php echo $obj->inputText('itemName[]', array('overwritePost' => $overwrite, 'readonly' => true, 'etc' => $etc, 'class' => 'form-control mnv-barcode-input')); ?>
                         </div>
-                        <!-- <div class="div-table-col detail-col-detail"><?php echo $obj->inputText('containerNumber[]', array('overwritePost' => $overwrite, 'etc' => 'style="text-align:right;" ' . $etc)); ?></div> -->
                         <div class="div-table-col detail-col-detail" style="vertical-align:top;">
                             <?php echo $obj->inputHidden('hidPalletDetailKey[]', array('overwritePost' => $overwrite, 'etc' => $etc, )); ?>
                             <?php echo $obj->inputText('palletDetailName[]', array('overwritePost' => $overwrite, 'readonly' => false, 'etc' => $etc, 'class' => 'form-control mnv-barcode-input')); ?>
+                        </div>
+                        <div class="div-table-col detail-col-detail">
+                            <?php echo $obj->inputText('containerNumber[]', array('overwritePost' => $overwrite, 'readonly' => true, 'etc' => 'style="text-align:left;" ' . $etc)); ?>
                         </div>
                         <div class="div-table-col detail-col-detail">
                             <?php echo $obj->inputNumber('receivingQty[]', array('overwritePost' => $overwrite, 'readonly' => true, 'etc' => 'style="text-align:right;" ' . $etc)); ?>

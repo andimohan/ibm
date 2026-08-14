@@ -233,7 +233,9 @@ function ItemReceiving(tabID, fileUpload){
                     var arrPostValue = []; 
                     arrPostValue.push({"selector":"itemDetailCode", "value":detail[i].itemcode});
                     arrPostValue.push({"selector":"itemDetailName", "value":detail[i].itemname}); 
-                    arrPostValue.push({"selector":"mililiter", "value":detail[i].mililiter}); 
+                    // arrPostValue.push({ "selector": "mililiter", "value": detail[i].mililiter }); 
+                    arrPostValue.push({ "selector": "size", "value": detail[i].size }); 
+                    arrPostValue.push({"selector":"selSizeUnit", "value":detail[i].sizeunitkey}); 
                     arrPostValue.push({"selector":"hidDetailBrandKey", "value":detail[i].brandkey});
                     arrPostValue.push({"selector":"brandName", "value":detail[i].brandname}); 
                     arrPostValue.push({"selector":"hidDetailTypeKey", "value":detail[i].typekey}); 

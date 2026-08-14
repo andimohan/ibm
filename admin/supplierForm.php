@@ -2,7 +2,7 @@
 require_once '../_config.php';  
 require_once '../_include-v2.php';  
 
-includeClass(array('Supplier.class.php','Tax.class.php'));
+includeClass(array('Supplier.class.php','Tax.class.php','Warehouse.class.php'));
 $supplier = createObjAndAddToCol( new Supplier());
 
 $ap = createObjAndAddToCol( new AP());  
@@ -10,7 +10,8 @@ $city = createObjAndAddToCol( new City());
 $currency = createObjAndAddToCol( new Currency());
 $termOfPayment = createObjAndAddToCol( new TermOfPayment()); 
 $supplierCategory = createObjAndAddToCol( new SupplierCategory()); 
-$tax = createObjAndAddToCol( new Tax()); 
+$tax = createObjAndAddToCol( new Tax());
+$warehouse = createObjAndAddToCol(new Warehouse());
 
 $isActiveCOA = $class->isActiveModule('chartOfAccount'); 
 if($isActiveCOA && USE_GL)
@@ -30,6 +31,7 @@ $isQuickAdd = ( isset($_GET) && !empty($_GET['quickadd'])) ? true : false;
 
 $editTermOfPaymentInactiveCriteria = '';
 $editSupplierCategoryInactiveCriteria = '';
+$editWarehouseInactiveCriteria = '';
 
 $rs = prepareOnLoadData($obj);  
 $rsContactPerson = array();
@@ -52,6 +54,7 @@ if (!empty($_GET['id'])){
 	
 	$_POST['selCategory'] =  $rs[0]['categorykey'];   
 	$_POST['selPPhType'] =  $rs[0]['pphtype'];
+    $_POST['selWarehouseKey'] = $rs[0]['warehousekey'];
         
 	if (!empty($_POST['hidCityKey'])){
 		$rsCity = $city->searchData('city.pkey',$rs[0]['citykey'],true);
@@ -91,7 +94,9 @@ if (!empty($_GET['id'])){
 		}
 	 
 	}
-	
+
+
+    $editWarehouseInactiveCriteria = ' or ' . $warehouse->tableName . '.pkey = ' . $obj->oDbCon->paramString($rs[0]['warehousekey']);
 	$editTermOfPaymentInactiveCriteria = ' or '.$termOfPayment->tableName.'.pkey = ' . $obj->oDbCon->paramString($rs[0]['termofpaymentkey']);
 	$editSupplierCategoryInactiveCriteria =  ' or '.$supplierCategory->tableName.'.pkey = ' . $obj->oDbCon->paramString($rs[0]['categorykey']);
 }
@@ -102,7 +107,7 @@ $arrTOP = $termOfPayment->generateComboboxOpt(null,array('criteria' =>' and ('.$
 $arrCurrency = $currency->generateComboboxOpt(null,array('criteria' =>' and ('.$currency->tableName.'.statuskey = 1)'));
 $arrSupplierCategory = $supplierCategory->generateComboboxOpt(null,array('criteria' =>' and ('.$supplierCategory->tableName.'.statuskey = 1)' .$editSupplierCategoryInactiveCriteria));  
 $arrPPh = $tax->generateComboboxOpt(null, array('criteria' => ' and ( ' . $tax->tableName . '.typekey=' . $obj->oDbCon->paramString(TAX_TYPE['PPH']) . ' and ' . $tax->tableName . '.statuskey = 1)', 'order' => 'order by ' . $tax->tableName . '.orderlist asc, ' . $tax->tableName . '.name asc'));
-
+$arrWarehouse = $warehouse->generateComboboxOpt(null, array('criteria' => ' and (' . $warehouse->tableName . '.statuskey = 1)' . $editWarehouseInactiveCriteria));
 
 if ($inTELDomain){   
 	$container = createObjAndAddToCol( new Container()); 
@@ -208,7 +213,14 @@ $currencyPreference[2] = 'As Invoiced';
                                         <div class="col-xs-9"> 
                                             <?php echo  $obj->inputSelect('selCategory', $arrSupplierCategory); ?> 
                                         </div> 
-                                    </div>    
+                                    </div> 
+                                    
+                                    <div class="form-group">
+                                        <label class="col-xs-3 control-label"><?php echo ucwords($obj->lang['warehouse']); ?></label>
+                                        <div class="col-xs-9">
+                                            <?php echo $obj->inputSelect('selWarehouseKey', $arrWarehouse); ?>
+                                        </div>
+                                    </div>
 							
                                     <div class="form-group">
                                         <label class="col-xs-3 control-label"><?php echo ucwords($obj->lang['address']); ?></label> 
