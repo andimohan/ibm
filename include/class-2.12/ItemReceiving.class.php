@@ -530,8 +530,10 @@ class ItemReceiving extends BaseClass
         if (!empty($criteria)) {
             $sql .= ' ' . $criteria;
         }
+        $this->setLog($sql, true);
 
         $rs = $this->oDbCon->doQuery($sql);
+        $this->setLog($rs, true);
 
         if (empty($rs))
             return;
@@ -821,6 +823,7 @@ class ItemReceiving extends BaseClass
                 ' . $this->tableName . '.statuskey in (' . TRANSACTION_STATUS['konfirmasi'] . ',' . TRANSACTION_STATUS['selesai'] . ') and
                 ' . $this->tableName . '.pkey in (' . $this->oDbCon->paramString($pkey, ',') . ')
         ';
+        $this->setLog($sql, true);
 
         $result = $this->oDbCon->doQuery($sql);
 

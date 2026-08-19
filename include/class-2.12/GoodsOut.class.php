@@ -147,13 +147,13 @@ class GoodsOut extends BaseClass
             $this->addErrorList($arrayToJs, false, $this->errorMsg['customer'][1]);
         }
 
-        if (empty($recipient)) {
-            $this->addErrorList($arrayToJs, false, $this->errorMsg['recipient'][1]);
-        }
+        // if (empty($recipient)) {
+        //     $this->addErrorList($arrayToJs, false, $this->errorMsg['recipient'][1]);
+        // }
 
-        if (empty($recipientAddress)) {
-            $this->addErrorList($arrayToJs, false, '<strong>' . $this->lang['recipient'] . '. </strong>' . $this->errorMsg['address'][1]);
-        }
+        // if (empty($recipientAddress)) {
+        //     $this->addErrorList($arrayToJs, false, '<strong>' . $this->lang['recipient'] . '. </strong>' . $this->errorMsg['address'][1]);
+        // }
 
         if (empty($arrReceivingDetailKey[0])) {
             $this->addErrorList($arrayToJs, false, $this->errorMsg[501]);
