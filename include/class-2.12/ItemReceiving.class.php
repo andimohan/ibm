@@ -638,7 +638,6 @@ class ItemReceiving extends BaseClass
                 ' . $this->tableName . '
             where
                 ' . $itemMovement->tableName . '.refkey2 = ' . $this->tableName . '.pkey and
-                ' . $itemMovement->tableName . '.reftable = ' . $this->oDbCon->paramString($putAway->tableName) . ' and
                 ' . $itemMovement->tableName . '.statuskey = 1 and
                 ' . $itemMovement->tableName . '.warehouselayoutkey = ' . $this->oDbCon->paramString($warehouselayoutoriginkey) . '    
         ';
@@ -823,7 +822,6 @@ class ItemReceiving extends BaseClass
                 ' . $this->tableName . '.statuskey in (' . TRANSACTION_STATUS['konfirmasi'] . ',' . TRANSACTION_STATUS['selesai'] . ') and
                 ' . $this->tableName . '.pkey in (' . $this->oDbCon->paramString($pkey, ',') . ')
         ';
-        $this->setLog($sql, true);
 
         $result = $this->oDbCon->doQuery($sql);
 

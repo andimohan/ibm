@@ -37,6 +37,7 @@ if (isset($_GET) && !empty($_GET['action'])) {
             if(isset($_GET['warehouselayoutoriginkey']) && !empty($_GET['warehouselayoutoriginkey'])){
                 $warehouselayoutoriginkey = $_GET['warehouselayoutoriginkey'];
             }
+            $obj->setLog($_GET, true);
 
             $rs = $obj->getDataForZoneTransfer($pkey,$warehouselayoutoriginkey);
             echo json_encode($rs);

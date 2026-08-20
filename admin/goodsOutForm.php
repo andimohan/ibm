@@ -48,6 +48,7 @@ if (!empty($_GET['id'])) {
 
     $_POST['recipient'] = $rs[0]['recipient'];
     $_POST['recipientAddress'] = $rs[0]['recipientaddress'];
+    $_POST['selCurrency'] = $rs[0]['currencykey'];
 
     $_POST['selDocumentType'] = $rs[0]['documenttypekey'];
     $_POST['submissionNumber'] = $rs[0]['submissionnumber'];
