@@ -46,7 +46,7 @@ class PutAway extends BaseClass
         $this->arrData['code'] = array('code');
         $this->arrData['typekey'] = array('selTypeKey');
         $this->arrData['trdate'] = array('trDate', 'date');
-        $this->arrData['warehousekey'] = array('selWarehouseKey');
+        $this->arrData['warehousekey'] = array('hidWarehouseKey');
         $this->arrData['putawaydate'] = array('trPutAwayDate', 'date');
         $this->arrData['warehouselayoutkey'] = array('hidWarehouseLayoutKey');
         $this->arrData['warehouselayoutoriginkey'] = array('hidWarehouseLayoutOriginKey');
@@ -288,8 +288,9 @@ class PutAway extends BaseClass
 
 
         $itemReceiving = new ItemReceiving();
+        $this->setLog($arr, true);
 
-        $warehousekey = $arr['selWarehouseKey'];
+        $warehousekey = $arr['hidWarehouseKey'];
         $warehouselayoutkey = $arr['hidWarehouseLayoutKey'];
         $palletkey = $arr['hidPalletKey'];
         $refkey = $arr['hidRefKey'];
@@ -667,12 +668,12 @@ class PutAway extends BaseClass
 
     function normalizeParameter($arrParam, $trim = false)
     {
-
-        $arrParam = parent::normalizeParameter($arrParam);
-
         if ($this->typekey == 2) {
             $arrParam['submissionNumber'] = $arrParam['refCode'];
         }
+        $this->setLog($arrParam, true);
+
+        $arrParam = parent::normalizeParameter($arrParam);
 
         return $arrParam;
 

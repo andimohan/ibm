@@ -133,7 +133,8 @@ function PutAway(tabID){
 				tabObj.find("[name=submissionNumber]").val(data.submissionnumber) 
 				tabObj.find("[name=warehouseLayoutOriginName]").val(data.warehouselayoutname) 
                 tabObj.find("[name=hidWarehouseLayoutOriginKey]").val(data.warehouselayoutkey) 
-                tabObj.find("[name=selWarehouseKey]").val(data.warehousekey).change(); 
+                tabObj.find("[name=hidWarehouseKey]").val(data.warehousekey); 
+                tabObj.find("[name=warehouseName]").val(data.warehousename); 
                 // tabObj.find(".baseunitname").html(data[0].baseunitname);  
             }
         });

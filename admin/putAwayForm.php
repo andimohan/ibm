@@ -50,6 +50,13 @@ if (!empty($_GET['id'])) {
         $_POST['warehouseLayoutName'] = $rsLocation[0]['name'];
     }
 
+    if (!empty($rs[0]['warehousekey'])) {
+
+        $rsWarehouse = $warehouse->getDataRowById($rs[0]['warehousekey']);
+        $_POST['hidWarehouseKey'] = $rsWarehouse[0]['pkey'];
+        $_POST['warehouseName'] = $rsWarehouse[0]['name'];
+    }
+    
     if (!empty($rs[0]['warehouselayoutoriginkey'])) {
 
         $rsLocation = $warehouseLayout->getDataRowById($rs[0]['warehouselayoutoriginkey']);
@@ -193,7 +200,9 @@ $arrWarehouse = $warehouse->generateComboboxOpt(null, array('criteria' => ' and 
                                 <label
                                     class="col-xs-3 control-label"><?php echo ucwords($obj->lang['warehouse']); ?></label>
                                 <div class="col-xs-9">
-                                    <?php echo $obj->inputSelect('selWarehouseKey', $arrWarehouse, array('readonly' => true)); ?>
+
+                                    <?php echo $obj->inputHidden('hidWarehouseKey'); ?>
+                                    <?php echo $obj->inputText('warehouseName', array('readonly' => true)); ?>
                                 </div>
                             </div>
                             <div class="form-group">
