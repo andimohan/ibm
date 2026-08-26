@@ -15,6 +15,7 @@ class GoodsOut extends BaseClass
         $this->tableItemReceivingHeader = 'item_receiving_header';
         $this->tableItemReceivingDetail = 'item_receiving_detail';
         $this->tableDocumentType = 'document_type';
+        $this->tableWarehouseLayout = 'warehouse_layout';
 
         $this->securityObject = 'GoodsOut';
 
@@ -28,7 +29,7 @@ class GoodsOut extends BaseClass
         $this->arrDataDetail['refkey'] = array('pkey', 'ref');
         $this->arrDataDetail['refreceivingheaderkey'] = array('hidRefReceivingHeaderKey');
         $this->arrDataDetail['refreceivingdetailkey'] = array('hidRefReceivingDetailKey');
-        $this->arrDataDetail['warehouselayoutkey'] = array('selWarehouseLayoutDetail');
+        $this->arrDataDetail['warehouselayoutkey'] = array('hidWarehouseLayoutDetailKey');
         $this->arrDataDetail['submissionnumber'] = array('submissionDetailNumber');
         $this->arrDataDetail['itemcode'] = array('itemCode');
         $this->arrDataDetail['itemname'] = array('itemName');
@@ -56,6 +57,8 @@ class GoodsOut extends BaseClass
         $this->arrData['recipient'] = array('recipient');
         $this->arrData['recipientaddress'] = array('recipientAddress');
         $this->arrData['statuskey'] = array('selStatus');
+        $this->arrData['car'] = array('car');
+        $this->arrData['driver'] = array('driver');
 
         $this->arrData['file'] = array('item-file-uploader', array('datatype' => 'file', 'uploadFolder' => $this->uploadFileFolder, 'token' => 'token-item-file-uploader', 'fileName' => 'item-file-uploader'));
 
@@ -78,6 +81,7 @@ class GoodsOut extends BaseClass
             'ItemReceiving.class.php',
             'DocumentType.class.php',
             'Customer.class.php',
+            'itemMovement.class.php',
             'Currency.class.php'
         ));
 
@@ -113,11 +117,14 @@ class GoodsOut extends BaseClass
 	   			' . $this->tableNameDetail . '.*,
                 ' . $this->tableItemReceivingHeader . '.code as receivingcode,
                 ' . $this->tableItemReceivingDetail . '.unit,
+                ' . $this->tableItemReceivingDetail . '.containernumber,
+                ' . $this->tableWarehouseLayout . '.name as warehouselayoutname,
                 ' . $this->tableItemUnit . '.name as unitname,
                 ' . $this->tableDocumentType . '.name as documenttypename 
                  from
 			  	    ' . $this->tableNameDetail . '
                         left join ' . $this->tableItemReceivingHeader . ' on ' . $this->tableNameDetail . '.refreceivingheaderkey = ' . $this->tableItemReceivingHeader . '.pkey
+                        left join ' . $this->tableWarehouseLayout . ' on ' . $this->tableNameDetail . '.warehouselayoutkey = ' . $this->tableWarehouseLayout . '.pkey
                         left join ' . $this->tableDocumentType . ' on ' . $this->tableItemReceivingHeader . '.documenttype = ' . $this->tableDocumentType . '.pkey
                         left join ' . $this->tableItemReceivingDetail . ' on ' . $this->tableNameDetail . '.refreceivingdetailkey = ' . $this->tableItemReceivingDetail . '.pkey
                         left join ' . $this->tableItemUnit . ' on ' . $this->tableItemReceivingDetail . '.unit = ' . $this->tableItemUnit . '.pkey
@@ -142,6 +149,7 @@ class GoodsOut extends BaseClass
         $arrQty = $arr['qty'];
         $arrSubmission = $arr['submissionNumber'];
         $arrItemCode = $arr['itemCode'];
+        $this->setLog($arr, true);
 
         if (empty($customerkey)) {
             $this->addErrorList($arrayToJs, false, $this->errorMsg['customer'][1]);
@@ -204,6 +212,31 @@ class GoodsOut extends BaseClass
     {
         $id = $rsHeader[0]['pkey'];
 
+        $rsDetail = $this->getDetailWithRelatedInformation($id);
+
+        $itemMovement = new itemMovement();
+        $note = $rsHeader[0]['code'] . '. ' . $this->ucFirst($this->lang['itemOut']);
+
+        for ($i = 0; $i < count($rsDetail); $i++) { 
+            $itemMovement->updateItemMovement(
+                            array(
+                                'refkey' => $id,
+                                'refkey2' => $rsDetail[$i]['refreceivingheaderkey'],
+                                'refdetailkey' => $rsDetail[$i]['refreceivingdetailkey'],
+                            ),
+                            $rsDetail[$i]['itemkey'],
+                            -$rsDetail[$i]['qty'],
+                            0,
+                            $this->tableName,
+                            array(
+                                'warehousekey' => $rsHeader[0]['warehousekey'],
+                                'warehouselayoutkey' => $rsDetail[$i]['warehouselayoutkey']
+                            ),
+                            $note,
+                            $rsHeader[0]['trdate']
+                        );
+        }
+
     }
 
     function validateClose($rsHeader)
@@ -216,8 +249,6 @@ class GoodsOut extends BaseClass
 
         $rs = $this->getDataRowById($id);
         $rsDetail = $this->getDetailWithRelatedInformation($id);
-
-        $itemReceiving = new ItemReceiving();
 
         $id = $rsHeader[0]['pkey'];
 
@@ -281,7 +312,9 @@ class GoodsOut extends BaseClass
     function cancelTrans($rsHeader, $copy)
     {
 
+        $itemMovement = new ItemMovement();
         $id = $rsHeader[0]['pkey'];
+        $itemMovement->cancelMovement($id, $this->tableName);
 
         if ($copy)
             $this->copyDataOnCancel($id);

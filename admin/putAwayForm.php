@@ -193,15 +193,14 @@ $arrWarehouse = $warehouse->generateComboboxOpt(null, array('criteria' => ' and 
                                 <label
                                     class="col-xs-3 control-label"><?php echo ucwords($obj->lang['warehouse']); ?></label>
                                 <div class="col-xs-9">
-                                    <?php echo $obj->inputSelect('selWarehouseKey', $arrWarehouse); ?>
+                                    <?php echo $obj->inputSelect('selWarehouseKey', $arrWarehouse, array('readonly' => true)); ?>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label
-                                    class="col-xs-3 control-label"><?php echo ucwords($obj->lang['warehouseLayout']); ?></label>
+                                <label class="col-xs-3 control-label"><?php echo ucwords($obj->lang['destinationZone']); ?></label>
                                 <div class="col-xs-9">
                                     <div class="flex">
-                                        <div class="consume">
+                                        <!-- <div class="consume">
                                             <?php echo $obj->inputAutoComplete(
                                                 array(
                                                     'objRefer' => $warehouseLayout,
@@ -218,7 +217,7 @@ $arrWarehouse = $warehouse->generateComboboxOpt(null, array('criteria' => ' and 
                                             );
                                             ?>
                                         </div>
-                                        <div>-</div>
+                                        <div>-</div> -->
                                         <div class="consume">
                                             <?php echo $obj->inputAutoComplete(
                                                 array(
@@ -289,13 +288,16 @@ $arrWarehouse = $warehouse->generateComboboxOpt(null, array('criteria' => ' and 
                     <div class=" div-table-col detail-col-header" style="width:150px;">
                         <?php echo ucwords($obj->lang['containerNumber']); ?>
                     </div>
-                    <div class="div-table-col detail-col-header" style="width:150px; text-align:right;">
-                        <?php echo ucwords($obj->lang['receivedQty']); ?>
+                    <div class=" div-table-col detail-col-header" style="width:150px;">
+                        <?php echo ucwords($obj->lang['zone']); ?>
                     </div>
-                    <div class="div-table-col detail-col-header" style="width:150px; text-align:right;">
+                    <div class="div-table-col detail-col-header" style="width:100px; text-align:right;">
+                        <?php echo ucwords($obj->lang['inStock']); ?>
+                    </div>
+                    <!-- <div class="div-table-col detail-col-header" style="width:140px; text-align:right;">
                         <?php echo ucwords($obj->lang['afterPutAwayQty']); ?>
-                    </div>
-                    <div class="div-table-col detail-col-header" style="width:150px; text-align:right;">
+                    </div> -->
+                    <div class="div-table-col detail-col-header" style="width:100px; text-align:right;">
                         <?php echo ucwords($obj->lang['qty']); ?>
                     </div>
                     <div class="div-table-col detail-col-header  icon-col <?php echo $obj->hideOnDisabled(); ?>"></div>
@@ -328,6 +330,8 @@ $arrWarehouse = $warehouse->generateComboboxOpt(null, array('criteria' => ' and 
                         $_POST['hidItemKey[]'] = $rsDetail[$i]['itemkey'];
                         $_POST['itemName[]'] = $rsDetail[$i]['itemname'];
                         $_POST['containerNumber[]'] = $rsDetail[$i]['containernumber'];
+                        $_POST['zoneDetailName[]'] = $rsDetail[$i]['warehouselayoutname'];
+                        $_POST['hidZoneDetailKey[]'] = $rsDetail[$i]['warehouselayoutkey'];
                         $_POST['receivingQty[]'] = $obj->formatNumber($rsDetail[$i]['receivingqty']);
                         $_POST['putAwayQty[]'] = $obj->formatNumber($rsDetail[$i]['putawayqty']);
                         $_POST['qty[]'] = $obj->formatNumber($rsDetail[$i]['qty']);
@@ -352,11 +356,15 @@ $arrWarehouse = $warehouse->generateComboboxOpt(null, array('criteria' => ' and 
                             <?php echo $obj->inputText('containerNumber[]', array('overwritePost' => $overwrite, 'readonly' => true, 'etc' => 'style="text-align:left;" ' . $etc)); ?>
                         </div>
                         <div class="div-table-col detail-col-detail">
-                            <?php echo $obj->inputNumber('receivingQty[]', array('overwritePost' => $overwrite, 'readonly' => true, 'etc' => 'style="text-align:right;" ' . $etc)); ?>
+                            <?php echo $obj->inputText('zoneDetailName[]', array('overwritePost' => $overwrite, 'readonly' => true, 'etc' => 'style="text-align:left;" ' . $etc)); ?>
+                            <?php echo $obj->inputHidden('hidZoneDetailKey[]', array('overwritePost' => $overwrite, 'etc' => $etc, )); ?>
                         </div>
                         <div class="div-table-col detail-col-detail">
-                            <?php echo $obj->inputNumber('putAwayQty[]', array('overwritePost' => $overwrite, 'readonly' => true, 'etc' => 'style="text-align:right;" ' . $etc)); ?>
+                            <?php echo $obj->inputNumber('receivingQty[]', array('overwritePost' => $overwrite, 'readonly' => true, 'etc' => 'style="text-align:right;" ' . $etc)); ?>
                         </div>
+                        <!-- <div class="div-table-col detail-col-detail">
+                            <?php echo $obj->inputNumber('putAwayQty[]', array('overwritePost' => $overwrite, 'readonly' => true, 'etc' => 'style="text-align:right;" ' . $etc)); ?>
+                        </div> -->
                         <div class="div-table-col detail-col-detail">
                             <?php echo $obj->inputNumber('qty[]', array('allowedStatusForEdit' => array(1, 2), 'overwritePost' => $overwrite, 'etc' => 'style="text-align:right;" ' . $etc)); ?>
                         </div>

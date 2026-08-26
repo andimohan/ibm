@@ -3252,6 +3252,8 @@ $this->lang['qtyItem'] = 'Qty. Item';
 $this->lang['labeling'] = 'Labeling';
 $this->lang['isNonLabeling'] = 'Non Labeling';
 $this->lang['picking'] = 'Picking';
+$this->lang['zone'] = 'Zone';
+$this->lang['destinationZone'] = 'Destination Zone';
 
 $this->lang['activationEmailContent'] = 'Dear {{CUSTOMER_NAME}},
 									 <br>

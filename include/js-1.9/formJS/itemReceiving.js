@@ -101,7 +101,6 @@ function ItemReceiving(tabID, fileUpload){
     }
 
     this.updateItemReceivingPlanInformation = function updateItemReceivingPlanInformation(obj,event, ui){
-            console.log("OK");
             if (tabObj.find("[name=hidCurrentItemReceivingPlanKey]" ).val() != ''){
 					$( "#dialog-message" ).html("Merubah Rencana Penerimaan Barang akan mereset detail transaksi.");
 					$( "#dialog-message" ).dialog({
@@ -169,7 +168,6 @@ function ItemReceiving(tabID, fileUpload){
         var pkey = tabObj.find("[name=hidItemReceivingPlanKey]").val();
     
         if (!pkey) return;
-        console.log('   update');
         $.ajax({
             type: "GET",
             url:  'ajax-item-receiving-plan.php',

@@ -9,7 +9,7 @@
       
     define('CLASS_VERSION', 'class-2.12');
 	define('ADMIN_CSS_VERSION', 'adminStyle-3.79.min.css');
-	define('ADMIN_JS_VERSION', 'formJS-1.318.min.js');
+	define('ADMIN_JS_VERSION', 'formJS-1.319.min.js');
 	define('REPORT_JS_VERSION', 'report-2.12.min.js' );
 
 	$WEB_FOLDER = '';

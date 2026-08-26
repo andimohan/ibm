@@ -3287,6 +3287,8 @@ $this->lang['qtyItem'] = 'Jml. Barang';
 $this->lang['labeling'] = 'Proses Labeling';
 $this->lang['isNonLabeling'] = 'Tidak Perlu Labeling';
 $this->lang['picking'] = 'Picking List';
+$this->lang['zone'] = 'Zona';
+$this->lang['destinationZone'] = 'Zona Tujuan';
 
 $this->errorMsg['putAway'][1] = 'Penerimaan Barang tidak boleh kosong.';
 $this->errorMsg['putAway'][2] = 'Jumlah barang di terima harus lebih besar dari 0.';

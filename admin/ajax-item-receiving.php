@@ -16,11 +16,13 @@ if (isset($_GET) && !empty($_GET['action'])) {
 
 
             $pkey = 0;
+            $obj->setLog($_GET, true);
             if(isset($_GET['pkey']) && !empty($_GET['pkey'])){
                 $pkey = $_GET['pkey'];
             }
 
-            $rs = $obj->getDataForPutAway($pkey);
+            // $rs = $obj->getDataForPutAway($pkey);
+            $rs = $obj->getDataForZoneTransfer($pkey, null);
 
             echo json_encode($rs);
 
@@ -37,7 +39,6 @@ if (isset($_GET) && !empty($_GET['action'])) {
             if(isset($_GET['warehouselayoutoriginkey']) && !empty($_GET['warehouselayoutoriginkey'])){
                 $warehouselayoutoriginkey = $_GET['warehouselayoutoriginkey'];
             }
-            $obj->setLog($_GET, true);
 
             $rs = $obj->getDataForZoneTransfer($pkey,$warehouselayoutoriginkey);
             echo json_encode($rs);
@@ -53,7 +54,6 @@ if (isset($_GET) && !empty($_GET['action'])) {
 
 
             $rs = $obj->getDataForLabeling($pkey);
-            $obj->setLog($rs, true);
 
             echo json_encode($rs);
 
@@ -67,7 +67,7 @@ if (isset($_GET) && !empty($_GET['action'])) {
             }
 
 
-            $rs = $obj->getDataForGoodsOut($pkey);
+            $rs = $obj->getDataForGoodsOut($pkey, null);
 
             echo json_encode($rs);
 

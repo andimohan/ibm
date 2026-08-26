@@ -348,7 +348,6 @@ class ItemMovement extends BaseClass
                 group by ' . $this->tableName . '.itemkey
                 ';
 
-        //$this->setLog($sql,true);
 
         $rs = $this->oDbCon->doQuery($sql);
         return $rs[0]['costinbaseunit'];
@@ -695,7 +694,6 @@ class ItemMovement extends BaseClass
             order by  ' . $this->tableSNMovement . '.pkey desc
         ';
 
-        //$this->setLog($sql,true);
         $rs = $this->oDbCon->doQuery($sql);
 
         if (empty($rs))
@@ -732,7 +730,6 @@ class ItemMovement extends BaseClass
 
             $rsLastMovement = $this->oDbCon->doQuery($sql);
 
-            //$this->setLog($rsLastMovement,true); 
 
             $this->insertItemSN(array(
                 'itemkey' => $rsRow['itemkey'],
@@ -964,8 +961,6 @@ class ItemMovement extends BaseClass
         // kalo itemnya keluar, warehousekey pasti jadi 0 
         //$warehousekey = ($rsMovement[$sn]['qtyinbaseunit'] > 0) ? $rsMovement[$sn]['warehousekey'] : 0;
         $warehousekey = ($movementHistory['qtyinbaseunit'] > 0) ? $movementHistory['warehousekey'] : 0;
-        $this->setLog($movementHistory['qtyinbaseunit'], true);
-        $this->setLog($warehousekey, true);
 
         // hanya digunakan untuk membatalkan item yg sudah keluar / terjual
         // jgn gunakan utk membatalkan transaksi retur ke vendor / kirim  ke vendor
@@ -1324,8 +1319,7 @@ class ItemMovement extends BaseClass
 
         if (!empty($orderBy))
             $sql .= ' ' . $orderBy;
-
-        //        $this->setLog($sql,true);         
+     
         return $this->oDbCon->doQuery($sql);
     }
 
@@ -1353,7 +1347,6 @@ class ItemMovement extends BaseClass
 
         $sql = 'select coalesce(sum(qtyinbaseunit),0) as "qtyinbaseunit" from ' . $this->tableRentalMovement . '  where statuskey = 1 and itemkey in (' . $itemkey . ') ' . $criteria;
 
-        // $this->setLog($sql);
 
         $rs = $this->oDbCon->doQuery($sql);
         return $rs[0]['qtyinbaseunit'];
@@ -1427,6 +1420,7 @@ class ItemMovement extends BaseClass
 			INSERT INTO		
 			  ' . $this->tableName . ' (
 			  	refkey,
+			  	refdetailkey,
                 refkey2,
                 trdate,
 				itemkey,
@@ -1445,6 +1439,7 @@ class ItemMovement extends BaseClass
 			)
 			VALUES (
 				' . $this->oDbCon->paramString($refkey) . ',
+				' . $this->oDbCon->paramString($refdetailkey) . ',
                 ' . $this->oDbCon->paramString($refkey2) . ',
 				' . $this->oDbCon->paramString($trdate) . ',
 				' . $this->oDbCon->paramString($itemkey) . ', 
@@ -1463,7 +1458,6 @@ class ItemMovement extends BaseClass
 			)';
 
         $result = $this->oDbCon->execute($sql);
-        // $this->setLog($sql, true);
         //$lastMovementId = $this->oDbCon->lastInsertId();
 
         $lastMovementId = $result['lastId'];
@@ -2219,7 +2213,6 @@ class ItemMovement extends BaseClass
         if ($qty <= 0)
             return $arrReturn;
 
-        //$this->setLog($qty,true);
 
         // ambil semua barang masuk, dengan criteria yg sama, sort desc berdasarkan tgl transaksi / tgl dibuat
         $criteria = '';
@@ -2249,7 +2242,6 @@ class ItemMovement extends BaseClass
                     ' . $criteria . '     
                 order by ' . $this->tableName . '.' . $datefield . ' desc ';
 
-        //$this->setLog($sql,true);
         $rsMovement = $this->oDbCon->doQuery($sql);
 
         foreach ($rsMovement as $row) {
@@ -2302,7 +2294,6 @@ class ItemMovement extends BaseClass
 
         $sql .= ' ' . $orderCriteria;
 
-        //$this->setLog($sql,true);
 
         $rs = $this->oDbCon->doQuery($sql);
 
@@ -2369,7 +2360,6 @@ class ItemMovement extends BaseClass
                $sql .= ' and '.$this->tableSNMovement.'.'.$datefield.' <= '.$this->oDbCon->paramDate($endDate,' / ', 'Y-m-d 23:59:59'); 
 
            $sql .= ' order by '.$this->tableSNMovement.'.'.$datefield.' desc limit 1 ';
-           //$this->setLog($sql,true);
 
            $rsMovement =  $this->oDbCon->doQuery($sql);
 

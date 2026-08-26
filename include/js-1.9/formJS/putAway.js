@@ -26,7 +26,7 @@ function PutAway(tabID){
         if (typekey == 1) {
             
             var submissionNumber = tabObj.find("[name=submissionNumber]").val() || "";
-            action = "action=getDataForPutAway&pkey=" + refkey;
+            action = "action=getDataForZoneTransfer&pkey=" + refkey;
         } else if (typekey == 2) {
             var warehouselayoutoriginkey = tabObj.find("[name=hidWarehouseLayoutOriginKey]").val();
 
@@ -75,11 +75,13 @@ function PutAway(tabID){
                         arrPostValue.push({ "selector": "itemName", "value": data[i].itemname });
                         
                         if (typekey == 1) {
-                            arrPostValue.push({ "selector": "hidItemReceivingHeaderKey", "value": data[i].refkey });
-                            arrPostValue.push({ "selector": "hidItemReceivingDetailKey", "value": data[i].pkey });
+                            arrPostValue.push({ "selector": "hidItemReceivingHeaderKey", "value": data[i].refkey2 });
+                            arrPostValue.push({ "selector": "hidItemReceivingDetailKey", "value": data[i].refdetailkey });
                             arrPostValue.push({ "selector": "containerNumber", "value": data[i].containernumber });
                             arrPostValue.push({ "selector": "receivingQty", "value": data[i].qtyinbaseunit });
-                            arrPostValue.push({ "selector": "putAwayQty", "value": data[i].putawayqty });
+                            arrPostValue.push({ "selector": "putAwayQty", "value": data[i].putawayqty }); 
+                            arrPostValue.push({ "selector": "zoneDetailName", "value": data[i].warehouselayoutname}); 
+                            arrPostValue.push({ "selector": "hidZoneDetailKey", "value": data[i].warehouselayoutkey }); 
                         } else if (typekey == 2) {
                             arrPostValue.push({ "selector": "hidItemReceivingHeaderKey", "value": data[i].refkey2 });
                             arrPostValue.push({ "selector": "qty", "value": data[i].qtyinbaseunit });

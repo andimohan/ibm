@@ -32,6 +32,7 @@ class PutAway extends BaseClass
         $this->arrDataDetail['itemkey'] = array('hidItemKey');
         $this->arrDataDetail['containernumber'] = array('containerNumber');
         $this->arrDataDetail['palletkey'] = array('hidPalletDetailKey');
+        $this->arrDataDetail['warehouselayoutkey'] = array('hidZoneDetailKey');
         $this->arrDataDetail['receivingqty'] = array('receivingQty', 'number');
         $this->arrDataDetail['putawayqty'] = array('putAwayQty', 'number');
         $this->arrDataDetail['qty'] = array('qty', 'number');
@@ -70,6 +71,16 @@ class PutAway extends BaseClass
 
         array_push($this->arrDataListAvailableColumn, array('code' => 'pallet', 'title' => 'pallet', 'dbfield' => 'palletname', 'default' => true, 'width' => 120));
         array_push($this->arrDataListAvailableColumn, array('code' => 'status', 'title' => 'status', 'dbfield' => 'statusname', 'default' => true, 'width' => 100));
+
+        $this->arrSearchColumn = array(); 
+        array_push($this->arrSearchColumn, array('Kode', $this->tableName . '.code'));
+        array_push($this->arrSearchColumn, array('Tanggal', $this->tableName . '.trdate')); 
+        array_push($this->arrSearchColumn, array('Gudang', $this->tableWarehouse. '.name')); 
+
+        if ($this->typekey == 1) {
+            array_push($this->arrSearchColumn, array('Penerimaan Barang', $this->tableItemReceiving. '.code')); 
+            array_push($this->arrSearchColumn, array('No Pengajuan', $this->tableName. '.submissionnumber')); 
+        }
 
 
 
@@ -154,11 +165,13 @@ class PutAway extends BaseClass
                 ' . $this->tablePallet . '.name as palletname,
                 ' . $this->tableItemReceivingDetail . '.containernumber as itemreceivingcontainernumber,
                 ' . $this->tableItemReceivingDetail . '.itemcode,
+                ' . $this->tableWarehouseLayout . '.name as warehouselayoutname,
                 ' . $this->tableItemUnit . '.name as unitname
 			  from
 			  	' . $this->tableNameDetail . '
                     left join ' . $this->tablePallet . ' on ' . $this->tableNameDetail . '.palletkey = ' . $this->tablePallet . '.pkey
                     left join ' . $this->tableItemReceivingDetail . ' on ' . $this->tableNameDetail . '.itemreceivingdetailkey = ' . $this->tableItemReceivingDetail . '.pkey
+                    left join ' . $this->tableWarehouseLayout . ' on ' . $this->tableNameDetail . '.warehouselayoutkey = ' . $this->tableWarehouseLayout . '.pkey
                      left join ' . $this->tableItemUnit . ' on ' . $this->tableItemReceivingDetail . '.unit = ' . $this->tableItemUnit . '.pkey,
                 ' . $this->tableItem . '
 			  where
@@ -173,19 +186,97 @@ class PutAway extends BaseClass
 
     function closeTrans($rsHeader)
     {
+
+        $itemReceiving = new ItemReceiving();
+        $warehouseLayout = new WarehouseLayout();
         $pkey = $rsHeader[0]['pkey'];
 
 
         $id = $rsHeader[0]['pkey'];
 
+        $rsItemReceiving = $itemReceiving->getDataRowById($rsHeader[0]['refkey']);
         $rsDetail = $this->getDetailWithRelatedInformation($id);
 
         $itemMovement = new ItemMovement();
         $note = $rsHeader[0]['code'] . '. ' . $this->ucFirst($this->lang['putAway']);
-        for ($i = 0; $i < count($rsDetail); $i++) {
-            if ($rsDetail[$i]['qty'] != 0)
-                $itemMovement->updateItemMovement($id, $rsDetail[$i]['itemkey'], -$rsDetail[$i]['qty'], 0, $this->tableName, array('warehouselayoutkey' => $rsHeader[0]['warehouselayoutoriginkey'], 'warehousekey' => $rsHeader[0]['warehousekey']), $note, $rsHeader[0]['trdate']);
-            $itemMovement->updateItemMovement($id, $rsDetail[$i]['itemkey'], $rsDetail[$i]['qty'], 0, $this->tableName, array('warehouselayoutkey' => $rsHeader[0]['warehouselayoutkey'], 'warehousekey' => $rsHeader[0]['warehousekey']), $note, $rsHeader[0]['trdate']);
+        // for ($i = 0; $i < count($rsDetail); $i++) {
+        //     if ($rsDetail[$i]['qty'] != 0)
+        //         $itemMovement->updateItemMovement($id, $rsDetail[$i]['itemkey'], -$rsDetail[$i]['qty'], 0, $this->tableName, array('warehouselayoutkey' => $rsHeader[0]['warehouselayoutoriginkey'], 'warehousekey' => $rsHeader[0]['warehousekey']), $note, $rsHeader[0]['trdate']);
+        //     $itemMovement->updateItemMovement($id, $rsDetail[$i]['itemkey'], $rsDetail[$i]['qty'], 0, $this->tableName, array('warehouselayoutkey' => $rsHeader[0]['warehouselayoutkey'], 'warehousekey' => $rsHeader[0]['warehousekey']), $note, $rsHeader[0]['trdate']);
+        // }
+
+        if ($this->typekey == 1) {
+
+            $rsWarehouseLayoutFrom = $warehouseLayout->getDataRowById($rsHeader[0]['warehouselayoutoriginkey']);
+            $rsWarehouseLayoutTo = $warehouseLayout->getDataRowById($rsHeader[0]['warehouselayoutkey']);
+            $note = $rsHeader[0]['code'] . '. ' . $this->ucFirst($this->lang['putAway'] . ' ' . $this->lang['from']) . ' ' . $this->lang['itemReceiving'] . ' : ' . $rsItemReceiving[0]['code'] . '. Dari Zona ' . $rsWarehouseLayoutFrom[0]['name'] . ' ke ' . $rsWarehouseLayoutTo[0]['name'];
+
+            for ($i = 0; $i < count($rsDetail); $i++) {
+                if ($rsDetail[$i]['qty'] != 0) {
+                    $itemMovement->updateItemMovement(
+                        array(
+                            'refkey' => $id,
+                            'refkey2' => $rsDetail[$i]['itemreceivingheaderkey'],
+                            'refdetailkey' => $rsDetail[$i]['itemreceivingdetailkey'],
+                        ),
+                        $rsDetail[$i]['itemkey'],
+                        -$rsDetail[$i]['qty'],
+                        0,
+                        $this->tableName,
+                        array(
+                            'warehousekey' => $rsHeader[0]['warehousekey'],
+                            'warehouselayoutkey' => $rsDetail[$i]['warehouselayoutkey']
+                        ),
+                        $note,
+                        $rsHeader[0]['trdate']
+                    );
+                    $itemMovement->updateItemMovement(
+                        array(
+                            'refkey' => $id,
+                            'refkey2' => $rsDetail[$i]['itemreceivingheaderkey'],
+                            'refdetailkey' => $rsDetail[$i]['itemreceivingdetailkey'],
+                        ),
+                        $rsDetail[$i]['itemkey'],
+                        $rsDetail[$i]['qty'],
+                        0,
+                        $this->tableName,
+                        array(
+                            'warehousekey' => $rsHeader[0]['warehousekey'],
+                            'warehouselayoutkey' => $rsHeader[0]['warehouselayoutkey']
+                        ),
+                        $note,
+                        $rsHeader[0]['trdate']
+                    );
+                }
+            }
+
+        } else {
+
+            $rsWarehouseLayoutFrom = $warehouseLayout->getDataRowById($rsHeader[0]['warehouselayoutoriginkey']);
+            $rsWarehouseLayoutTo = $warehouseLayout->getDataRowById($rsHeader[0]['warehouselayoutkey']);
+            $rsDetail = $this->getDetailById($rsHeader[0]['pkey']);
+
+            $note = $rsHeader[0]['code'] . '. Perpindahan Zona dari ' . $rsWarehouseLayoutFrom[0]['name'] . ' ke ' . $rsWarehouseLayoutTo[0]['name'];
+
+            for ($i = 0; $i < count($rsDetail); $i++) {
+                $itemMovement->updateItemMovement(array(
+                    'refkey' => $id,
+                    'refkey2' => $rsDetail[$i]['itemreceivingheaderkey'],
+                    'refdetailkey' => $rsDetail[$i]['itemreceivingdetailkey'],
+                ), $rsDetail[$i]['itemkey'], -$rsDetail[$i]['qty'], 0, $this->tableName, array(
+                    'warehousekey' => $rsHeader[0]['warehousekey'],
+                    'warehouselayoutkey' => $rsDetail[$i]['warehouselayoutkey']
+                ), $note, $rsHeader[0]['trdate']);
+                $itemMovement->updateItemMovement(array(
+                    'refkey' => $id,
+                    'refkey2' => $rsDetail[$i]['itemreceivingheaderkey'],
+                    'refdetailkey' => $rsDetail[$i]['itemreceivingdetailkey'],
+                ), $rsDetail[$i]['itemkey'], $rsDetail[$i]['qty'], 0, $this->tableName, array(
+                    'warehousekey' => $rsHeader[0]['warehousekey'],
+                    'warehouselayoutkey' => $rsHeader[0]['warehouselayoutkey']
+                ), $note, $rsHeader[0]['trdate']);
+            }
+
         }
 
 
@@ -230,9 +321,9 @@ class PutAway extends BaseClass
             $warehouseDestinationKey = $arr['hidWarehouseLayoutKey'];
             $refkey = $arr['hidRefKey'];
 
-            if (empty($warehouseOriginKey) || empty($warehouseDestinationKey)) {
-                $this->addErrorList($arrayToJs, false, $this->errorMsg['zoneTransfer'][1]);
-            }
+            // if (empty($warehouseOriginKey) || empty($warehouseDestinationKey)) {
+            //     $this->addErrorList($arrayToJs, false, $this->errorMsg['zoneTransfer'][1]);
+            // }
 
             if ($warehouseOriginKey == $warehouseDestinationKey) {
                 $this->addErrorList($arrayToJs, false, $this->errorMsg['zoneTransfer'][2]);
@@ -307,6 +398,7 @@ class PutAway extends BaseClass
 
 
         $rsDetail = $this->getDetailWithRelatedInformation($id);
+        $this->setLog($rsDetail, true);
 
         if ($this->typekey == 1) {
 
@@ -325,6 +417,7 @@ class PutAway extends BaseClass
                         }
                         $outstadingPutAwayQty = $itemReceiving->getTotalUnPutAwayItemReceiving($rsDetail[$i]['itemreceivingdetailkey']);
                         //apakah qty lebih besar dari outstanding put away
+                        $this->setLog($outstadingPutAwayQty, true);
                         if ($rsDetail[$i]['qty'] > $outstadingPutAwayQty) {
                             $this->addErrorLog(false, '<strong>' . $rsHeader[0]['code'] . '</strong>. ' . $rsDetail[$i]['itemname'] . '. ' . $this->errorMsg['putAway'][4]);
                         }
@@ -414,77 +507,77 @@ class PutAway extends BaseClass
 
         $rsItemReceiving = $itemReceiving->getDataRowById($rsHeader[0]['refkey']);
 
-        if ($this->typekey == 1) {
+        // if ($this->typekey == 1) {
 
-            $rsWarehouseLayoutFrom = $warehouseLayout->getDataRowById($rsHeader[0]['warehouselayoutoriginkey']);
-            $rsWarehouseLayoutTo = $warehouseLayout->getDataRowById($rsHeader[0]['warehouselayoutkey']);
-            $note = $rsHeader[0]['code'] . '. ' . $this->ucFirst($this->lang['putAway'] . ' ' . $this->lang['from']) . ' ' . $this->lang['itemReceiving'] . ' : ' . $rsItemReceiving[0]['code'] . '. Dari Zona ' . $rsWarehouseLayoutFrom[0]['name'] . ' ke ' . $rsWarehouseLayoutTo[0]['name'];
+        //     $rsWarehouseLayoutFrom = $warehouseLayout->getDataRowById($rsHeader[0]['warehouselayoutoriginkey']);
+        //     $rsWarehouseLayoutTo = $warehouseLayout->getDataRowById($rsHeader[0]['warehouselayoutkey']);
+        //     $note = $rsHeader[0]['code'] . '. ' . $this->ucFirst($this->lang['putAway'] . ' ' . $this->lang['from']) . ' ' . $this->lang['itemReceiving'] . ' : ' . $rsItemReceiving[0]['code'] . '. Dari Zona ' . $rsWarehouseLayoutFrom[0]['name'] . ' ke ' . $rsWarehouseLayoutTo[0]['name'];
 
-            for ($i = 0; $i < count($rsDetail); $i++) {
-                if ($rsDetail[$i]['qty'] != 0) {
-                    $itemMovement->updateItemMovement(
-                        array(
-                            'refkey' => $id,
-                            'refkey2' => $rsDetail[$i]['itemreceivingheaderkey'],
-                        ),
-                        $rsDetail[$i]['itemkey'],
-                        -$rsDetail[$i]['qty'],
-                        0,
-                        $this->tableName,
-                        array(
-                            'warehousekey' => $rsHeader[0]['warehousekey'],
-                            'warehouselayoutkey' => $rsHeader[0]['warehouselayoutoriginkey']
-                        ),
-                        $note,
-                        $rsHeader[0]['trdate']
-                    );
-                    $itemMovement->updateItemMovement(
-                        array(
-                            'refkey' => $id,
-                            'refkey2' => $rsDetail[$i]['itemreceivingheaderkey'],
-                        ),
-                        $rsDetail[$i]['itemkey'],
-                        $rsDetail[$i]['qty'],
-                        0,
-                        $this->tableName,
-                        array(
-                            'warehousekey' => $rsHeader[0]['warehousekey'],
-                            'warehouselayoutkey' => $rsHeader[0]['warehouselayoutkey']
-                        ),
-                        $note,
-                        $rsHeader[0]['trdate']
-                    );
-                }
-            }
+        //     for ($i = 0; $i < count($rsDetail); $i++) {
+        //         if ($rsDetail[$i]['qty'] != 0) {
+        //             $itemMovement->updateItemMovement(
+        //                 array(
+        //                     'refkey' => $id,
+        //                     'refkey2' => $rsDetail[$i]['itemreceivingheaderkey'],
+        //                 ),
+        //                 $rsDetail[$i]['itemkey'],
+        //                 -$rsDetail[$i]['qty'],
+        //                 0,
+        //                 $this->tableName,
+        //                 array(
+        //                     'warehousekey' => $rsHeader[0]['warehousekey'],
+        //                     'warehouselayoutkey' => $rsHeader[0]['warehouselayoutoriginkey']
+        //                 ),
+        //                 $note,
+        //                 $rsHeader[0]['trdate']
+        //             );
+        //             $itemMovement->updateItemMovement(
+        //                 array(
+        //                     'refkey' => $id,
+        //                     'refkey2' => $rsDetail[$i]['itemreceivingheaderkey'],
+        //                 ),
+        //                 $rsDetail[$i]['itemkey'],
+        //                 $rsDetail[$i]['qty'],
+        //                 0,
+        //                 $this->tableName,
+        //                 array(
+        //                     'warehousekey' => $rsHeader[0]['warehousekey'],
+        //                     'warehouselayoutkey' => $rsHeader[0]['warehouselayoutkey']
+        //                 ),
+        //                 $note,
+        //                 $rsHeader[0]['trdate']
+        //             );
+        //         }
+        //     }
 
-        } else if ($this->typekey == 2) {
+        // } else if ($this->typekey == 2) {
 
-            $rsWarehouseLayoutFrom = $warehouseLayout->getDataRowById($rsHeader[0]['warehouselayoutoriginkey']);
-            $rsWarehouseLayoutTo = $warehouseLayout->getDataRowById($rsHeader[0]['warehouselayoutkey']);
-            $rsDetail = $this->getDetailById($rsHeader[0]['pkey']);
+        //     $rsWarehouseLayoutFrom = $warehouseLayout->getDataRowById($rsHeader[0]['warehouselayoutoriginkey']);
+        //     $rsWarehouseLayoutTo = $warehouseLayout->getDataRowById($rsHeader[0]['warehouselayoutkey']);
+        //     $rsDetail = $this->getDetailById($rsHeader[0]['pkey']);
 
-            $note = $rsHeader[0]['code'] . '. Perpindahan Zona dari ' . $rsWarehouseLayoutFrom[0]['name'] . ' ke ' . $rsWarehouseLayoutTo[0]['name'];
+        //     $note = $rsHeader[0]['code'] . '. Perpindahan Zona dari ' . $rsWarehouseLayoutFrom[0]['name'] . ' ke ' . $rsWarehouseLayoutTo[0]['name'];
 
-            for ($i = 0; $i < count($rsDetail); $i++) {
-                $itemMovement->updateItemMovement(array(
-                    'refkey' => $id,
-                    'refkey2' => $rsDetail[$i]['itemreceivingheaderkey'],
-                ), $rsDetail[$i]['itemkey'], -$rsDetail[$i]['qty'], 0, $this->tableName, array(
-                    'warehousekey' => $rsHeader[0]['warehousekey'],
-                    'warehouselayoutkey' => $rsHeader[0]['warehouselayoutoriginkey']
-                ), $note, $rsHeader[0]['trdate']);
-                $itemMovement->updateItemMovement(array(
-                    'refkey' => $id,
-                    'refkey2' => $rsDetail[$i]['itemreceivingheaderkey'],
-                ), $rsDetail[$i]['itemkey'], $rsDetail[$i]['qty'], 0, $this->tableName, array(
-                    'warehousekey' => $rsHeader[0]['warehousekey'],
-                    'warehouselayoutkey' => $rsHeader[0]['warehouselayoutkey']
-                ), $note, $rsHeader[0]['trdate']);
-            }
+        //     for ($i = 0; $i < count($rsDetail); $i++) {
+        //         $itemMovement->updateItemMovement(array(
+        //             'refkey' => $id,
+        //             'refkey2' => $rsDetail[$i]['itemreceivingheaderkey'],
+        //         ), $rsDetail[$i]['itemkey'], -$rsDetail[$i]['qty'], 0, $this->tableName, array(
+        //             'warehousekey' => $rsHeader[0]['warehousekey'],
+        //             'warehouselayoutkey' => $rsHeader[0]['warehouselayoutoriginkey']
+        //         ), $note, $rsHeader[0]['trdate']);
+        //         $itemMovement->updateItemMovement(array(
+        //             'refkey' => $id,
+        //             'refkey2' => $rsDetail[$i]['itemreceivingheaderkey'],
+        //         ), $rsDetail[$i]['itemkey'], $rsDetail[$i]['qty'], 0, $this->tableName, array(
+        //             'warehousekey' => $rsHeader[0]['warehousekey'],
+        //             'warehouselayoutkey' => $rsHeader[0]['warehouselayoutkey']
+        //         ), $note, $rsHeader[0]['trdate']);
+        //     }
 
-        } else if ($this->typekey == 3) {
+        // } else if ($this->typekey == 3) {
 
-        }
+        // }
 
     }
 
@@ -520,12 +613,12 @@ class PutAway extends BaseClass
 
             $rs = $this->oDbCon->doQuery($sql);
 
-            if (!empty($rs)) {
-                if ($rsHeader[0]['warehouselayoutkey'] != $rs[0]['warehouselayoutkey']) {
-                    $rsLayout = $warehouseLayout->getDataRowById($rs[0]['warehouselayoutkey']);
-                    array_push($arrErrMsg, '<strong>' . $rsDetail[$i]['itemcode'] . ' - ' . $rsDetail[$i]['itemname'] . '</strong>. ' . $this->errorMsg['putAway'][5] . ' ke <strong>' . $rsLayout[0]['name'] . '</strong>');
-                }
-            }
+            // if (!empty($rs)) {
+            //     if ($rsHeader[0]['warehouselayoutkey'] != $rs[0]['warehouselayoutkey']) {
+            //         $rsLayout = $warehouseLayout->getDataRowById($rs[0]['warehouselayoutkey']);
+            //         array_push($arrErrMsg, '<strong>' . $rsDetail[$i]['itemcode'] . ' - ' . $rsDetail[$i]['itemname'] . '</strong>. ' . $this->errorMsg['putAway'][5] . ' ke <strong>' . $rsLayout[0]['name'] . '</strong>');
+            //     }
+            // }
 
         }
 

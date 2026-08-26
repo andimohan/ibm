@@ -124,14 +124,12 @@ if (!empty($_GET['id'])) {
 }
 $rsWarehouse = $warehouse->searchData('', '', true, ' and (' . $warehouse->tableName . '.statuskey = 1' . $editWarehouseInactiveCriteria . ')');
 $editWarehouseLayoutInactiveCriteria = '';
-$obj->setLog($rs, true);
 if (!empty($rs[0]['warehouselayoutkey'])) {
     $editWarehouseLayoutInactiveCriteria = ' and ' . $warehouseLayout->tableName . '.warehousekey = ' . $obj->oDbCon->paramString($rs[0]['warehousekey']);
 } else {
     $editWarehouseLayoutInactiveCriteria = ' and ' . $warehouseLayout->tableName . '.warehousekey = ' . $obj->oDbCon->paramString($rsWarehouse[0]['pkey']);
 }
 
-$obj->setLog($editWarehouseLayoutInactiveCriteria, true);
 
 $rsWarehouseLayout = $warehouseLayout->searchData('', '', true, ' and (' . $warehouseLayout->tableName . '.statuskey = 1 and ' . $warehouseLayout->tableName . '.istransit = 1' . $editWarehouseLayoutInactiveCriteria . ')');
 
@@ -144,7 +142,6 @@ $arrUnit = $itemUnit->generateComboboxOpt(null, array('criteria' => ' and (' . $
 
 $arrCurrency = $currency->generateComboboxOpt(null, array('criteria' => ' and (' . $currency->tableName . '.statuskey = 1' . $editCurrencyInactiveCriteria . ')'));
 $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name');
-// $obj->setLog($rsWarehouseLayout, true);
 
 //$arrDefaultUnit = $itemUnit->generateComboboxOpt(null, array('criteria' => ' and (' . $itemUnit->tableName . '.statuskey = 1 )'));
 
@@ -546,7 +543,6 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
 
                 <?php
                 $totalRows = count($rsDetail);
-                $obj->setLog($rsDetail, true);
 
                 for ($i = 0; $i <= $totalRows; $i++) {
 
@@ -586,7 +582,7 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
                         $_POST['selSizeUnit[]'] = $rsDetail[$i]['sizeunitkey'];
                         $_POST['qtyCarton[]'] = $obj->formatNumber($rsDetail[$i]['qtycarton']);
                         $_POST['qtyPackage[]'] = $obj->formatNumber($rsDetail[$i]['qtypackage']);
-                        $_POST['amount[]'] = $obj->formatNumber($rsDetail[$i]['amount']);
+                        $_POST['amount[]'] = $obj->formatNumber($rsDetail[$i]['amount'], 2);
                         $_POST['hidDetailTypeKey[]'] = $rsDetail[$i]['typekey'];
                         $_POST['detailType[]'] = $rsDetail[$i]['typename'];
                         $_POST['hidDetailBrandKey[]'] = $rsDetail[$i]['brandkey'];

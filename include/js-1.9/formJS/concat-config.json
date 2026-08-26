@@ -279,7 +279,7 @@
                 "goodsOut.js",
                 "purchasePricing.js"
             ], 
-			"output": "../formJS-1.318.min.js",
+			"output": "../formJS-1.319.min.js",
 			"terserOptions": {
 			 "mangle":true,
 			 "format": { 

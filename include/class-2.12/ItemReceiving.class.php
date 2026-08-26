@@ -489,7 +489,8 @@ class ItemReceiving extends BaseClass
         for ($i = 0; $i < count($rsDetail); $i++) {
             $itemMovement->updateItemMovement(array(
                 'refkey' => $id,
-                'refkey2' => $id
+                'refkey2' => $id,
+                'refdetailkey' => $rsDetail[$i]['pkey']
             ), $rsDetail[$i]['itemkey'], $rsDetail[$i]['qty'], 0, $this->tableName, array('warehousekey' => $rsHeader[0]['warehousekey'], 'warehouselayoutkey' => $rsHeader[0]['warehouselayoutkey']), $note, $rsHeader[0]['trdate']);
         }
     }
@@ -530,10 +531,8 @@ class ItemReceiving extends BaseClass
         if (!empty($criteria)) {
             $sql .= ' ' . $criteria;
         }
-        $this->setLog($sql, true);
 
         $rs = $this->oDbCon->doQuery($sql);
-        $this->setLog($rs, true);
 
         if (empty($rs))
             return;
@@ -619,6 +618,7 @@ class ItemReceiving extends BaseClass
             select
                 ' . $itemMovement->tableName . '.refkey,
                  ' . $itemMovement->tableName . '.refkey2,
+                 ' . $itemMovement->tableName . '.refdetailkey,
                   max(' . $itemMovement->tableName . '.trdate) as trdate,
                 ' . $itemMovement->tableName . '.itemkey,
                 sum(' . $itemMovement->tableName . '.qtyinbaseunit) as qtyinbaseunit,
@@ -630,18 +630,28 @@ class ItemReceiving extends BaseClass
                 ' . $this->tableWarehouseLayout . '.name as warehouselayoutname,
                 ' . $itemMovement->tableItem . '.code as itemcode,
                 ' . $itemMovement->tableItem . '.name as itemname,
-                ' . $this->tableName . '.submissionnumber
+                ' . $this->tableName . '.submissionnumber,
+                ' . $this->tableNameDetail . '.containernumber
             from
                 ' . $itemMovement->tableName . '
                     left join ' . $itemMovement->tableItem . ' on ' . $itemMovement->tableName . '.itemkey = ' . $itemMovement->tableItem . '.pkey
-                    left join ' . $this->tableWarehouseLayout . ' on ' . $itemMovement->tableName . '.warehouselayoutkey = ' . $this->tableWarehouseLayout . '.pkey,
+                    left join ' . $this->tableWarehouseLayout . ' on ' . $itemMovement->tableName . '.warehouselayoutkey = ' . $this->tableWarehouseLayout . '.pkey
+                    left join ' . $this->tableNameDetail . ' on ' . $itemMovement->tableName . '.refdetailkey = ' . $this->tableNameDetail . '.pkey,
                 ' . $this->tableName . '
             where
                 ' . $itemMovement->tableName . '.refkey2 = ' . $this->tableName . '.pkey and
-                ' . $itemMovement->tableName . '.statuskey = 1 and
-                ' . $itemMovement->tableName . '.warehouselayoutkey = ' . $this->oDbCon->paramString($warehouselayoutoriginkey) . '    
+                ' . $itemMovement->tableName . '.statuskey = 1  
         ';
 
+        //  where
+        //         ' . $itemMovement->tableName . '.refkey2 = ' . $this->tableName . '.pkey and
+        //         ' . $itemMovement->tableName . '.statuskey = 1 and
+        //         ' . $itemMovement->tableName . '.warehouselayoutkey = ' . $this->oDbCon->paramString($warehouselayoutoriginkey) . '    
+
+        if ($warehouselayoutoriginkey != 0) {
+            $sql .= ' and ' . $itemMovement->tableName . '.warehouselayoutkey = ' . $this->oDbCon->paramString($warehouselayoutoriginkey);
+        }
+        
         if ($pkey != 0) {
             $sql .= ' and ' . $itemMovement->tableName . '.refkey2 = ' . $this->oDbCon->paramString($pkey);
         }
@@ -653,12 +663,15 @@ class ItemReceiving extends BaseClass
         $sql .= '
                 group by
                     ' . $itemMovement->tableName . '.itemkey,
-                    ' . $itemMovement->tableName . '.warehouselayoutkey
+                    ' . $itemMovement->tableName . '.warehouselayoutkey,
+                    ' . $itemMovement->tableName . '.refdetailkey
                 having
                     sum(' . $itemMovement->tableName . '.qtyinbaseunit) > 0
             ';
+            $this->setLog($sql, true);
 
         $result = $this->oDbCon->doQuery($sql);
+        $this->setLog($result, true);
 
         return $result;
     }
@@ -737,6 +750,7 @@ class ItemReceiving extends BaseClass
         ';
 
         $result = $this->oDbCon->doQuery($sql);
+        $this->setLog($sql, true);
 
         return $result[0]['outstandingqty'];
     }
@@ -780,53 +794,125 @@ class ItemReceiving extends BaseClass
     }
 
 
-    function getDataForGoodsOut($pkey)
-    {
-        if (!is_array($pkey))
-            $pkey = array($pkey);
+    // function getDataForGoodsOut($pkey)
+    // {
+    //     if (!is_array($pkey))
+    //         $pkey = array($pkey);
 
-        $sql = '
+    //     $sql = '
+    //         select
+    //             ' . $this->tableName . '.*,
+    //             ' . $this->tableNameDetail . '.pkey as detailkey,
+    //             ' . $this->tableNameDetail . '.itemkey,
+    //             ' . $this->tableNameDetail . '.itemcode,
+    //             ' . $this->tableNameDetail . '.itemname,
+    //             ' . $this->tableNameDetail . '.label,
+    //             ' . $this->tableNameDetail . '.unit,
+    //             ' . $this->tableItemUnit . '.name as unitname,
+    //             ' . $this->tableNameDetail . '.qtycarton,
+    //             ' . $this->tableNameDetail . '.qtypackage,
+    //             ' . $this->tableNameDetail . '.qty,
+    //             ' . $this->tableNameDetail . '.qtylabeled,
+    //             ' . $this->tableNameDetail . '.issuedqty,
+    //             IF(' . $this->tableWarehouse . '.isnonlabeling = 0, ' . $this->tableNameDetail . '.qtylabeled, ' . $this->tableNameDetail . '.qty) as quantity,
+    //             IF(' . $this->tableWarehouse . '.isnonlabeling = 0,
+    //                 ' . $this->tableNameDetail . '.qtylabeled - ' . $this->tableNameDetail . '.issuedqty,
+    //                 ' . $this->tableNameDetail . '.qty - ' . $this->tableNameDetail . '.issuedqty
+    //             ) as outstanding,
+    //             ' . $this->tableNameDetail . '.amount
+    //         from
+    //             ' . $this->tableName . ',
+    //             ' . $this->tableWarehouse . ',
+    //             ' . $this->tableNameDetail . '
+    //                 left join ' . $this->tableItemUnit . ' on ' . $this->tableNameDetail . '.unit = ' . $this->tableItemUnit . '.pkey
+    //         where
+    //             ' . $this->tableName . '.warehousekey = ' . $this->tableWarehouse . '.pkey and
+    //             ' . $this->tableName . '.pkey = ' . $this->tableNameDetail . '.refkey and
+    //             (
+    //                 (' . $this->tableWarehouse . '.isnonlabeling = 0 and ' . $this->tableNameDetail . '.qtylabeled - ' . $this->tableNameDetail . '.issuedqty > 0)
+    //                 or
+    //                 (' . $this->tableWarehouse . '.isnonlabeling = 1 and ' . $this->tableNameDetail . '.qty - ' . $this->tableNameDetail . '.issuedqty > 0)
+    //             ) and
+    //             ' . $this->tableName . '.statuskey in (' . TRANSACTION_STATUS['konfirmasi'] . ',' . TRANSACTION_STATUS['selesai'] . ') and
+    //             ' . $this->tableName . '.pkey in (' . $this->oDbCon->paramString($pkey, ',') . ')
+    //     ';
+
+    //     $result = $this->oDbCon->doQuery($sql);
+
+    //     return $result;
+
+    // }
+
+    function getDataForGoodsOut($pkey, $warehouselayoutoriginkey, $criteria = "")
+    {
+        $itemMovement = new ItemMovement();
+        $putAway = new PutAway(1);
+
+        $sql = '   
             select
-                ' . $this->tableName . '.*,
-                ' . $this->tableNameDetail . '.pkey as detailkey,
-                ' . $this->tableNameDetail . '.itemkey,
-                ' . $this->tableNameDetail . '.itemcode,
-                ' . $this->tableNameDetail . '.itemname,
+                ' . $itemMovement->tableName . '.refkey,
+                 ' . $itemMovement->tableName . '.refkey2,
+                 ' . $itemMovement->tableName . '.refdetailkey,
+                  max(' . $itemMovement->tableName . '.trdate) as trdate,
+                ' . $itemMovement->tableName . '.itemkey,
+                sum(' . $itemMovement->tableName . '.qtyinbaseunit) as qtyinbaseunit,
+                ' . $itemMovement->tableName . '.warehousekey,
+                ' . $itemMovement->tableName . '.warehouselayoutkey,
+                ' . $itemMovement->tableName . '.note,
+                ' . $itemMovement->tableName . '.statuskey,
+                ' . $this->tableWarehouseLayout . '.code as warehouselayoutcode,
+                ' . $this->tableWarehouseLayout . '.name as warehouselayoutname,
+                ' . $itemMovement->tableItem . '.code as itemcode,
+                ' . $itemMovement->tableItem . '.name as itemname,
+                ' . $this->tableName . '.submissionnumber,
+                ' . $this->tableName . '.code as receivingcode,
+                ' . $this->tableNameDetail . '.containernumber,
+                ' . $this->tableNameDetail . '.amount,
                 ' . $this->tableNameDetail . '.label,
-                ' . $this->tableNameDetail . '.unit,
-                ' . $this->tableItemUnit . '.name as unitname,
-                ' . $this->tableNameDetail . '.qtycarton,
-                ' . $this->tableNameDetail . '.qtypackage,
-                ' . $this->tableNameDetail . '.qty,
-                ' . $this->tableNameDetail . '.qtylabeled,
-                ' . $this->tableNameDetail . '.issuedqty,
-                IF(' . $this->tableWarehouse . '.isnonlabeling = 0, ' . $this->tableNameDetail . '.qtylabeled, ' . $this->tableNameDetail . '.qty) as quantity,
-                IF(' . $this->tableWarehouse . '.isnonlabeling = 0,
-                    ' . $this->tableNameDetail . '.qtylabeled - ' . $this->tableNameDetail . '.issuedqty,
-                    ' . $this->tableNameDetail . '.qty - ' . $this->tableNameDetail . '.issuedqty
-                ) as outstanding,
-                ' . $this->tableNameDetail . '.amount
+                ' . $this->tableNameDetail . '.qtylabeled
             from
-                ' . $this->tableName . ',
-                ' . $this->tableWarehouse . ',
-                ' . $this->tableNameDetail . '
-                    left join ' . $this->tableItemUnit . ' on ' . $this->tableNameDetail . '.unit = ' . $this->tableItemUnit . '.pkey
+                ' . $itemMovement->tableName . '
+                    left join ' . $itemMovement->tableItem . ' on ' . $itemMovement->tableName . '.itemkey = ' . $itemMovement->tableItem . '.pkey
+                    left join ' . $this->tableWarehouseLayout . ' on ' . $itemMovement->tableName . '.warehouselayoutkey = ' . $this->tableWarehouseLayout . '.pkey
+                    left join ' . $this->tableWarehouse . ' on ' . $itemMovement->tableName . '.warehousekey = ' . $this->tableWarehouse . '.pkey
+                    left join ' . $this->tableNameDetail . ' on ' . $itemMovement->tableName . '.refdetailkey = ' . $this->tableNameDetail . '.pkey,
+                ' . $this->tableName . '
             where
-                ' . $this->tableName . '.warehousekey = ' . $this->tableWarehouse . '.pkey and
-                ' . $this->tableName . '.pkey = ' . $this->tableNameDetail . '.refkey and
-                (
-                    (' . $this->tableWarehouse . '.isnonlabeling = 0 and ' . $this->tableNameDetail . '.qtylabeled - ' . $this->tableNameDetail . '.issuedqty > 0)
-                    or
-                    (' . $this->tableWarehouse . '.isnonlabeling = 1 and ' . $this->tableNameDetail . '.qty - ' . $this->tableNameDetail . '.issuedqty > 0)
-                ) and
-                ' . $this->tableName . '.statuskey in (' . TRANSACTION_STATUS['konfirmasi'] . ',' . TRANSACTION_STATUS['selesai'] . ') and
-                ' . $this->tableName . '.pkey in (' . $this->oDbCon->paramString($pkey, ',') . ')
+                ' . $itemMovement->tableName . '.refkey2 = ' . $this->tableName . '.pkey and
+                ' . $itemMovement->tableName . '.statuskey = 1  
         ';
 
+        //  where
+        //         ' . $itemMovement->tableName . '.refkey2 = ' . $this->tableName . '.pkey and
+        //         ' . $itemMovement->tableName . '.statuskey = 1 and
+        //         ' . $itemMovement->tableName . '.warehouselayoutkey = ' . $this->oDbCon->paramString($warehouselayoutoriginkey) . '    
+
+        if ($warehouselayoutoriginkey != 0) {
+            $sql .= ' and ' . $itemMovement->tableName . '.warehouselayoutkey = ' . $this->oDbCon->paramString($warehouselayoutoriginkey);
+        }
+        
+        if ($pkey != 0) {
+            $sql .= ' and ' . $itemMovement->tableName . '.refkey2 = ' . $this->oDbCon->paramString($pkey);
+        }
+
+        if (!empty($criteria)) {
+            $sql .= ' ' . $criteria;
+        }
+
+        $sql .= '
+                group by
+                    ' . $itemMovement->tableName . '.itemkey,
+                    ' . $itemMovement->tableName . '.warehouselayoutkey,
+                    ' . $itemMovement->tableName . '.refdetailkey
+                having
+                    sum(' . $itemMovement->tableName . '.qtyinbaseunit) > 0
+            ';
+            $this->setLog($sql, true);
+
         $result = $this->oDbCon->doQuery($sql);
+        $this->setLog($result, true);
 
         return $result;
-
     }
 
     function getTotalUnIssuedItemReceiving($detailkey)

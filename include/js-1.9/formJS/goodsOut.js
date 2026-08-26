@@ -46,17 +46,20 @@ function GoodsOut(tabID)
 							
 								// var outstanding = parseInt(data[i].qtylabeled) - parseInt(data[i].issuedqty);
 
-	                            arrPostValue.push({"selector":"hidRefReceivingHeaderKey", "value":data[i].pkey});
-								arrPostValue.push({ "selector": "hidRefReceivingDetailKey", "value": data[i].detailkey });
+	                            arrPostValue.push({"selector":"hidRefReceivingHeaderKey", "value":data[i].refkey2});
+								arrPostValue.push({ "selector": "hidRefReceivingDetailKey", "value": data[i].refdetailkey });
+							 	arrPostValue.push({"selector":"warehouseLayoutDetailName", "value":data[i].warehouselayoutname});
+							 	arrPostValue.push({"selector":"hidWarehouseLayoutDetailKey", "value":data[i].warehouselayoutkey});
 							 	arrPostValue.push({"selector":"selWarehouseLayoutDetail", "value":data[i].warehouselayoutkey});
-	                            arrPostValue.push({"selector":"itemReceiving", "value":data[i].code});
+	                            arrPostValue.push({"selector":"itemReceiving", "value":data[i].receivingcode});
 	                            arrPostValue.push({"selector":"submissionDetailNumber", "value":data[i].submissionnumber});  
+	                            arrPostValue.push({"selector":"containerNumber", "value":data[i].containernumber});  
 	                            arrPostValue.push({"selector":"hidItemKey", "value":data[i].itemkey});  
 	                            arrPostValue.push({"selector":"itemCode", "value":data[i].itemcode});  
 	                            arrPostValue.push({"selector":"itemName", "value":data[i].label});  
-	                            arrPostValue.push({"selector":"itemQty", "value":data[i].quantity});  
+	                            arrPostValue.push({"selector":"itemQty", "value":data[i].qtyinbaseunit});  
 								arrPostValue.push({ "selector": "issuedQty", "value": data[i].issuedqty });  
-								arrPostValue.push({ "selector": "qty", "value": data[i].outstanding });  
+								arrPostValue.push({ "selector": "qty", "value": data[i].qtyinbaseunit });  
 								arrPostValue.push({ "selector": "amount", "value": data[i].amount});  
 								
 	                            
