@@ -14,10 +14,11 @@ $arrKey = array_column($rsData, 'pkey');
 $rsDetail = $itemReceiving->getDetailWithRelatedInformation($arrKey);
 $rsDetail = $itemReceiving->reindexDetailCollections($rsDetail,'refkey');
 
+
 foreach($rsData as $data){
 	 $result = array();
 	 try{   
-                $id = $data[$i];
+                $id = $data['pkey'];
                 $detail = $rsDetail[$id];
                  $note = $data['code'] . '. ' . ucfirst($itemReceiving->lang['itemReceiving']) . ' ' . $itemReceiving->lang['from'] . ' ' . $data['suppliername'];
 				$itemReceiving->oDbCon->startTrans(true);
@@ -38,6 +39,7 @@ foreach($rsData as $data){
 	
 }
 
-
+$total = count($rsData);
+echo $total;
 echo 'done';
 ?>
