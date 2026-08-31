@@ -81,7 +81,7 @@ class GoodsOut extends BaseClass
             'ItemReceiving.class.php',
             'DocumentType.class.php',
             'Customer.class.php',
-            'itemMovement.class.php',
+            'ItemMovement.class.php',
             'Currency.class.php'
         ));
 
