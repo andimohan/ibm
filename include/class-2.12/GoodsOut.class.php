@@ -82,7 +82,7 @@ class GoodsOut extends BaseClass
             'DocumentType.class.php',
             'Customer.class.php',
             'ItemMovement.class.php',
-            'warehouseLayout.class.php',
+            'WarehouseLayout.class.php',
             'Currency.class.php'
         ));
 
