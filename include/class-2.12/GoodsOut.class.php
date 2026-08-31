@@ -214,7 +214,7 @@ class GoodsOut extends BaseClass
 
         $rsDetail = $this->getDetailWithRelatedInformation($id);
 
-        $itemMovement = new itemMovement();
+        $itemMovement = new ItemMovement();
         $note = $rsHeader[0]['code'] . '. ' . $this->ucFirst($this->lang['itemOut']);
 
         for ($i = 0; $i < count($rsDetail); $i++) { 
