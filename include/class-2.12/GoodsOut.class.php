@@ -82,6 +82,7 @@ class GoodsOut extends BaseClass
             'DocumentType.class.php',
             'Customer.class.php',
             'ItemMovement.class.php',
+            'warehouseLayout.class.php',
             'Currency.class.php'
         ));
 
@@ -149,7 +150,6 @@ class GoodsOut extends BaseClass
         $arrQty = $arr['qty'];
         $arrSubmission = $arr['submissionNumber'];
         $arrItemCode = $arr['itemCode'];
-        $this->setLog($arr, true);
 
         if (empty($customerkey)) {
             $this->addErrorList($arrayToJs, false, $this->errorMsg['customer'][1]);
@@ -215,9 +215,11 @@ class GoodsOut extends BaseClass
         $rsDetail = $this->getDetailWithRelatedInformation($id);
 
         $itemMovement = new ItemMovement();
+        $warehouseLayout = new WarehouseLayout();
         $note = $rsHeader[0]['code'] . '. ' . $this->ucFirst($this->lang['itemOut']);
 
         for ($i = 0; $i < count($rsDetail); $i++) { 
+            $rsWarehouseLayout = $warehouseLayout->getDataRowById($rsDetail[$i]['warehouselayoutkey']);
             $itemMovement->updateItemMovement(
                             array(
                                 'refkey' => $id,
@@ -229,7 +231,7 @@ class GoodsOut extends BaseClass
                             0,
                             $this->tableName,
                             array(
-                                'warehousekey' => $rsHeader[0]['warehousekey'],
+                                'warehousekey' => $rsWarehouseLayout[0]['warehousekey'],
                                 'warehouselayoutkey' => $rsDetail[$i]['warehouselayoutkey']
                             ),
                             $note,
