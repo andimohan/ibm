@@ -109,8 +109,8 @@ $generateReportContent = function ($dataset) {
                     <td style="width: 80px;border-top:1px solid black;border-bottom:1px solid black;"><span style="font-weight:bold;">Kode Barang</span></td>
                     <td style="width: 155px;border-top:1px solid black;border-bottom:1px solid black;"><span style="font-weight:bold;">Nama Barang</span></td>
                     <td style="width: 60px;border-top:1px solid black;border-bottom:1px solid black;text-align:left;"><span style="font-weight:bold;">Satuan</span></td>
-                    <td style="width: 80px;border-top:1px solid black;border-bottom:1px solid black;"><span style="font-weight:bold;">Qty</span></td>
-                    <td style="border-right:1px solid black;width: 100px;border-top:1px solid black;border-bottom:1px solid black;"><span style="font-weight:bold;">Value</span></td>
+                    <td style="text-align:right; width: 80px;border-top:1px solid black;border-bottom:1px solid black;"><span style="font-weight:bold;">Qty</span></td>
+                    <td style="text-align:right; border-right:1px solid black;width: 100px;border-top:1px solid black;border-bottom:1px solid black;"><span style="font-weight:bold;">Value</span></td>
                 </tr>';
 
     for ($i = 0; $i < count($rsDetail); $i++) {
