@@ -135,7 +135,7 @@ class ItemReceivingPlan extends BaseClass
     function getQuery()
     {
 
-        return '
+        $sql =  '
 				select
 					' . $this->tableName . '.*,
 					' . $this->tableCustomer . '.name as customername,
@@ -156,6 +156,9 @@ class ItemReceivingPlan extends BaseClass
                     ' . $this->tableName . '.warehousekey = ' . $this->tableWarehouse . '.pkey and
 					' . $this->tableName . '.statuskey = ' . $this->tableStatus . '.pkey  
  		' . $this->criteria;
+        $sql .=  $this->getWarehouseCriteria();
+
+        return $sql;
     }
 
     function validateForm($arr, $pkey = '')

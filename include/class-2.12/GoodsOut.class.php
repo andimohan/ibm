@@ -131,6 +131,7 @@ class GoodsOut extends BaseClass
                     ' . $this->tableNameDetail . '.refkey in (' . $this->oDbCon->paramString($pkey, ',') . ') ';
 
         $sql .= $criteria;
+        $sql .=  $this->getWarehouseCriteria();
 
         return $this->oDbCon->doQuery($sql);
 

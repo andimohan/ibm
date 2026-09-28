@@ -141,6 +141,12 @@ if ($isGrouping) {
     array_push($arrTemplate, $arrDetailTemplate);
 }
 
+$arrWarehouse = $class->convertForCombobox($warehouse->searchData($warehouse->tableName . '.statuskey', 1, true, '', 'order by name asc'), 'pkey', 'name');
+// $arrWarehouseLayout = $class->convertForCombobox($warehouseLayout->searchData('', '', true, '', 'order by name asc'), 'pkey', 'name');
+$arrWarehouseLayout = $class->convertForCombobox($warehouseLayout->searchData($warehouseLayout->tableName . '.statuskey', 1, true, ' and '. $warehouseLayout->tableName.'.pkey <> 0', 'order by name asc'), 'pkey', 'name');
+$arrCustomer = $class->convertForCombobox($customer->searchData($customer->tableName . '.statuskey', 2, true, '', 'order by name asc'), 'pkey', 'name');
+$arrSupplier = $class->convertForCombobox($supplier->searchData($supplier->tableName . '.statuskey', 1, true, '', 'order by name asc'), 'pkey', 'name');
+
 $arrTwigVar['inputCode'] = $class->inputText('code');
 $arrTwigVar['inputStartDate'] = $class->inputDate('trStartDate', array('etc' => 'style="text-align:center"'));
 $arrTwigVar['inputEndDate'] = $class->inputDate('trEndDate', array('etc' => 'style="text-align:center"'));
@@ -334,14 +340,11 @@ if (isset($_POST) && !empty($_POST['hidAction'])) {
     // $tableHeader = $twig->render('template-header.html', $arrTwigVar);
     // $tempreport = $tableHeader . $tempreport;
 
-    // $obj->generateReport($_POST, $tempreport, $arrTemplate, $dataToExport, $arrFilterInformation, $tableHeader);
-    $obj->generateReport($_POST, $tempreport, $arrTemplate,$dataToExport,$arrFilterInformation);
+    $obj->generateReport($_POST, $tempreport, $arrTemplate, $dataToExport, $arrFilterInformation, $tableHeader);
+    // $obj->generateReport($_POST, $tempreport, $arrTemplate,$dataToExport,$arrFilterInformation);
 }
 
-$arrWarehouse = $class->convertForCombobox($warehouse->searchData($warehouse->tableName . '.statuskey', 1, true, '', 'order by name asc'), 'pkey', 'name');
-$arrWarehouseLayout = $class->convertForCombobox($warehouseLayout->searchData('', '', true, '', 'order by name asc'), 'pkey', 'name');
-$arrCustomer = $class->convertForCombobox($customer->searchData($customer->tableName . '.statuskey', 2, true, '', 'order by name asc'), 'pkey', 'name');
-$arrSupplier = $class->convertForCombobox($supplier->searchData($supplier->tableName . '.statuskey', 1, true, '', 'order by name asc'), 'pkey', 'name');
+
 $arrStatus = $class->convertForCombobox($arrStatus, 'pkey', 'status');
 $arrTwigVar['inputSelStatus'] = $class->inputSelect('selStatus[]', $arrStatus, array('etc' => 'multiple="multiple"', 'class' => 'multi-selectbox'));
 $arrTwigVar['arrTemplate'] = $arrHeaderTemplate;

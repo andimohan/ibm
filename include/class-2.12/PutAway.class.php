@@ -149,6 +149,7 @@ class PutAway extends BaseClass
             $sql .= ' and  ' . $this->tableName . '.typekey in (' . $this->typekey . ')  ';
 
         $sql .= $this->criteria;
+        $sql .=  $this->getWarehouseCriteria();
         $sql .= $this->getCompanyCriteria();
 
         return $sql;

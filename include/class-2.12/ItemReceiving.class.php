@@ -165,6 +165,7 @@ class ItemReceiving extends BaseClass
                     ' . $this->tableName . '.warehousekey = ' . $this->tableWarehouse . '.pkey and
 					' . $this->tableName . '.statuskey = ' . $this->tableStatus . '.pkey  
  		' . $this->criteria;
+        $sql .=  $this->getWarehouseCriteria();
 
         return $sql;
     }
@@ -978,3 +979,4 @@ class ItemReceiving extends BaseClass
 
 
 }
+?>
