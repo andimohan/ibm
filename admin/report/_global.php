@@ -121,7 +121,7 @@ if($EXPORT_TYPE == 1 && isset($_POST['hidFileData']) && !empty($_POST['hidFileDa
     $arrExportParam = array();
     $arrExportParam['exportType'] = $EXPORT_TYPE;
     $arrExportParam['module'] = $moduleName;
-    // $excel->exportToSave($arrTemplate,$arrExportParam,array(),$fileIndexName);  
+    $excel->exportToSave($arrTemplate,$arrExportParam,array(),$fileIndexName);  
     
     
 }
