@@ -36,7 +36,7 @@ $arrDocumentType = $class->convertForCombobox($documentType->searchData('', '', 
 
 
 if (!isset($_POST['isGrouping'])) {
-    $_POST['isGrouping'] = 1;
+    $_POST['isGrouping'] = 0;
 }
 
 $isGrouping = (isset($_POST['isGrouping']) && $_POST['isGrouping'] == 1) ? true : false;
@@ -115,7 +115,7 @@ switch ($EXPORT_TYPE) {
 }
 
 $arrHeaderTemplate = array();
-$arrHeaderTemplate['reportTitle'] = $obj->lang['reportItemReceiving'];
+$arrHeaderTemplate['reportTitle'] = $obj->lang['itemReceivingReport'];
 $arrHeaderTemplate['dataStructure'] = $arrDataStructure;
 $arrHeaderTemplate['total'] = array();
 array_push($arrTemplate, $arrHeaderTemplate);

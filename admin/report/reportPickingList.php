@@ -28,7 +28,7 @@ $dataToExport = array();
 $arrTemplate = array();
 
 if (!isset($_POST['isGrouping'])) {
-    $_POST['isGrouping'] = isset($_POST['isShowDetail']) ? $_POST['isShowDetail'] : 1;
+    $_POST['isGrouping'] = isset($_POST['isShowDetail']) ? $_POST['isShowDetail'] : 0;
 }
 
 if (!isset($_POST['trStartDate']) || empty($_POST['trStartDate'])) {
@@ -112,7 +112,8 @@ if ($isGrouping) {
 }
 
 $arrWarehouse = $class->convertForCombobox($warehouse->searchData($warehouse->tableName . '.statuskey', 1, true, '', 'order by name asc'), 'pkey', 'name');
-$arrWarehouseLayout = $class->convertForCombobox($warehouseLayout->searchData('', '', true, '', 'order by name asc'), 'pkey', 'name');
+// $arrWarehouseLayout = $class->convertForCombobox($warehouseLayout->searchData('', '', true, '', 'order by name asc'), 'pkey', 'name');
+$arrWarehouseLayout = $class->convertForCombobox($warehouseLayout->searchData($warehouseLayout->tableName . '.statuskey', 1, true, ' and '. $warehouseLayout->tableName.'.pkey <> 0', 'order by name asc'), 'pkey', 'name');
 $arrStatus = $class->convertForCombobox($obj->getAllStatus(), 'pkey', 'status');
 
 $arrTwigVar['inputCode'] = $class->inputText('code');

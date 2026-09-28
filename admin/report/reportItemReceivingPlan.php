@@ -33,7 +33,6 @@ $arrTemplate = array();
 
 $arrStatus = $obj->getAllStatus();
 $arrDocumentType = $obj->convertForCombobox($documentType->searchData('', '', true, '', 'order by name asc'), 'pkey', 'name');
-// $obj->setLog('arrDocumentType: ' . print_r($arrDocumentType, true), true);
 
 if (!isset($_POST['isGrouping'])) {
     $_POST['isGrouping'] = 0;
@@ -119,7 +118,7 @@ switch ($EXPORT_TYPE) {
 }
 
 $arrHeaderTemplate = array();
-$arrHeaderTemplate['reportTitle'] = $obj->lang['reportItemReceivingPlan'];
+$arrHeaderTemplate['reportTitle'] = $obj->lang['itemReceivingPlanReport'];
 $arrHeaderTemplate['dataStructure'] = $arrDataStructure;
 $arrHeaderTemplate['total'] = array();
 array_push($arrTemplate, $arrHeaderTemplate);
@@ -266,7 +265,6 @@ if (isset($_POST) && !empty($_POST['hidAction'])) {
     $order = 'order by ' . $orderBy . ' ' . $orderType;
 
     $rs = $obj->searchData('', '', true, $criteria, $order);
-    // $obj->setLog('Search Data', print_r($rs,true),true);
     $tempreport = '';
 
     if (!$isGrouping) {
@@ -274,9 +272,7 @@ if (isset($_POST) && !empty($_POST['hidAction'])) {
 
         for ($i = 0; $i < count($rs); $i++) {
             $documentType = (int)$rs[$i]['documenttype'];
-            $obj->setLog('int val'. $documentType, true);
             $rs[$i]['documentname'] = isset($arrDocumentType[$documentType]) ? $arrDocumentType[$documentType]['label'] : $rs[$i]['documenttype'];
-            $obj->setLog('document name: ' . $rs[$i]['documentname'], true);
             $rsDetail = $obj->getDetailWithRelatedInformation($rs[$i]['pkey'], $detailCriteria);
 
             if (empty($rsDetail)) {
@@ -335,10 +331,11 @@ if (isset($_POST) && !empty($_POST['hidAction'])) {
         $arrTemplate[0]['total'] = $obj->arraySum($arrTemplate[0]['total'], $return['subtotal'][0]);
     }
 
-    $tableHeader = $twig->render('template-header.html', $arrTwigVar);
+    // $tableHeader = $twig->render('template-header.html', $arrTwigVar);
     // $tempreport = $tableHeader . $tempreport;
 
-    $obj->generateReport($_POST, $tempreport, $arrTemplate, $dataToExport, $arrFilterInformation, $tableHeader);
+    // $obj->generateReport($_POST, $tempreport, $arrTemplate, $dataToExport, $arrFilterInformation, $tableHeader);
+    $obj->generateReport($_POST, $tempreport, $arrTemplate,$dataToExport,$arrFilterInformation);
 }
 
 $arrWarehouse = $class->convertForCombobox($warehouse->searchData($warehouse->tableName . '.statuskey', 1, true, '', 'order by name asc'), 'pkey', 'name');

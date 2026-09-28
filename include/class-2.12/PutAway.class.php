@@ -165,6 +165,7 @@ class PutAway extends BaseClass
                 ' . $this->tablePallet . '.name as palletname,
                 ' . $this->tableItemReceivingDetail . '.containernumber as itemreceivingcontainernumber,
                 ' . $this->tableItemReceivingDetail . '.itemcode,
+                ' . $this->tableItemReceivingDetail . '.label as itemlabel,
                 ' . $this->tableWarehouseLayout . '.name as warehouselayoutname,
                 ' . $this->tableItemUnit . '.name as unitname
 			  from

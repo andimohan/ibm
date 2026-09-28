@@ -28,7 +28,7 @@ $dataToExport = array();
 $arrTemplate = array();
 
 if (!isset($_POST['isGrouping'])) {
-    $_POST['isGrouping'] = isset($_POST['isShowDetail']) ? $_POST['isShowDetail'] : 1;
+    $_POST['isGrouping'] = isset($_POST['isShowDetail']) ? $_POST['isShowDetail'] : 0;
 }
 
 if (!isset($_POST['trStartDate']) || empty($_POST['trStartDate'])) {
@@ -95,7 +95,7 @@ switch ($EXPORT_TYPE) {
 }
 
 $arrHeaderTemplate = array();
-$arrHeaderTemplate['reportTitle'] = ucwords($obj->lang['reportPutAway']);
+$arrHeaderTemplate['reportTitle'] = ucwords($obj->lang['putAwayReport']);
 $arrHeaderTemplate['dataStructure'] = $arrDataStructure;
 $arrHeaderTemplate['total'] = array();
 array_push($arrTemplate, $arrHeaderTemplate);
@@ -119,7 +119,8 @@ if ($isGrouping) {
 }
 
 $arrWarehouse = $class->convertForCombobox($warehouse->searchData($warehouse->tableName . '.statuskey', 1, true, '', 'order by name asc'), 'pkey', 'name');
-$arrWarehouseLayout = $class->convertForCombobox($warehouseLayout->searchData('', '', true, '', 'order by name asc'), 'pkey', 'name');
+// $arrWarehouseLayout = $class->convertForCombobox($warehouseLayout->searchData('', '', true, '', 'order by name asc'), 'pkey', 'name');
+$arrWarehouseLayout = $class->convertForCombobox($warehouseLayout->searchData($warehouseLayout->tableName . '.statuskey', 1, true, ' and '. $warehouseLayout->tableName.'.pkey <> 0', 'order by name asc'), 'pkey', 'name');
 $arrPallet = $class->convertForCombobox($pallet->searchData('', '', true, '', 'order by name asc'), 'pkey', 'name');
 $arrStatus = $class->convertForCombobox($obj->getAllStatus(), 'pkey', 'status');
 
@@ -269,7 +270,6 @@ if (isset($_POST) && !empty($_POST['hidAction'])) {
     for ($i = 0; $i < count($rs); $i++) {
         if ($isGrouping) {
             $rsDetail = $obj->getDetailWithRelatedInformation($rs[$i]['pkey'], $detailCriteria);
-            $obj->setLog('rsDetail :'.print_r($rsDetail,true), true);
             if (!empty($rsDetail)) {
                 $rs[$i]['_detail_'] = array('arrTemplate' => $arrDetailTemplate, 'data' => $rsDetail);
             }
