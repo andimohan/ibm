@@ -92,7 +92,7 @@ class PutAway extends BaseClass
                 $printUrl = 'print/putAway';
                 break;
             case 2:
-                $printUrl = '';
+                $printUrl = 'print/zoneTransfer';
                 break;
             case 3:
                 $printUrl = 'print/pickingList';

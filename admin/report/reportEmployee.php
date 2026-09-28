@@ -195,6 +195,7 @@ if (isset($_POST) && !empty($_POST['hidAction'])){
     }
 		 
     $obj->generateReport($_POST, $tempreport, $arrTemplate,$dataToExport,$arrFilterInformation);
+    
 }
 
 $arrStatus = $class->convertForCombobox($obj->getAllStatus(),'pkey','status');   

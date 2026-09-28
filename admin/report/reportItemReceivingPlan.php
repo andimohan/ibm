@@ -36,7 +36,7 @@ $arrDocumentType = $obj->convertForCombobox($documentType->searchData('', '', tr
 // $obj->setLog('arrDocumentType: ' . print_r($arrDocumentType, true), true);
 
 if (!isset($_POST['isGrouping'])) {
-    $_POST['isGrouping'] = 1;
+    $_POST['isGrouping'] = 0;
 }
 
 
@@ -50,10 +50,11 @@ $orderCriteria['orderBy'] = (isset($_POST) && !empty($_POST['hidOrderBy'])) ? $o
 $orderCriteria['orderType'] = (isset($_POST) && !empty($_POST['hidOrderType'])) ? $_POST['hidOrderType'] : -1;
 
 $isGrouping = (isset($_POST['isGrouping']) && $_POST['isGrouping'] == 1) ? true : false;
+$arrDataStructure = array();
+$_POST['itemReceivingPlan'] = IMPORT_TEMPLATE['itemReceivingPlan'];
 
 switch ($EXPORT_TYPE) {
     case 2:
-        $arrDataStructure = array();
         $arrDataStructure['code'] = array('title' => ucwords($obj->lang['code']), 'dbfield' => 'code', 'width' => '110px');
         $arrDataStructure['trdate'] = array('title' => ucwords($obj->lang['date']), 'dbfield' => 'date', 'width' => '120px', 'format' => 'date', 'align' => 'center');
         if (!$isGrouping) {
@@ -85,7 +86,6 @@ switch ($EXPORT_TYPE) {
         break;
 
     default:
-        $arrDataStructure = array();
         $arrDataStructure['rowNumber'] = array('title' => '#', 'align' => 'right', 'width' => '40px', 'autoNumber' => true, 'sortable' => false);
         $arrDataStructure['code'] = array('title' => ucwords($obj->lang['code']), 'dbfield' => 'code', 'width' => '110px');
         $arrDataStructure['trdate'] = array('title' => ucwords($obj->lang['date']), 'dbfield' => 'date', 'width' => '120px', 'format' => 'date', 'align' => 'center');

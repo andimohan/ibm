@@ -6,13 +6,13 @@ $PRINT_SETTINGS = array(
 
 includeClass(array('PutAway.class.php'));
 
-$putAway = createObjAndAddToCol(new PutAway(3));
+$putAway = createObjAndAddToCol(new PutAway(1));
 $obj = $putAway;
 
 $generateReportContent = function ($dataset) {
 
 
-    $obj = new PutAway(3);
+    $obj = new PutAway(1);
     $setting = new Setting();
 
     $rs = $dataset['rs'];
@@ -39,7 +39,7 @@ $generateReportContent = function ($dataset) {
                     <table cellpadding="4" >
                         <tr><td></td></tr>
                         <tr>
-                            <td style="border:1px solid black"><b>PICKING LIST</b></td>
+                            <td style="border:1px solid black"><b>PUT AWAY</b></td>
                         </tr>
                             <tr><td></td></tr>
                     </table>
@@ -52,7 +52,7 @@ $generateReportContent = function ($dataset) {
                 <td style="width:338px; vertical-align:top;">
                     <table cellpadding="4" style="width:100%;">
                         <tr style="font-weight:bold;">
-                            <td style="width: 120px;">No. Picking List</td>
+                            <td style="width: 120px;">No. Put Away</td>
                             <td style="width: 20px;">:</td>
                             <td style="width: 190px;"><b>' . $rs[0]['code'] . '</b></td>
                         </tr>
@@ -62,7 +62,7 @@ $generateReportContent = function ($dataset) {
                 <td style="width:338px; vertical-align:top;">
                     <table cellpadding="4" style="width:100%;">
                         <tr style="font-weight:bold;">
-                            <td style="width: 120px;">Tgl. Picking List</td>
+                            <td style="width: 120px;">Tgl. Put Away</td>
                             <td style="width: 20px;">:</td>
                             <td style="width: 190px;text-align:right;"><b>' . $obj->formatDBDate($rs[0]['trdate'], 'd - m - y') . '</b></td>
                         </tr>

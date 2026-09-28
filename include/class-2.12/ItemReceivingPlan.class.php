@@ -107,6 +107,9 @@ class ItemReceivingPlan extends BaseClass
         array_push($this->arrSearchColumn, array('Pemasok', $this->tableSupplier . '.name'));
         array_push($this->arrSearchColumn, array('Pengirim', 'shipper.name'));
         array_push($this->arrSearchColumn, array('Status', $this->tableStatus . '.status'));
+        
+        $this->printMenu = array();
+        array_push($this->printMenu, array('code' => 'printTransaction', 'name' => $this->lang['printTransaction'], 'icon' => 'print', 'url' => 'print/itemReceivingPlan'));
 
 
         $this->includeClassDependencies(

@@ -17,7 +17,7 @@ $temp = array('ap','ar','salesOrder','truckingServiceWorkOrder','emklJobHeader',
 			'activityProgress','emklWorkOrderImport','truckingServiceOrderInvoiceExcel','debitNoteTigaRaksa','shippingInstructionHBL','preAlertNotice', 'cargoReleased',
             'performaShippingInstruction','overdueOutstandingLetter','employeeCommission','emklHouseBLWSI','truckingServiceOrderInvoiceMaersk','truckingServiceOrderInvoicePeriodeTCL',
             'packagingCode', 'emklCommission','emklOrderSheetWarehouse','emklOrderSheetTrucking','emklPurchaseOrderTrucking','emklPurchaseOrderWarehouse','emklJobOrderWarehouse','emklJobOrderTrucking','truckingServiceOrderInvoiceLSI',
-            'truckingServiceOrderPointHistory','carSpareparts','truckingServiceOrderInvoiceSariRoti','itemReceiving','putAway','goodsOut','pickingList');
+            'truckingServiceOrderPointHistory','carSpareparts','truckingServiceOrderInvoiceSariRoti','itemReceiving','putAway','goodsOut','pickingList','itemReceivingPlan','zoneTransfer');
 
 if(in_array($_GET['filename'],$temp))
     require_once '../../_include-v2.php';
