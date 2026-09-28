@@ -88,7 +88,7 @@ switch ($EXPORT_TYPE) {
 }
 
 $arrHeaderTemplate = array();
-$arrHeaderTemplate['reportTitle'] = ucwords($obj->lang['reportPickingList']);
+$arrHeaderTemplate['reportTitle'] = ucwords($obj->lang['pickingListReport']);
 $arrHeaderTemplate['dataStructure'] = $arrDataStructure;
 $arrHeaderTemplate['total'] = array();
 array_push($arrTemplate, $arrHeaderTemplate);
