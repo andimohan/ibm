@@ -1,7 +1,5 @@
 <?php
 
-use PhpOffice\PhpSpreadsheet\Reader\Xlsx\BaseParserClass;
-
 class GoodsOut extends BaseClass
 {
     function __construct()

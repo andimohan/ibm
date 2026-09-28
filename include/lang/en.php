@@ -3255,6 +3255,12 @@ $this->lang['picking'] = 'Picking';
 $this->lang['zone'] = 'Zone';
 $this->lang['destinationZone'] = 'Destination Zone';
 
+$this->lang['itemReceivingPlanReport'] = 'Item Receiving Plan Report';
+$this->lang['itemReceivingReport'] = 'Item Receiving Report';
+$this->lang['zoneTransferReport'] = 'Zone Transfer Report';
+$this->lang['putAwayReport'] = 'Putaway Report';
+$this->lang['pickingListReport'] = 'Picking List Report';
+
 $this->lang['activationEmailContent'] = 'Dear {{CUSTOMER_NAME}},
 									 <br>
 									Thank you for creating an account, you\'re almost done! To complete your registration, click on the link below to verify your account and email address.

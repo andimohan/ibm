@@ -9,7 +9,8 @@
         "google/cloud-translate": "^1.12",
         "guzzlehttp/guzzle": "^7.4",
         "http-interop/http-factory-guzzle": "^1.2",
-        "aws/aws-sdk-php": "^3.257"
+        "aws/aws-sdk-php": "^3.257",
+        "phpmailer/phpmailer": "^7.0"
     },
     "autoload": {
         "files": [

@@ -1,9 +1,4 @@
 <?php
-
-$PRINT_SETTINGS = array(
-    'showPrintHeader' => false,
-);
-
 includeClass(array('GoodsOut.class.php'));
 
 $goodsOut = createObjAndAddToCol(new GoodsOut());

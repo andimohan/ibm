@@ -1045,6 +1045,11 @@
     pushMenuItem($submenuitem , array ('label' => $class->lang['warehouseTransferReport'],   'securityObject' => 'reportWarehouseTransfer',   'phplist' => $reportPath.'reportWarehouseTransfer', 'target' => '_blank' ), array(1,2,3,5,9));
     pushMenuItem($submenuitem , array ('label' => $class->lang['itemAgingReport'],   'securityObject' => 'reportItem',   'phplist' => $reportPath.'reportItemAging', 'target' => '_blank' ), array(1,2,3,5,9));
     pushMenuItem($submenuitem , array ('label' => $class->lang['stockCardReport'],   'securityObject' => 'reportStockCard',   'phplist' => $reportPath.'reportStockCard', 'target' => '_blank' ));
+    pushMenuItem($submenuitem , array ('label' => $class->lang['itemReceivingPlanReport'],   'securityObject' => 'ReportItemReceivingPlan',   'phplist' => $reportPath.'reportItemReceivingPlan', 'target' => '_blank' ));
+    pushMenuItem($submenuitem , array ('label' => $class->lang['itemReceivingReport'],   'securityObject' => 'ReportItemReceiving',   'phplist' => $reportPath.'reportItemReceiving', 'target' => '_blank' ));
+    pushMenuItem($submenuitem , array ('label' => $class->lang['zoneTransferReport'],   'securityObject' => 'ReportZoneTransfer',   'phplist' => $reportPath.'reportZoneTransfer', 'target' => '_blank' ));
+    pushMenuItem($submenuitem , array ('label' => $class->lang['putAwayReport'],   'securityObject' => 'ReportPutAway',   'phplist' => $reportPath.'reportPutAway', 'target' => '_blank' ));
+    pushMenuItem($submenuitem , array ('label' => $class->lang['pickingListReport'],   'securityObject' => 'ReportPickingList',   'phplist' => $reportPath.'reportPickingList', 'target' => '_blank' ));
     pushMenuItem($submenuitem , array ('label' => $class->lang['snMovementReport'],   'securityObject' => 'reportItemMovementSN',   'phplist' => $reportPath.'reportItemMovementSN', 'target' => '_blank' ));
     pushMenuItem($submenuitem , array('label' => $class->lang['packagingCodeReport'], 'securityObject' => 'reportPackagingCode', 'phplist' => $reportPath . 'reportPackagingCode', 'target' => '_blank'));
     pushMenuItem($submenuitem , array ('label' => 'SN Gudang',   'securityObject' => 'reportItemMovementSN',   'phplist' => $reportPath.'reportSNInWarehouse', 'target' => '_blank' ));
