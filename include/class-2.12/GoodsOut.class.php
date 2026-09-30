@@ -58,6 +58,7 @@ class GoodsOut extends BaseClass
         $this->arrData['statuskey'] = array('selStatus');
         $this->arrData['car'] = array('car');
         $this->arrData['driver'] = array('driver');
+        $this->arrData['warehousekey'] = array('selWarehousekey');
 
         $this->arrData['file'] = array('item-file-uploader', array('datatype' => 'file', 'uploadFolder' => $this->uploadFileFolder, 'token' => 'token-item-file-uploader', 'fileName' => 'item-file-uploader'));
 
@@ -111,6 +112,8 @@ class GoodsOut extends BaseClass
  	  ' . $this->criteria;
 
         $sql .= $this->getCompanyCriteria();
+        
+        $sql .=  $this->getWarehouseCriteria();
 
         return $sql;
     }
@@ -142,7 +145,6 @@ class GoodsOut extends BaseClass
                     ' . $this->tableNameDetail . '.refkey in (' . $this->oDbCon->paramString($pkey, ',') . ') ';
 
         $sql .= $criteria;
-        $sql .=  $this->getWarehouseCriteria();
 
         return $this->oDbCon->doQuery($sql);
 
@@ -335,6 +337,10 @@ class GoodsOut extends BaseClass
 
     function normalizeParameter($arrParam, $trim = false)
     {
+
+        $itemReceiving = new ItemReceiving();
+        $rsItemReceiving =  $itemReceiving->getDataRowById($arrParam['hidRefReceivingHeaderKey'][0]);
+        $arrParam['selWarehousekey'] = $rsItemReceiving[0]['warehousekey'];
         $arrParam = parent::normalizeParameter($arrParam, true);
 
         return $arrParam;
