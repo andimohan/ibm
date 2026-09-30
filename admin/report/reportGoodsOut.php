@@ -131,7 +131,7 @@ switch ($EXPORT_TYPE) {
 }
 
 $arrHeaderTemplate = array();
-$arrHeaderTemplate['reportTitle'] = ucwords($obj->lang['goodsOutReport']);
+$arrHeaderTemplate['reportTitle'] = ucwords($obj->lang['itemOutReport']);
 $arrHeaderTemplate['dataStructure'] = $arrDataStructure;
 $arrHeaderTemplate['total'] = array();
 array_push($arrTemplate, $arrHeaderTemplate);
@@ -267,6 +267,7 @@ if (isset($_POST) && !empty($_POST['hidAction'])) {
             $documentTypeId = (int)$rs[$i]['documenttypekey'];
             $rs[$i]['documenttype'] = isset($arrDocumentType[$documentTypeId]) ? $arrDocumentType[$documentTypeId]['label'] : $rs[$i]['documenttypekey'];
             $rsDetail = $obj->getDetailWithRelatedInformation($rs[$i]['pkey'], $detailCriteria);
+            $obj->setLog($rsDetail, true);
 
             if (empty($rsDetail)) {
                 continue;
@@ -292,7 +293,7 @@ if (isset($_POST) && !empty($_POST['hidAction'])) {
                 $flatRow['statusname'] = $rs[$i]['statusname'];
                 $flatRow['receivingcode'] = $rsDetail[$j]['receivingcode'];
                 $flatRow['warehouselayoutname'] = $rsDetail[$j]['warehouselayoutname'];
-                $flatRow['itemcode'] = $rsDetail[$j]['itemcode'];
+                $flatRow['itemcode'] = $rsDetail[$j]['itemdetailcode'];
                 $flatRow['itemname'] = $rsDetail[$j]['itemname'];
                 $flatRow['itemlabel'] = $rsDetail[$j]['itemlabel'];
                 $flatRow['hs'] = $rsDetail[$j]['hs'];

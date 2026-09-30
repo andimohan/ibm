@@ -128,6 +128,7 @@ class GoodsOut extends BaseClass
                 ' . $this->tableItemReceivingDetail . '.unit,
                 ' . $this->tableItemReceivingDetail . '.containernumber as detailcontainernumber,
                 ' . $this->tableItemReceivingDetail . '.label as itemlabel,
+                ' . $this->tableItemReceivingDetail . '.itemcode as itemdetailcode,
                 ' . $this->tableItemReceivingDetail . '.hs,
                 ' . $this->tableWarehouseLayout . '.name as warehouselayoutname,
                 ' . $this->tableItemUnit . '.name as unitname,
