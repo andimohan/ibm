@@ -28,27 +28,27 @@ $arrTemplate = array();
 $arrDocumentType = $class->convertForCombobox($documentType->searchData('', '', true, '', 'order by name asc'), 'pkey', 'name');
 $arrCustomer = $class->convertForCombobox($customer->searchData($customer->tableName . '.statuskey', 2, true, '', 'order by name asc'), 'pkey', 'name');
 
-$rsGoodsOutOption = $obj->searchData('', '', true, ' and ' . $obj->tableName . '.statuskey in (1,2,3)', 'order by ' . $obj->tableName . '.recipient asc');
-$arrRecipient = array();
-$arrCar = array();
-$arrDriver = array();
+// $rsGoodsOutOption = $obj->searchData('', '', true, ' and ' . $obj->tableName . '.statuskey in (1,2,3)', 'order by ' . $obj->tableName . '.recipient asc');
+// $arrRecipient = array();
+// $arrCar = array();
+// $arrDriver = array();
 
-for ($i = 0; $i < count($rsGoodsOutOption); $i++) {
-    $recipient = trim($rsGoodsOutOption[$i]['recipient']);
-    if (!empty($recipient) && !isset($arrRecipient[$recipient])) {
-        $arrRecipient[$recipient] = array('pkey' => $recipient, 'name' => $recipient);
-    }
+// for ($i = 0; $i < count($rsGoodsOutOption); $i++) {
+//     $recipient = trim($rsGoodsOutOption[$i]['recipient']);
+//     if (!empty($recipient) && !isset($arrRecipient[$recipient])) {
+//         $arrRecipient[$recipient] = array('pkey' => $recipient, 'name' => $recipient);
+//     }
 
-    $car = trim($rsGoodsOutOption[$i]['car']);
-    if (!empty($car) && !isset($arrCar[$car])) {
-        $arrCar[$car] = array('pkey' => $car, 'name' => $car);
-    }
+//     $car = trim($rsGoodsOutOption[$i]['car']);
+//     if (!empty($car) && !isset($arrCar[$car])) {
+//         $arrCar[$car] = array('pkey' => $car, 'name' => $car);
+//     }
 
-    $driver = trim($rsGoodsOutOption[$i]['driver']);
-    if (!empty($driver) && !isset($arrDriver[$driver])) {
-        $arrDriver[$driver] = array('pkey' => $driver, 'name' => $driver);
-    }
-}
+//     $driver = trim($rsGoodsOutOption[$i]['driver']);
+//     if (!empty($driver) && !isset($arrDriver[$driver])) {
+//         $arrDriver[$driver] = array('pkey' => $driver, 'name' => $driver);
+//     }
+// }
 
 
 
@@ -77,10 +77,10 @@ switch ($EXPORT_TYPE) {
             $arrDataStructure['itemname'] = array('title' => ucwords($obj->lang['itemName']), 'dbfield' => 'itemlabel', 'width' => '180px');
             $arrDataStructure['hsnumber'] = array('title' => ucwords($obj->lang['hs']), 'dbfield' => 'hs', 'width' => '150px');
             $arrDataStructure['containernumber'] = array('title' => ucwords($obj->lang['containerNumber']), 'dbfield' => 'detailcontainernumber', 'width' => '150px');
-            $arrDataStructure['amount'] = array('title' => ucwords($obj->lang['amount']), 'dbfield' => 'qty', 'width' => '150px');
+            $arrDataStructure['amount'] = array('title' => ucwords($obj->lang['amount']), 'dbfield' => 'qty', 'width' => '150px', 'format' => 'number');
             $arrDataStructure['unit'] = array('title' => ucwords($obj->lang['unit']), 'dbfield' => 'unitname', 'width' => '180px');
             $arrDataStructure['currency'] = array('title' => ucwords($obj->lang['currency']), 'dbfield' => 'currencyname', 'width' => '180px');
-            $arrDataStructure['value'] = array('title' => ucwords($obj->lang['value']), 'dbfield' => 'amount', 'width' => '150px');
+            $arrDataStructure['value'] = array('title' => ucwords($obj->lang['value']), 'dbfield' => 'amount', 'width' => '150px', 'format' => 'number');
 
         }
         $arrDataStructure['documenttype'] = array('title' => ucwords($obj->lang['documentType']), 'dbfield' => 'documenttype', 'width' => '140px');
@@ -108,10 +108,10 @@ switch ($EXPORT_TYPE) {
             $arrDataStructure['itemname'] = array('title' => ucwords($obj->lang['itemName']), 'dbfield' => 'itemlabel', 'width' => '180px');
             $arrDataStructure['hsnumber'] = array('title' => ucwords($obj->lang['hs']), 'dbfield' => 'hs', 'width' => '150px');
             $arrDataStructure['containernumber'] = array('title' => ucwords($obj->lang['containerNumber']), 'dbfield' => 'detailcontainernumber', 'width' => '150px');
-            $arrDataStructure['amount'] = array('title' => ucwords($obj->lang['amount']), 'dbfield' => 'qty', 'width' => '150px');
+            $arrDataStructure['amount'] = array('title' => ucwords($obj->lang['amount']), 'dbfield' => 'qty', 'width' => '150px', 'format' => 'number');
             $arrDataStructure['unit'] = array('title' => ucwords($obj->lang['unit']), 'dbfield' => 'unitname', 'width' => '180px');
             $arrDataStructure['currency'] = array('title' => ucwords($obj->lang['currency']), 'dbfield' => 'currencyname', 'width' => '180px');
-            $arrDataStructure['value'] = array('title' => ucwords($obj->lang['value']), 'dbfield' => 'amount', 'width' => '150px');
+            $arrDataStructure['value'] = array('title' => ucwords($obj->lang['value']), 'dbfield' => 'amount', 'width' => '150px', 'format' => 'number');
 
         }
         $arrDataStructure['documenttype'] = array('title' => ucwords($obj->lang['documentType']), 'dbfield' => 'documenttype', 'width' => '140px');
@@ -131,7 +131,7 @@ switch ($EXPORT_TYPE) {
 }
 
 $arrHeaderTemplate = array();
-$arrHeaderTemplate['reportTitle'] = ucwords($obj->lang['itemOutReport']);
+$arrHeaderTemplate['reportTitle'] = ucwords($obj->lang['goodsOutReport']);
 $arrHeaderTemplate['dataStructure'] = $arrDataStructure;
 $arrHeaderTemplate['total'] = array();
 array_push($arrTemplate, $arrHeaderTemplate);
@@ -205,23 +205,23 @@ if (isset($_POST) && !empty($_POST['hidAction'])) {
         array_push($arrFilterInformation, array('label' => $obj->lang['documentType'], 'filter' => implode(', ', $arrTemp)));
     }
 
-    // if (isset($_POST['selRecipient']) && !empty($_POST['selRecipient'])) {
-    //     $key = implode(',', $class->oDbCon->paramString($_POST['selRecipient']));
-    //     $criteria .= ' AND ' . $obj->tableName . '.recipient in(' . $key . ')';
-    //     array_push($arrFilterInformation, array('label' => $obj->lang['recipient'], 'filter' => implode(', ', $_POST['selRecipient'])));
-    // }
+    if (isset($_POST['selRecipient']) && trim($_POST['selRecipient']) !== '') {
+        $recipientFilter = trim($_POST['selRecipient']);
+        $criteria .= ' AND ' . $obj->tableName . '.recipient LIKE (' . $class->oDbCon->paramString('%' . $recipientFilter . '%') . ')';
+        array_push($arrFilterInformation, array('label' => $obj->lang['recipient'], 'filter' => $recipientFilter));
+    }
 
-    // if (isset($_POST['selCar']) && !empty($_POST['selCar'])) {
-    //     $key = implode(',', $class->oDbCon->paramString($_POST['selCar']));
-    //     $criteria .= ' AND ' . $obj->tableName . '.car in(' . $key . ')';
-    //     array_push($arrFilterInformation, array('label' => $obj->lang['car'], 'filter' => implode(', ', $_POST['selCar'])));
-    // }
+    if (isset($_POST['selCar']) && trim($_POST['selCar']) !== '') {
+        $carFilter = trim($_POST['selCar']);
+        $criteria .= ' AND ' . $obj->tableName . '.car LIKE (' . $class->oDbCon->paramString('%' . $carFilter . '%') . ')';
+        array_push($arrFilterInformation, array('label' => $obj->lang['car'], 'filter' => $carFilter));
+    }
 
-    // if (isset($_POST['selDriver']) && !empty($_POST['selDriver'])) {
-    //     $key = implode(',', $class->oDbCon->paramString($_POST['selDriver']));
-    //     $criteria .= ' AND ' . $obj->tableName . '.driver in(' . $key . ')';
-    //     array_push($arrFilterInformation, array('label' => $obj->lang['driver'], 'filter' => implode(', ', $_POST['selDriver'])));
-    // }
+    if (isset($_POST['selDriver']) && trim($_POST['selDriver']) !== '') {
+        $driverFilter = trim($_POST['selDriver']);
+        $criteria .= ' AND ' . $obj->tableName . '.driver LIKE (' . $class->oDbCon->paramString('%' . $driverFilter . '%') . ')';
+        array_push($arrFilterInformation, array('label' => $obj->lang['driver'], 'filter' => $driverFilter));
+    }
 
     if (isset($_POST['selStatus']) && !empty($_POST['selStatus'])) {
         $key = implode(',', $class->oDbCon->paramString($_POST['selStatus']));
@@ -341,9 +341,9 @@ $arrDriver = $class->convertForCombobox(array_values($arrDriver), 'pkey', 'name'
 
 $arrStatus = $obj->getAllStatus();
 $arrStatus = $class->convertForCombobox($arrStatus, 'pkey', 'status');
-// $arrTwigVar['inputRecipient'] = $class->inputSelect('selRecipient[]', $arrRecipient, array('value' => array(),'etc' => 'multiple="multiple"', 'class' => 'multi-selectbox'));
-// $arrTwigVar['inputCar'] = $class->inputSelect('selCar[]', $arrCar, array('value' => array(),'etc' => 'multiple="multiple"', 'class' => 'multi-selectbox'));
-// $arrTwigVar['inputDriver'] = $class->inputSelect('selDriver[]', $arrDriver, array('value' => null,'etc' => 'multiple="multiple"', 'class' => 'multi-selectbox'));
+$arrTwigVar['inputRecipient'] = $class->inputText('selRecipient', array('value' => ''));
+$arrTwigVar['inputCar'] = $class->inputText('selCar', array('value' => ''));
+$arrTwigVar['inputDriver'] = $class->inputText('selDriver', array('value' => ''));
 
 $arrTwigVar['inputSelStatus'] = $class->inputSelect('selStatus[]', $arrStatus, array('value' => array(), 'etc' => 'multiple="multiple"', 'class' => 'multi-selectbox'));
 $arrTwigVar['arrTemplate'] = $arrHeaderTemplate;
