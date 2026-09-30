@@ -3294,6 +3294,7 @@ $this->lang['itemReceivingReport'] = 'Laporan Peneriamaan barang';
 $this->lang['zoneTransferReport'] = 'Laporan Mutasi Zona';
 $this->lang['putAwayReport'] = 'Laporan Putaway';
 $this->lang['pickingListReport'] = 'Laporan Picking List';
+$this->lang['regNumber'] = 'No. Pend';
 
 $this->errorMsg['putAway'][1] = 'Penerimaan Barang tidak boleh kosong.';
 $this->errorMsg['putAway'][2] = 'Jumlah barang di terima harus lebih besar dari 0.';

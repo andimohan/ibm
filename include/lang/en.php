@@ -3260,6 +3260,7 @@ $this->lang['itemReceivingReport'] = 'Item Receiving Report';
 $this->lang['zoneTransferReport'] = 'Zone Transfer Report';
 $this->lang['putAwayReport'] = 'Putaway Report';
 $this->lang['pickingListReport'] = 'Picking List Report';
+$this->lang['regNumber'] = 'No. Reg';
 
 $this->lang['activationEmailContent'] = 'Dear {{CUSTOMER_NAME}},
 									 <br>

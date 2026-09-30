@@ -14,6 +14,7 @@ class GoodsOut extends BaseClass
         $this->tableItemReceivingDetail = 'item_receiving_detail';
         $this->tableDocumentType = 'document_type';
         $this->tableWarehouseLayout = 'warehouse_layout';
+        $this->tableCurrency = 'currency';
 
         $this->securityObject = 'GoodsOut';
 
@@ -63,6 +64,8 @@ class GoodsOut extends BaseClass
         $this->arrDataListAvailableColumn = array();
         array_push($this->arrDataListAvailableColumn, array('code' => 'code', 'title' => 'code', 'dbfield' => 'code', 'default' => true, 'width' => 100));
         array_push($this->arrDataListAvailableColumn, array('code' => 'trdate', 'title' => 'date', 'dbfield' => 'trdate', 'align' => 'center', 'format' => 'date', 'default' => true, 'width' => 120));
+        array_push($this->arrDataListAvailableColumn, array('code' => 'submissionNumber', 'title' => 'submissionNumber', 'dbfield' => 'submissionnumber', 'default' => true, 'width' => 150));
+        array_push($this->arrDataListAvailableColumn, array('code' => 'registrationNumber', 'title' => 'regNumber', 'dbfield' => 'registrationnumber', 'default' => true, 'width' => 70));
         array_push($this->arrDataListAvailableColumn, array('code' => 'customer', 'title' => 'customer', 'dbfield' => 'customername', 'default' => true, 'width' => 150));
         array_push($this->arrDataListAvailableColumn, array('code' => 'recipient', 'title' => 'recipient', 'dbfield' => 'recipient', 'default' => true, 'width' => 150));
         array_push($this->arrDataListAvailableColumn, array('code' => 'status', 'title' => 'status', 'dbfield' => 'statusname', 'default' => true, 'width' => 70));
@@ -71,6 +74,8 @@ class GoodsOut extends BaseClass
         array_push($this->arrSearchColumn, array('Kode', $this->tableName . '.code'));
         array_push($this->arrSearchColumn, array('Penerima', $this->tableName . '.recipient'));
         array_push($this->arrSearchColumn, array('Status', $this->tableStatus . '.status'));
+        array_push($this->arrSearchColumn, array('No. Pengajuan', $this->tableName . '.submissionnumber'));
+        array_push($this->arrSearchColumn, array('No. Pendaftaran', $this->tableName . '.registrationnumber'));
 
         $this->printMenu = array();
         array_push($this->printMenu, array('code' => 'printTransaction', 'name' => $this->lang['printTransaction'], 'icon' => 'print', 'url' => 'print/goodsOut'));
@@ -115,10 +120,15 @@ class GoodsOut extends BaseClass
         $sql = 'select
 	   			' . $this->tableNameDetail . '.*,
                 ' . $this->tableItemReceivingHeader . '.code as receivingcode,
+                ' . $this->tableItemReceivingHeader . '.invoicenumber,
+                ' . $this->tableItemReceivingHeader . '.blnumber,
                 ' . $this->tableItemReceivingDetail . '.unit,
-                ' . $this->tableItemReceivingDetail . '.containernumber,
+                ' . $this->tableItemReceivingDetail . '.containernumber as detailcontainernumber,
+                ' . $this->tableItemReceivingDetail . '.label as itemlabel,
+                ' . $this->tableItemReceivingDetail . '.hs,
                 ' . $this->tableWarehouseLayout . '.name as warehouselayoutname,
                 ' . $this->tableItemUnit . '.name as unitname,
+                ' . $this->tableCurrency . '.name as currencyname,
                 ' . $this->tableDocumentType . '.name as documenttypename 
                  from
 			  	    ' . $this->tableNameDetail . '
@@ -127,6 +137,7 @@ class GoodsOut extends BaseClass
                         left join ' . $this->tableDocumentType . ' on ' . $this->tableItemReceivingHeader . '.documenttype = ' . $this->tableDocumentType . '.pkey
                         left join ' . $this->tableItemReceivingDetail . ' on ' . $this->tableNameDetail . '.refreceivingdetailkey = ' . $this->tableItemReceivingDetail . '.pkey
                         left join ' . $this->tableItemUnit . ' on ' . $this->tableItemReceivingDetail . '.unit = ' . $this->tableItemUnit . '.pkey
+                        left join ' . $this->tableCurrency . ' on ' . $this->tableItemReceivingHeader . '.currencykey = ' . $this->tableCurrency . '.pkey
                 where
                     ' . $this->tableNameDetail . '.refkey in (' . $this->oDbCon->paramString($pkey, ',') . ') ';
 

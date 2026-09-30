@@ -1,0 +1,72 @@
+{% extends "template.html" %}
+{% block JS %}
+<script>
+    jQuery(document).ready(function(){
+        setTimeout(function () {
+    
+            var $statusSelect = jQuery('select[name="selStatus[]"]');
+
+            if ($statusSelect.length) {
+                $statusSelect.val([]).trigger('change');
+            }
+        }, 0);
+    });
+</script>
+{% endblock %}
+{% block filter %}
+<div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label">{{ LANG.code }}</label>
+        <div class="col-xs-12">
+            {{ inputCode|raw }}
+        </div>
+    </div>
+    <div class="form-group mnv-date-range">
+        <label class="col-xs-12 control-label">{{ LANG.period }}</label>
+        <div class="col-xs-6" style="padding-right:5px;"> {{ inputStartDate|raw }} </div>
+        <div class="col-xs-6" style="padding-left:5px;"> {{ inputEndDate|raw }} </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label">{{ LANG.customer }}</label>
+        <div class="col-xs-12">
+            {{ inputSelCustomer|raw }}
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-12 control-label">{{ LANG.documentType }}</label>
+        <div class="col-xs-12">
+            {{ inputSelDocumentType|raw }}
+        </div>
+    </div>
+    <!-- <div class="form-group">
+        <label class="col-xs-12 control-label">{{ LANG.recipient }}</label>
+        <div class="col-xs-12">
+            {{ inputRecipient|raw }}
+        </div>
+    </div> -->
+    <!-- <div class="form-group">
+        <label class="col-xs-12 control-label">{{ LANG.car }}</label>
+        <div class="col-xs-12">
+            {{ inputCar|raw }}
+        </div>
+    </div> -->
+    <!-- <div class="form-group">
+        <label class="col-xs-12 control-label">{{ LANG.driver }}</label>
+        <div class="col-xs-12">
+            {{ inputDriver|raw }}
+        </div>
+    </div> -->
+    <div class="form-group">
+        <label class="col-xs-12 control-label">{{ LANG.status }}</label>
+        <div class="col-xs-12">
+            {{ inputSelStatus|raw }}
+        </div>
+    </div>
+    <div class="form-group" style="margin-bottom:0">
+        <label class="col-xs-12 control-label">{{ LANG.others }}</label>
+    </div>
+    <div class="form-group">
+        <div class="col-xs-12"> {{ inputIsGrouping|raw }} <span style="margin-left: 5px">{{ LANG.group }}</span></div>
+    </div>
+</div>
+{% endblock %}

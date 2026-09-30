@@ -91,14 +91,16 @@ class ItemReceiving extends BaseClass
         $this->arrData['file'] = array('item-file-uploader', array('datatype' => 'file', 'uploadFolder' => $this->uploadFileFolder, 'token' => 'token-item-file-uploader', 'fileName' => 'item-file-uploader'));
 
         $this->arrDataListAvailableColumn = array();
-        array_push($this->arrDataListAvailableColumn, array('code' => 'code', 'title' => 'code', 'dbfield' => 'code', 'default' => true, 'width' => 100));
-        array_push($this->arrDataListAvailableColumn, array('code' => 'trdate', 'title' => 'date', 'dbfield' => 'trdate', 'align' => 'center', 'format' => 'date', 'default' => true, 'width' => 120));
-        array_push($this->arrDataListAvailableColumn, array('code' => 'refCode', 'title' => 'refCode', 'dbfield' => 'itemreceivingplanheadercode', 'default' => true, 'width' => 120));
+        array_push($this->arrDataListAvailableColumn, array('code' => 'code', 'title' => 'code', 'dbfield' => 'code', 'default' => true, 'width' => 50));
+        array_push($this->arrDataListAvailableColumn, array('code' => 'trdate', 'title' => 'date', 'dbfield' => 'trdate', 'align' => 'center', 'format' => 'date', 'default' => true, 'width' => 100));
+        array_push($this->arrDataListAvailableColumn, array('code' => 'submissionNumber', 'title' => 'submissionNumber', 'dbfield' => 'submissionnumber', 'default' => true, 'width' => 150));
+        array_push($this->arrDataListAvailableColumn, array('code' => 'registrationNumber', 'title' => 'regNumber', 'dbfield' => 'registrationnumber', 'default' => true, 'width' => 70));
         array_push($this->arrDataListAvailableColumn, array('code' => 'warehouse', 'title' => 'warehouse', 'dbfield' => 'warehousename', 'default' => true, 'width' => 120));
         array_push($this->arrDataListAvailableColumn, array('code' => 'warehouselayout', 'title' => 'warehouseLayout', 'dbfield' => 'warehouselayoutname', 'default' => true, 'width' => 120));
         array_push($this->arrDataListAvailableColumn, array('code' => 'customer', 'title' => 'customer', 'dbfield' => 'customername', 'default' => true, 'width' => 150));
-        array_push($this->arrDataListAvailableColumn, array('code' => 'supplier', 'title' => 'supplier', 'dbfield' => 'suppliername', 'default' => true, 'width' => 150));
+        // array_push($this->arrDataListAvailableColumn, array('code' => 'supplier', 'title' => 'supplier', 'dbfield' => 'suppliername', 'default' => true, 'width' => 150));
         array_push($this->arrDataListAvailableColumn, array('code' => 'shipper', 'title' => 'shipper', 'dbfield' => 'shippername', 'default' => true, 'width' => 150));
+        array_push($this->arrDataListAvailableColumn, array('code' => 'refCode', 'title' => 'refCode', 'dbfield' => 'itemreceivingplanheadercode', 'default' => true, 'width' => 120));
         array_push($this->arrDataListAvailableColumn, array('code' => 'status', 'title' => 'status', 'dbfield' => 'statusname', 'default' => true, 'width' => 70));
 
 
@@ -109,7 +111,9 @@ class ItemReceiving extends BaseClass
         array_push($this->arrSearchColumn, array('Tata Letak Gudang', $this->tableWarehouseLayout . '.name'));
         array_push($this->arrSearchColumn, array('Tgl', $this->tableName . '.trdate'));
         array_push($this->arrSearchColumn, array('Pelanggan', $this->tableCustomer . '.name'));
-        array_push($this->arrSearchColumn, array('Pemasok', $this->tableSupplier . '.name'));
+        array_push($this->arrSearchColumn, array('No. Pengajuan', $this->tableName . '.submissionnumber'));
+        array_push($this->arrSearchColumn, array('No. Pendaftaran', $this->tableName . '.registrationnumber'));
+        // array_push($this->arrSearchColumn, array('Pemasok', $this->tableSupplier . '.name'));
         array_push($this->arrSearchColumn, array('Pengirim', 'shipper.name'));
         array_push($this->arrSearchColumn, array('Status', $this->tableStatus . '.status'));
 
