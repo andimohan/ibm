@@ -80,6 +80,7 @@ class GoodsOut extends BaseClass
 
         $this->printMenu = array();
         array_push($this->printMenu, array('code' => 'printTransaction', 'name' => $this->lang['printTransaction'], 'icon' => 'print', 'url' => 'print/goodsOut'));
+        array_push($this->printMenu, array('code' => 'printDeliveryNote', 'name' => $this->lang['printDeliveryNote'], 'icon' => 'print', 'url' => 'print/SJGoodsOut'));
 
         $this->includeClassDependencies(array(
             'ItemReceiving.class.php',
