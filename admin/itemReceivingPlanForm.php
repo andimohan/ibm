@@ -700,7 +700,7 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
                                                 </div>
                                                 <div>
                                                     <?php echo $obj->inputHidden('hidDetailCountryKey[]', array('overwritePost' => $overwrite, 'etc' => $etc, 'add-class' => 'label-style', 'disabled' => $disable)); ?>
-                                                    <?php echo $obj->inputDecimal('alcoholContent[]', array('overwritePost' => $overwrite, 'etc' => $etc . ' placeholder="' . $obj->lang['country'] . '" ', 'add-class' => 'label-style', 'disabled' => $disable)); ?>
+                                                    <?php echo $obj->inputDecimal('alcoholContent[]', array('overwritePost' => $overwrite, 'etc' => $etc . ' placeholder="' . $obj->lang['alcohol'] . ' %'. '" ', 'add-class' => 'label-style', 'disabled' => $disable)); ?>
                                                     <!-- <?php echo $obj->inputDecimal('alcoholContent[]', array('overwritePost' => $overwrite, 'etc' => 'style="text-align:right;" ' . $etc, 'disabled' => $disable)); ?> -->
                                                 </div>
                                             </div>
