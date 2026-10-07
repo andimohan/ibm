@@ -507,7 +507,7 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
                                 <div class=" div-table-col detail-col-header" style="width:60px;text-align:right;">
                                     <?php echo ucwords($obj->lang['size']); ?>
                                 </div>
-                                <div class=" div-table-col detail-col-header" style="width:55px;">
+                                <div class=" div-table-col detail-col-header" style="width:85px;">
                                     <?php echo ucwords($obj->lang['unit']); ?>
                                 </div>
                                 <div class=" div-table-col detail-col-header" style="width:170px;">
@@ -525,9 +525,9 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
                                 <div class=" div-table-col detail-col-header" style="width:80px; text-align:right;">
                                     <?php echo ucwords($obj->lang['qty']); ?>
                                 </div>
-                                <div class=" div-table-col detail-col-header" style="width:80px;text-align:right;">
+                                <!-- <div class=" div-table-col detail-col-header" style="width:80px;text-align:right;">
                                     <?php echo ucwords($obj->lang['alcohol'] . ' %'); ?>
-                                </div>
+                                </div> -->
                                 <!-- <div class=" div-table-col detail-col-header" style="width:120px;"><?php echo ucwords($obj->lang['country']); ?></div> -->
                                 <!-- <div class=" div-table-col detail-col-header" style="width:100px;"><?php echo ucwords($obj->lang['unit']); ?></div> -->
                                 <div class="div-table-col detail-col-header" style="width:100px;text-align:right;">
@@ -625,7 +625,7 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
                                                     <?php echo $obj->inputNumber('size[]', array('overwritePost' => $overwrite, 'etc' => 'style="text-align:right;" ' . $etc, 'disabled' => $disable)); ?>
                                                 </div>
                                                 <div class="div-table-col detail-col-detail"
-                                                    style="vertical-align:top; width:55px; ">
+                                                    style="vertical-align:top; width:85px; ">
                                                     <?php echo $obj->inputSelect('selSizeUnit[]', $arrUnit, array('overwritePost' => $overwrite, 'etc' => 'style="" ' . $etc, 'disabled' => $disable)); ?>
                                                 </div>
                                                 <div class="div-table-col detail-col-detail" style="width:170px;"
@@ -651,10 +651,10 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
                                                     style="vertical-align:top; width:80px; ">
                                                     <?php echo $obj->inputNumber('qty[]', array('readonly' => true, 'overwritePost' => $overwrite, 'etc' => 'style="text-align:right;" ' . $etc, 'disabled' => $disable)); ?>
                                                 </div>
-                                                <div class="div-table-col detail-col-detail"
+                                                <!-- <div class="div-table-col detail-col-detail"
                                                     style="vertical-align:top; width:80px; ">
                                                     <?php echo $obj->inputDecimal('alcoholContent[]', array('overwritePost' => $overwrite, 'etc' => 'style="text-align:right;" ' . $etc, 'disabled' => $disable)); ?>
-                                                </div>
+                                                </div> -->
                                                 <div class="div-table-col detail-col-detail"
                                                     style="vertical-align:top; width:100px;">
                                                     <?php echo $obj->inputDecimal('amount[]', array('overwritePost' => $overwrite, 'etc' => 'style="text-align:right;" ' . $etc, 'disabled' => $disable)); ?>
@@ -724,6 +724,16 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
                                                 <div>
                                                     <?php echo $obj->inputHidden('hidDetailCountryKey[]', array('overwritePost' => $overwrite, 'etc' => $etc, 'add-class' => 'label-style', 'disabled' => $disable)); ?>
                                                     <?php echo $obj->inputText('countryOfOriginId[]', array('overwritePost' => $overwrite, 'etc' => $etc . ' placeholder="' . $obj->lang['country'] . '" ', 'add-class' => 'label-style', 'disabled' => $disable)); ?>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div style="font-weight:bold; padding-left: 0.5em;">
+                                                    <?php echo ucwords($obj->lang['alcohol'] . ' %'); ?>
+                                                </div>
+                                                <div>
+                                                    <?php echo $obj->inputHidden('hidDetailCountryKey[]', array('overwritePost' => $overwrite, 'etc' => $etc, 'add-class' => 'label-style', 'disabled' => $disable)); ?>
+                                                    <?php echo $obj->inputDecimal('alcoholContent[]', array('overwritePost' => $overwrite, 'etc' => $etc . ' placeholder="' . $obj->lang['country'] . '" ', 'add-class' => 'label-style', 'disabled' => $disable)); ?>
+                                                    <!-- <?php echo $obj->inputDecimal('alcoholContent[]', array('overwritePost' => $overwrite, 'etc' => 'style="text-align:right;" ' . $etc, 'disabled' => $disable)); ?> -->
                                                 </div>
                                             </div>
                                         </div>
