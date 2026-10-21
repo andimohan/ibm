@@ -104,6 +104,12 @@ $this->errorMsg['username'][3] = 'Username must be between 5 to 30 characters lo
 $this->errorMsg['username'][4] = 'Username can only contain letters, numbers, and underscore.';
 $this->errorMsg['username'][5] = 'Username and password did not match.';
 
+$this->errorMsg['putAway'][1] = 'Penerimaan Barang tidak boleh kosong.';
+$this->errorMsg['putAway'][2] = 'Jumlah barang di terima harus lebih besar dari 0.';
+$this->errorMsg['putAway'][3] = 'Jumlah tidak boleh melebihi jumlah yang diterima.';
+$this->errorMsg['putAway'][4] = 'Jumlah tidak boleh melebihi yang belum di Put Away.';
+$this->errorMsg['putAway'][5] = 'Tata letak gudang / zona asal tidak sesuai.';
+
 $this->errorMsg['pallet'][1] = 'Pallet cannot be empty.';
 $this->errorMsg['pallet'][2] = 'Pallet name already exists. Please choose another name.';
 

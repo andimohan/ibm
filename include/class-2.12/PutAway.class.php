@@ -45,6 +45,7 @@ class PutAway extends BaseClass
         $this->arrData['pkey'] = array('pkey', array('dataDetail' => $arrDetails));
         $this->arrData['code'] = array('code');
         $this->arrData['typekey'] = array('selTypeKey');
+        $this->arrData['putawaytypekey'] = array('selPutAwayTypeKey');
         $this->arrData['trdate'] = array('trDate', 'date');
         $this->arrData['warehousekey'] = array('hidWarehouseKey');
         $this->arrData['putawaydate'] = array('trPutAwayDate', 'date');
@@ -230,7 +231,9 @@ class PutAway extends BaseClass
                             'warehouselayoutkey' => $rsDetail[$i]['warehouselayoutkey']
                         ),
                         $note,
-                        $rsHeader[0]['trdate']
+                        $rsHeader[0]['trdate'],
+                        0,
+                        $rsDetail[$i]['palletkey']
                     );
                     $itemMovement->updateItemMovement(
                         array(
@@ -247,7 +250,9 @@ class PutAway extends BaseClass
                             'warehouselayoutkey' => $rsHeader[0]['warehouselayoutkey']
                         ),
                         $note,
-                        $rsHeader[0]['trdate']
+                        $rsHeader[0]['trdate'],
+                        0,
+                        $rsHeader[0]['palletkey']
                     );
                 }
             }
@@ -268,7 +273,7 @@ class PutAway extends BaseClass
                 ), $rsDetail[$i]['itemkey'], -$rsDetail[$i]['qty'], 0, $this->tableName, array(
                     'warehousekey' => $rsHeader[0]['warehousekey'],
                     'warehouselayoutkey' => $rsDetail[$i]['warehouselayoutkey']
-                ), $note, $rsHeader[0]['trdate']);
+                ), $note, $rsHeader[0]['trdate'],0,$rsDetail[$i]['palletkey']);
                 $itemMovement->updateItemMovement(array(
                     'refkey' => $id,
                     'refkey2' => $rsDetail[$i]['itemreceivingheaderkey'],
@@ -276,7 +281,7 @@ class PutAway extends BaseClass
                 ), $rsDetail[$i]['itemkey'], $rsDetail[$i]['qty'], 0, $this->tableName, array(
                     'warehousekey' => $rsHeader[0]['warehousekey'],
                     'warehouselayoutkey' => $rsHeader[0]['warehouselayoutkey']
-                ), $note, $rsHeader[0]['trdate']);
+                ), $note, $rsHeader[0]['trdate'],0,$rsDetail[$i]['palletkey']);
             }
 
         }
@@ -290,7 +295,6 @@ class PutAway extends BaseClass
 
 
         $itemReceiving = new ItemReceiving();
-        $this->setLog($arr, true);
 
         $warehousekey = $arr['hidWarehouseKey'];
         $warehouselayoutkey = $arr['hidWarehouseLayoutKey'];
@@ -401,7 +405,6 @@ class PutAway extends BaseClass
 
 
         $rsDetail = $this->getDetailWithRelatedInformation($id);
-        $this->setLog($rsDetail, true);
 
         if ($this->typekey == 1) {
 
@@ -420,7 +423,6 @@ class PutAway extends BaseClass
                         }
                         $outstadingPutAwayQty = $itemReceiving->getTotalUnPutAwayItemReceiving($rsDetail[$i]['itemreceivingdetailkey']);
                         //apakah qty lebih besar dari outstanding put away
-                        $this->setLog($outstadingPutAwayQty, true);
                         if ($rsDetail[$i]['qty'] > $outstadingPutAwayQty) {
                             $this->addErrorLog(false, '<strong>' . $rsHeader[0]['code'] . '</strong>. ' . $rsDetail[$i]['itemname'] . '. ' . $this->errorMsg['putAway'][4]);
                         }
@@ -446,13 +448,13 @@ class PutAway extends BaseClass
 
 
                 //cek stok di zona
-                $saldoakhir = $itemMovement->getItemQOH($rsDetail[$i]['itemkey'], $rsHeader[0]['warehousekey'], $rsHeader[0]['warehouselayoutoriginkey']);
+                $saldoakhir = $itemMovement->getItemQOH($rsDetail[$i]['itemkey'], $rsHeader[0]['warehousekey'], $rsDetail[$i]['warehouselayoutkey']);
                 $totalqty = $saldoakhir - $rsDetail[$i]['qty'];
                 if ($totalqty < 0) {
                     array_push($arrErrMsg, '<strong>. ' . $rsDetail[$i]['itemcode'] . ' - ' . $rsDetail[$i]['itemname'] . '</strong>, ' . $this->errorMsg[402]);
                 }
 
-                //cek apakah posisiwarehouse terakhir sama dengan asal mutasi?
+                //cek apakah posisiwarehouse asal apakah sama
                 $sql = '
                     select
                         ' . $itemMovement->tableName . '.pkey,
@@ -465,16 +467,18 @@ class PutAway extends BaseClass
                         ' . $itemMovement->tableName . '
                     where
                      ' . $itemMovement->tableName . '.statuskey = 1 and
-                      ' . $itemMovement->tableName . '.reftable = ' . $this->oDbCon->paramString($this->tableName) . ' and 
+                     ' . $itemMovement->tableName . '.qtyinbaseunit > 0 and
+                      ' . $itemMovement->tableName . '.refkey2 = ' . $this->oDbCon->paramString($rsDetail[$i]['itemreceivingheaderkey']) . ' and 
                       ' . $itemMovement->tableName . '.warehousekey = ' . $this->oDbCon->paramString($rsHeader[0]['warehousekey']) . ' and 
-                      ' . $itemMovement->tableName . '.itemkey = ' . $this->oDbCon->paramString($rsDetail[$i]['itemkey']) . ' order by  ' . $itemMovement->tableName . '.pkey desc limit 1 
+                      ' . $itemMovement->tableName . '.itemkey = ' . $this->oDbCon->paramString($rsDetail[$i]['itemkey']) . ' order by  ' . $itemMovement->tableName . '.pkey
                 ';
 
                 $rs = $this->oDbCon->doQuery($sql);
 
                 if (!empty($rs)) {
+                    $arrWarehouseLayout = array_unique(array_column($rs, 'warehouselayoutkey'));
                     $rsData = $this->getDataRowById($rs[0]['refkey']);
-                    if (($rsHeader[0]['warehouselayoutoriginkey'] != $rs[0]['warehouselayoutkey']) && $rsData[0]['typekey'] == 2) {
+                    if (!in_array($rsDetail[$i]['warehouselayoutkey'], $arrWarehouseLayout) && $rsData[0]['typekey'] == 2) {
                         $rsLayout = $warehouseLayout->getDataRowById($rs[0]['warehouselayoutkey']);
                         array_push($arrErrMsg, '<strong>' . $rsDetail[$i]['itemcode'] . ' - ' . $rsDetail[$i]['itemname'] . '</strong>. ' . $this->errorMsg['putAway'][5] . ' ke <strong>' . $rsLayout[0]['name'] . '</strong>');
                     }
@@ -486,6 +490,7 @@ class PutAway extends BaseClass
             if (!empty($arrErrMsg)) {
                 $this->addErrorLog(false, '<strong>' . $rsHeader[0]['code'] . '</strong>. ' . $this->errorMsg[201] . '<br>' . implode(',<br>', $arrErrMsg));
             }
+            
 
         } else if ($this->typekey == 3) {
 
@@ -668,12 +673,20 @@ class PutAway extends BaseClass
         }
     }
 
+    function getPutAwayType()
+    {
+        $arrType = array();
+        array_push($arrType, array('pkey' => 1, 'name' => 'Before Labeling'));
+        array_push($arrType, array('pkey' => 2, 'name' => 'After Labeling'));
+        return $arrType;
+
+    }
+
     function normalizeParameter($arrParam, $trim = false)
     {
         if ($this->typekey == 2) {
             $arrParam['submissionNumber'] = $arrParam['refCode'];
         }
-        $this->setLog($arrParam, true);
 
         $arrParam = parent::normalizeParameter($arrParam);
 

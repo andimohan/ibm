@@ -19,6 +19,7 @@ class ItemReceiving extends BaseClass
         $this->tableCountry = 'country';
         $this->tableItemReceivingPlanHeader = 'item_receiving_plan_header';
         $this->tableItemUnit = 'item_unit';
+        $this->tablePallet = 'pallet';
 
         $this->isTransaction = true;
         $this->securityObject = 'ItemReceiving';
@@ -631,17 +632,20 @@ class ItemReceiving extends BaseClass
                 ' . $itemMovement->tableName . '.warehouselayoutkey,
                 ' . $itemMovement->tableName . '.note,
                 ' . $itemMovement->tableName . '.statuskey,
+                ' . $itemMovement->tableName . '.palletkey,
                 ' . $this->tableWarehouseLayout . '.code as warehouselayoutcode,
                 ' . $this->tableWarehouseLayout . '.name as warehouselayoutname,
                 ' . $itemMovement->tableItem . '.code as itemcode,
                 ' . $itemMovement->tableItem . '.name as itemname,
                 ' . $this->tableName . '.submissionnumber,
-                ' . $this->tableNameDetail . '.containernumber
+                ' . $this->tableNameDetail . '.containernumber,
+                ' . $this->tablePallet . '.name as palletname
             from
                 ' . $itemMovement->tableName . '
                     left join ' . $itemMovement->tableItem . ' on ' . $itemMovement->tableName . '.itemkey = ' . $itemMovement->tableItem . '.pkey
                     left join ' . $this->tableWarehouseLayout . ' on ' . $itemMovement->tableName . '.warehouselayoutkey = ' . $this->tableWarehouseLayout . '.pkey
-                    left join ' . $this->tableNameDetail . ' on ' . $itemMovement->tableName . '.refdetailkey = ' . $this->tableNameDetail . '.pkey,
+                    left join ' . $this->tableNameDetail . ' on ' . $itemMovement->tableName . '.refdetailkey = ' . $this->tableNameDetail . '.pkey
+                    left join ' . $this->tablePallet . ' on ' . $itemMovement->tableName . '.palletkey = ' . $this->tablePallet . '.pkey,
                 ' . $this->tableName . '
             where
                 ' . $itemMovement->tableName . '.refkey2 = ' . $this->tableName . '.pkey and
@@ -673,11 +677,9 @@ class ItemReceiving extends BaseClass
                 having
                     sum(' . $itemMovement->tableName . '.qtyinbaseunit) > 0
             ';
-            $this->setLog($sql, true);
 
         $result = $this->oDbCon->doQuery($sql);
         $this->setLog($result, true);
-
         return $result;
     }
 

@@ -62,6 +62,7 @@ switch ($EXPORT_TYPE) {
             $arrDataStructure['qty'] = array('title' => ucwords($obj->lang['qty']), 'dbfield' => 'qty', 'width' => '80px', 'format' => 'number');
         }
         $arrDataStructure['putAwayDate'] = array('title' => ucwords($obj->lang['putAwayDate']), 'dbfield' => 'putawaydate', 'width' => '120px', 'format' => 'date', 'align' => 'center');
+        $arrDataStructure['putAwayType'] = array('title' => ucwords($obj->lang['type']), 'dbfield' => 'typename', 'width' => '160px');
         $arrDataStructure['itemReceiving'] = array('title' => ucwords($obj->lang['itemReceiving']), 'dbfield' => 'refcode', 'width' => '160px');
         $arrDataStructure['submissionNumber'] = array('title' => ucwords($obj->lang['submissionNumber']), 'dbfield' => 'submissionnumber', 'width' => '220px');
         $arrDataStructure['warehouse'] = array('title' => ucwords($obj->lang['warehouse']), 'dbfield' => 'warehousename', 'width' => '140px');
@@ -85,6 +86,7 @@ switch ($EXPORT_TYPE) {
             $arrDataStructure['qty'] = array('title' => ucwords($obj->lang['qty']), 'dbfield' => 'qty', 'width' => '80px', 'format' => 'number');
         }
         $arrDataStructure['putAwayDate'] = array('title' => ucwords($obj->lang['putAwayDate']), 'dbfield' => 'putawaydate', 'width' => '120px', 'format' => 'date', 'align' => 'center');
+        $arrDataStructure['putAwayType'] = array('title' => ucwords($obj->lang['type']), 'dbfield' => 'typename', 'width' => '160px');
         $arrDataStructure['itemReceiving'] = array('title' => ucwords($obj->lang['itemReceiving']), 'dbfield' => 'refcode', 'width' => '160px');
         $arrDataStructure['submissionNumber'] = array('title' => ucwords($obj->lang['submissionNumber']), 'dbfield' => 'submissionnumber', 'width' => '220px');
         $arrDataStructure['warehouse'] = array('title' => ucwords($obj->lang['warehouse']), 'dbfield' => 'warehousename', 'width' => '140px');
@@ -122,6 +124,7 @@ $arrWarehouse = $class->convertForCombobox($warehouse->searchData($warehouse->ta
 // $arrWarehouseLayout = $class->convertForCombobox($warehouseLayout->searchData('', '', true, '', 'order by name asc'), 'pkey', 'name');
 $arrWarehouseLayout = $class->convertForCombobox($warehouseLayout->searchData($warehouseLayout->tableName . '.statuskey', 1, true, ' and '. $warehouseLayout->tableName.'.pkey <> 0', 'order by name asc'), 'pkey', 'name');
 $arrPallet = $class->convertForCombobox($pallet->searchData('', '', true, '', 'order by name asc'), 'pkey', 'name');
+$arrPutAwayType = $class->convertForCombobox($obj->getPutAwayType(), 'pkey', 'name');
 $arrStatus = $class->convertForCombobox($obj->getAllStatus(), 'pkey', 'status');
 
 $arrTwigVar['inputCode'] = $class->inputText('code');
@@ -134,6 +137,7 @@ $arrTwigVar['inputSubmissionNumber'] = $class->inputText('submissionNumber');
 $arrTwigVar['inputSelWarehouse'] = $class->inputSelect('selWarehouse[]', $arrWarehouse, array('etc' => 'multiple="multiple"', 'class' => 'multi-selectbox'));
 $arrTwigVar['inputSelWarehouseLayout'] = $class->inputSelect('selWarehouseLayout[]', $arrWarehouseLayout, array('etc' => 'multiple="multiple"', 'class' => 'multi-selectbox'));
 $arrTwigVar['inputSelPallet'] = $class->inputSelect('selPallet[]', $arrPallet, array('etc' => 'multiple="multiple"', 'class' => 'multi-selectbox'));
+$arrTwigVar['inputSelPutAwayType'] = $class->inputSelect('selPutAwayType[]', $arrPutAwayType, array('etc' => 'multiple="multiple"', 'class' => 'multi-selectbox'));
 $arrTwigVar['inputSelStatus'] = $class->inputSelect('selStatus[]', $arrStatus, array('etc' => 'multiple="multiple"', 'class' => 'multi-selectbox'));
 $arrTwigVar['inputIsGrouping'] = $class->inputCheckBox('isGrouping');
 $arrTwigVar['isGrouping'] = $isGrouping;
@@ -197,6 +201,19 @@ if (isset($_POST) && !empty($_POST['hidAction'])) {
             array_push($arrTemp, $rsCriteria[$k]['name']);
         }
         array_push($arrFilterInformation, array('label' => $obj->lang['pallet'], 'filter' => implode(', ', $arrTemp)));
+    }
+
+    if (isset($_POST['selPutAwayType']) && !empty($_POST['selPutAwayType'])) {
+        $key = implode(',', $class->oDbCon->paramString($_POST['selPutAwayType']));
+        $criteria .= ' AND ' . $obj->tableName . '.putawaytypekey in(' . $key . ')';
+
+        $rsType = $obj->getPutAwayType();
+
+        $arrTemp = array();
+        for ($k = 0; $k < count($rsType); $k++) {
+            array_push($arrTemp, $rsType[$k]['name']);
+        }
+        array_push($arrFilterInformation, array('label' => $obj->lang['type'], 'filter' => implode(', ', $arrTemp)));
     }
 
     if (isset($_POST['selStatus']) && !empty($_POST['selStatus'])) {
@@ -265,9 +282,14 @@ if (isset($_POST) && !empty($_POST['hidAction'])) {
         }
 
         $rs = $arrFlatData;
+        
     }
 
+    $rsType = $obj->getPutAwayType();
+    $rsTypeCol = $obj->reindexDetailCollections($rsType,'pkey');
     for ($i = 0; $i < count($rs); $i++) {
+
+        $rs[$i]['typename'] = $rsTypeCol[$rs[$i]['putawaytypekey']][0]['name'];
         if ($isGrouping) {
             $rsDetail = $obj->getDetailWithRelatedInformation($rs[$i]['pkey'], $detailCriteria);
             if (!empty($rsDetail)) {

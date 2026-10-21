@@ -81,11 +81,18 @@ if (!empty($_GET['id'])) {
     $_POST['submissionNumber'] = $rs[0]['submissionnumber'];
 
     $_POST['selTypeKey'] = 1;
+    $_POST['selPutAwayTypeKey'] = $rs[0]['putawaytypekey'];
 
 }
 
 $arrStatus = $obj->generateComboboxOpt(array('data' => $obj->getAllStatus(), 'label' => 'status'));
 $arrWarehouse = $warehouse->generateComboboxOpt(null, array('criteria' => ' and (' . $warehouse->tableName . '.statuskey = 1)'));
+
+$arrType[0]['pkey'] = 0;
+$arrType[0]['name'] = '- - - - - - - - -';
+$arrType = array_merge($arrType,$obj->getPutAwayType());
+
+$arrPutAwayType = $obj->generateComboboxOpt(array('data' => $arrType, 'label' => 'name'));
 
 ?>
 <!DOCTYPE html
@@ -160,12 +167,19 @@ $arrWarehouse = $warehouse->generateComboboxOpt(null, array('criteria' => ' and 
                                     <?php echo $obj->inputDate('trDate'); ?>
                                 </div>
                             </div>
-
+                    
                             <div class="form-group">
                                 <label
                                     class="col-xs-3 control-label"><?php echo ucwords($obj->lang['putAwayDate']); ?></label>
                                 <div class="col-xs-9">
                                     <?php echo $obj->inputDate('trPutAwayDate'); ?>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label
+                                    class="col-xs-3 control-label"><?php echo ucwords($obj->lang['type']); ?></label>
+                                <div class="col-xs-9">
+                                    <?php echo $obj->inputSelect('selPutAwayTypeKey', $arrPutAwayType); ?>
                                 </div>
                             </div>
                             <div class="form-group coa-link">

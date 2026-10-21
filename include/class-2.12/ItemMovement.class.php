@@ -1352,7 +1352,7 @@ class ItemMovement extends BaseClass
         return $rs[0]['qtyinbaseunit'];
     }
 
-    function updateItemMovement($refkey, $itemkey, $qtyinbaseunit, $costinbaseunit, $reftable, $warehousekey, $note, $trdate, $vendorpartnumberkey = 0)
+    function updateItemMovement($refkey, $itemkey, $qtyinbaseunit, $costinbaseunit, $reftable, $warehousekey, $note, $trdate, $vendorpartnumberkey = 0, $palletkey = 0)
     {
 
         $warehouse = new Warehouse();
@@ -1433,6 +1433,7 @@ class ItemMovement extends BaseClass
 				reftable, 
 				note,
                 qtyinpcs,
+                palletkey,
 				statuskey,
 				createdon,
 				createdby
@@ -1452,6 +1453,7 @@ class ItemMovement extends BaseClass
 				' . $this->oDbCon->paramString($reftable) . ',
 				' . $this->oDbCon->paramString($note) . ',
 				' . $this->oDbCon->paramString($qtyinpcs) . ',
+                ' . $this->oDbCon->paramString($palletkey) . ',
 				1  ,
 				now(),
 				' . $this->oDbCon->paramString($createdby) . '

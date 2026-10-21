@@ -99,6 +99,12 @@ $this->errorMsg['zoneTransfer'][2] = 'Tata letak gudang asal / tujuan tidak bole
 $this->errorMsg['zoneTransfer'][3] = 'No. Pengajuan harus diisi.';
 $this->errorMsg['zoneTransfer'][4] = 'No. Pengajuan tidak ditemukan.';
 
+$this->errorMsg['putAway'][1] = 'Penerimaan Barang tidak boleh kosong.';
+$this->errorMsg['putAway'][2] = 'Jumlah barang di terima harus lebih besar dari 0.';
+$this->errorMsg['putAway'][3] = 'Jumlah tidak boleh melebihi jumlah yang diterima.';
+$this->errorMsg['putAway'][4] = 'Jumlah tidak boleh melebihi yang belum di Put Away.';
+$this->errorMsg['putAway'][5] = 'Tata letak gudang / zona asal tidak sesuai.';
+
 $this->errorMsg['username'][1] = 'Username harus diisi.';
 $this->errorMsg['username'][2] = 'Username Anda telah terdaftar. Silahkan memilih username lain.';
 $this->errorMsg['username'][3] = 'Username harus diantara 5 - 30 karakter.';
@@ -3296,9 +3302,7 @@ $this->lang['putAwayReport'] = 'Laporan Putaway';
 $this->lang['pickingListReport'] = 'Laporan Picking List';
 $this->lang['regNumber'] = 'No. Pend';
 
-$this->errorMsg['putAway'][1] = 'Penerimaan Barang tidak boleh kosong.';
-$this->errorMsg['putAway'][2] = 'Jumlah barang di terima harus lebih besar dari 0.';
-$this->errorMsg['putAway'][3] = 'Jumlah tidak boleh melebihi jumlah yang diterima.';
+
 
 $this->lang['activationEmailContent'] = 'Hi {{CUSTOMER_NAME}},
 									 <br>
