@@ -82,10 +82,12 @@ function getQuery(){
                     concat('.$this->tableName. '.code,\' - \','.$this->tableName. '.name) as coaname, 
 					'.$this->tableCurrency.'.name as currencyname, 
 					'.$this->tableStatus.'.status as statusname, 
+					parentcoa.code as parentcode,
                     ('.$this->tableName. '.amount)  as amount 
 				from 
 					'.$this->tableName . '
-                     left join '. $this->tableCurrency .' on '. $this->tableName .'.currencykey = '. $this->tableCurrency .'.pkey,
+                     	left join '. $this->tableCurrency .' on '. $this->tableName .'.currencykey = '. $this->tableCurrency .'.pkey
+                     	left join '. $this->tableName .' parentcoa on '. $this->tableName .'.parentkey = parentcoa.pkey,
                     '.$this->tableStatus.' 
 				where  		
 					'.$this->tableName . '.statuskey = '.$this->tableStatus.'.pkey  
@@ -129,14 +131,14 @@ function getQuery(){
 		}else if(count($rs) <> 0){
 			$this->addErrorList($arrayToJs,false,$this->errorMsg['code'][2]);
 		}
-         
-		$rsCategory = $this->isValueExisted($pkey,'name',$name,2);
-		if(empty($name)){
-			$this->addErrorList($arrayToJs,false,$this->errorMsg['coa'][1]);
-		}else if(count($rsCategory) <> 0){
-			$this->addErrorList($arrayToJs,false,$this->errorMsg['coa'][2]);
-		}
-		  
+
+		//$rsCategory = $this->isValueExisted($pkey,'name',$name,2);
+		//if(empty($name)){
+		//	$this->addErrorList($arrayToJs,false,$this->errorMsg['coa'][1]);
+		//}else if(count($rsCategory) <> 0){
+		//	$this->addErrorList($arrayToJs,false,$this->errorMsg['coa'][2]);
+		//}		 
+ 		   
 		return $arrayToJs;
 	 }
 		
@@ -145,7 +147,7 @@ function getQuery(){
 					'.$this->tableName. '.pkey,
 
 					'.$this->tableName. '.currencykey,
-concat('.$this->tableName. '.code," - ",'.$this->tableName.'.name) as value 
+					concat('.$this->tableName. '.code," - ",'.$this->tableName.'.name) as value 
 				from 
 					'.$this->tableName . ','.$this->tableStatus.' 
 				where  		
@@ -753,7 +755,7 @@ concat('.$this->tableName. '.code," - ",'.$this->tableName.'.name) as value
         if($this->isActiveModule('BankReconsiliation')){  
             $cashBank = new CashBank();
              
-            $rsCashBank = $cashBank->searchDataRow(array($cashBank->tableName.'.pkey'),
+            $rsCashBank = $cashBank->searchDataRow(array($cashBank->tableName.'.pkey',$cashBank->tableName.'.code'),
                                                    ' and '.$cashBank->tableName.'.statuskey <> 4 
                                                      and '.$cashBank->tableName.'.isreconsile = 0
                                                      and month('.$cashBank->tableName.'.trdate) = '.$this->oDbCon->paramString($runningMonth).' 
@@ -762,7 +764,7 @@ concat('.$this->tableName. '.code," - ",'.$this->tableName.'.name) as value
                                                   );
             
             if(!empty($rsCashBank))
-				$this->addErrorList($arrayToJs,false, $this->errorMsg['coa'][6]); 
+				$this->addErrorList($arrayToJs,false, $this->errorMsg['coa'][6].' '.implode(', ',array_column($rsCashBank,'code'))); 
                 
         }
 
@@ -915,7 +917,7 @@ concat('.$this->tableName. '.code," - ",'.$this->tableName.'.name) as value
         
     }
     
-    function sumRunningAmount($startDt = '', $endDt, $coaCriteria='', $forReport = 0, $invert = 1, $arrWarehouseKey = array()){ 
+    function sumRunningAmount($startDt = '', $endDt= '', $coaCriteria='', $forReport = 0, $invert = 1, $arrWarehouseKey = array()){ 
        
         $parentAmount = array();
         
@@ -1315,7 +1317,7 @@ concat('.$this->tableName. '.code," - ",'.$this->tableName.'.name) as value
     }
     
     
-    function getRunningNumber($pkey,$resetType = 0,$trDate){ 
+    function getRunningNumber($pkey,$resetType = 0,$trDate=''){ 
          
           
         switch ($resetType) { 

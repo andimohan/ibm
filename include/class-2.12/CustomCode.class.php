@@ -150,7 +150,7 @@ class CustomCode extends BaseClass{
 		return $arrayToJs;
     }
     
-    function getRunningNumber($pkey,$resetType = 0,$trDate,$warehousekey = 0){ 
+    function getRunningNumber($pkey,$resetType = 0,$trDate='0000-00-00',$warehousekey = 0){ 
          
           
         switch ($resetType) { 
@@ -248,5 +248,46 @@ class CustomCode extends BaseClass{
         
         return $rs;
   
+   }
+ function getModuleStatus($arrModulKeys){
+        
+        $filtered   = [];
+        $statusMap  = []; 
+
+        if (!is_array($arrModulKeys)) {
+            $arrModulKeys = array_map('trim', explode(',', $arrModulKeys));
+        }
+
+        foreach ($arrModulKeys as $key) {
+            $rsMapping = $this->getObjMapping(null, $key);
+
+            if ($rsMapping === null) continue;
+
+            $allStatus = $rsMapping->getAllStatus();
+
+            if (empty($allStatus)) continue;
+
+            foreach ($allStatus as $item) {
+                $pkey   = $item['pkey'];
+                $status = $item['status'];
+
+                if (!isset($statusMap[$pkey])) {
+                    $statusMap[$pkey] = [];
+                }
+
+                if (!in_array($status, $statusMap[$pkey])) {
+                    $statusMap[$pkey][] = $status;
+                }
+            }
+        }
+
+        foreach ($statusMap as $pkey => $statuses) {
+            $filtered[] = [
+                'pkey'   => $pkey,
+                'status' => implode(' / ', $statuses)
+            ];
+        }
+
+        return $filtered;
    }
 } 
