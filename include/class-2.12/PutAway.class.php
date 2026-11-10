@@ -61,9 +61,10 @@ class PutAway extends BaseClass
         array_push($this->arrDataListAvailableColumn, array('code' => 'code', 'title' => 'code', 'dbfield' => 'code', 'default' => true, 'width' => 90));
         array_push($this->arrDataListAvailableColumn, array('code' => 'date', 'title' => 'date', 'dbfield' => 'trdate', 'default' => true, 'width' => 100, 'align' => 'center', 'format' => 'date'));
         array_push($this->arrDataListAvailableColumn, array('code' => 'warehouse', 'title' => 'warehouse', 'dbfield' => 'warehousename', 'default' => true, 'width' => 120));
+        array_push($this->arrDataListAvailableColumn, array('code' => 'itemReceiving', 'title' => 'itemReceiving', 'dbfield' => 'refcode', 'default' => true, 'width' => 120));
         if ($this->typekey == 1) {
             array_push($this->arrDataListAvailableColumn, array('code' => 'location', 'title' => 'location', 'dbfield' => 'warehouselayoutname', 'default' => true, 'width' => 120));
-            array_push($this->arrDataListAvailableColumn, array('code' => 'itemReceiving', 'title' => 'itemReceiving', 'dbfield' => 'refcode', 'default' => true, 'width' => 120));
+            // array_push($this->arrDataListAvailableColumn, array('code' => 'itemReceiving', 'title' => 'itemReceiving', 'dbfield' => 'refcode', 'default' => true, 'width' => 120));
         } else if ($this->typekey == 2) {
             array_push($this->arrDataListAvailableColumn, array('code' => 'locationOrigin', 'title' => 'origin', 'dbfield' => 'warehouselayoutoriginname', 'default' => true, 'width' => 150));
             array_push($this->arrDataListAvailableColumn, array('code' => 'locationDestination', 'title' => 'destination', 'dbfield' => 'warehouselayoutdestinationname', 'default' => true, 'width' => 150));
@@ -77,6 +78,7 @@ class PutAway extends BaseClass
         array_push($this->arrSearchColumn, array('Kode', $this->tableName . '.code'));
         array_push($this->arrSearchColumn, array('Tanggal', $this->tableName . '.trdate')); 
         array_push($this->arrSearchColumn, array('Gudang', $this->tableWarehouse. '.name')); 
+        array_push($this->arrSearchColumn, array('Penerimaan Barang', $this->tableItemReceiving. '.code')); 
 
         if ($this->typekey == 1) {
             array_push($this->arrSearchColumn, array('Penerimaan Barang', $this->tableItemReceiving. '.code')); 

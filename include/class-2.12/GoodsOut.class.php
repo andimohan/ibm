@@ -234,6 +234,8 @@ class GoodsOut extends BaseClass
 
         for ($i = 0; $i < count($rsDetail); $i++) { 
             $rsWarehouseLayout = $warehouseLayout->getDataRowById($rsDetail[$i]['warehouselayoutkey']);
+            $this->setLog($rsWarehouseLayout, true);
+            $this->setLog($rsDetail[$i]['warehouselayoutkey'], true);
             $itemMovement->updateItemMovement(
                             array(
                                 'refkey' => $id,

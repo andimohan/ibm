@@ -191,6 +191,7 @@ class ItemMovement extends BaseClass
         $sql = 'select coalesce(sum(qtyinbaseunit),0) as "qtyinbaseunit" from ' . $this->tableName . '  where statuskey = 1 and itemkey in (' . $itemkey . ') ' . $criteria;
 
         $rs = $this->oDbCon->doQuery($sql);
+
         return $rs[0]['qtyinbaseunit'];
     }
     function sumItemMovementWarehouseLayout($itemkey, $warehouselayoutkey = '', $endDate = '')
