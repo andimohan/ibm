@@ -195,7 +195,7 @@ $arrPutAwayType = $obj->generateComboboxOpt(array('data' => $arrType, 'label' =>
                                             ),
                                             'source' => array(
                                                 'url' => 'ajax-item-receiving.php',
-                                                'data' => array('action' => 'searchData', 'statuskey' => '(2)', 'searchField' => 'code,submissionnumber')
+                                                'data' => array('action' => 'searchData', 'statuskey' => '(2,3)', 'searchField' => 'code,submissionnumber')
                                             ),
                                             'callbackFunction' => 'getTabObj().importData(1)'
                                         )

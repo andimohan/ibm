@@ -448,6 +448,8 @@ $this->errorMsg['invoice'][3] = 'Invoice already has tax invoice.';
 $this->errorMsg['invoice'][4] = 'Invoice already existed.'; 
 $this->errorMsg['invoice'][5] = 'Invalid invoice reference.'; 
 $this->errorMsg['invoice'][7] = 'Faktur belum lunas.';  
+
+$this->errorMsg['invoiceNumber'][1] = 'No. Invoice harus diisi.';   
  
 $this->errorMsg['invoiceTaxNumber'][1] = 'Invoice tax number cannot be empty.';  
 $this->errorMsg['invoiceTaxNumber'][2] = 'Invoice tax number already exists. Please choose another invoice tax number.';

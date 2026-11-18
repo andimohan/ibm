@@ -450,6 +450,8 @@ $this->errorMsg['invoice'][4] = 'Faktur telah terdaftar.';
 $this->errorMsg['invoice'][5] = 'Referensi faktur tidak valid.';
 $this->errorMsg['invoice'][7] = 'Faktur belum lunas.';   
 
+$this->errorMsg['invoiceNumber'][1] = 'No. Invoice harus diisi.';   
+
 $this->errorMsg['invoiceTaxNumber'][1] = 'Nomor faktur pajak harus diisi.';  
 $this->errorMsg['invoiceTaxNumber'][2] = 'Nomor faktur pajak telah terdaftar. Silahkan memilih nomor faktur pajak lain.'; 
 $this->errorMsg['invoiceTaxNumber'][3] = 'Nilai pajak tidak boleh kosong.';  

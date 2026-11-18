@@ -197,6 +197,7 @@ $arrTypename = array();
 $arrTransactionTypeName = array();
 $arrUnitName = array();
 $arrCountryName = array();
+$arrSizeUnitName = array();
 
 
 for ($row = $headerRow; $row <= $headerRow; ++$row) {
@@ -333,36 +334,39 @@ for ($row = $detailRow; $row <= $highestRow; ++$row) {
 
     $itemCode = $worksheet->getCellByColumnAndRow(2, $row)->getValue();
     $itemName = $worksheet->getCellByColumnAndRow(3, $row)->getValue();
-    $mililiter = $worksheet->getCellByColumnAndRow(4, $row)->getValue();
+    $size = $worksheet->getCellByColumnAndRow(4, $row)->getValue();
+    $sizeUnit = $worksheet->getCellByColumnAndRow(5, $row)->getValue();
+    $sizeUnitId = removeSpaceAndLowerCase($sizeUnit);
 
-    $brand = $worksheet->getCellByColumnAndRow(5, $row)->getValue();
+    $brand = $worksheet->getCellByColumnAndRow(6, $row)->getValue();
     $brandId = removeSpaceAndLowerCase($brand);
 
-    $type = $worksheet->getCellByColumnAndRow(6, $row)->getValue();
+    $type = $worksheet->getCellByColumnAndRow(7, $row)->getValue();
     $typeId = removeSpaceAndLowerCase($type);
 
-    $qtyCarton = $worksheet->getCellByColumnAndRow(7, $row)->getValue();
-    $qtyPackage = $worksheet->getCellByColumnAndRow(8, $row)->getValue();
-    $alcoholContent = $worksheet->getCellByColumnAndRow(9, $row)->getValue();
-    $amount = $worksheet->getCellByColumnAndRow(10, $row)->getValue();
-    $hs = $worksheet->getCellByColumnAndRow(11, $row)->getValue();
-    $transactionType = $worksheet->getCellByColumnAndRow(12, $row)->getValue();
+    $qtyCarton = $worksheet->getCellByColumnAndRow(8, $row)->getValue();
+    $qtyPackage = $worksheet->getCellByColumnAndRow(9, $row)->getValue();
+    $alcoholContent = $worksheet->getCellByColumnAndRow(10, $row)->getValue();
+    $amount = $worksheet->getCellByColumnAndRow(11, $row)->getValue();
+    $hs = $worksheet->getCellByColumnAndRow(12, $row)->getValue();
+    $transactionType = $worksheet->getCellByColumnAndRow(13, $row)->getValue();
     $transactionTypeId = removeSpaceAndLowerCase($transactionType);
 
-    $category = $worksheet->getCellByColumnAndRow(13, $row)->getValue();
+    $category = $worksheet->getCellByColumnAndRow(14, $row)->getValue();
 
-    $unit = $worksheet->getCellByColumnAndRow(14, $row)->getValue();
+    $unit = $worksheet->getCellByColumnAndRow(15, $row)->getValue();
     $unitId = removeSpaceAndLowerCase($unit);
 
-    $packaging = $worksheet->getCellByColumnAndRow(15, $row)->getValue();
+    $packaging = $worksheet->getCellByColumnAndRow(16, $row)->getValue();
 
-    $country = $worksheet->getCellByColumnAndRow(16, $row)->getValue();
+    $country = $worksheet->getCellByColumnAndRow(17, $row)->getValue();
     $countryId = removeSpaceAndLowerCase($country);
 
-    $containerNumber = $worksheet->getCellByColumnAndRow(17, $row)->getValue();
-    $containerSize = $worksheet->getCellByColumnAndRow(18, $row)->getValue();
-    $containerType = $worksheet->getCellByColumnAndRow(19, $row)->getValue();
+    $containerNumber = $worksheet->getCellByColumnAndRow(18, $row)->getValue();
+    $containerSize = $worksheet->getCellByColumnAndRow(19, $row)->getValue();
+    $containerType = $worksheet->getCellByColumnAndRow(20, $row)->getValue();
 
+    $rsSizeUnitCol = $rsItemUnitCols[$sizeUnitId];
     $rsBrandCol = $rsBrandCols[$brandId];
     $rsItemCategoryCol = $rsItemCategoryCols[$typeId];
     $rsTransactionTypeCol = $rsTransactionTypeCols[$transactionTypeId];
@@ -374,6 +378,7 @@ for ($row = $detailRow; $row <= $highestRow; ++$row) {
     array_push($arrTypename, array('original' => $type, 'id' => $typeId, 'row' => $row));
     array_push($arrTransactionTypeName, array('original' => $transactionType, 'id' => $transactionTypeId, 'row' => $row));
     array_push($arrUnitName, array('original' => $unit, 'id' => $unitId, 'row' => $row));
+    array_push($arrSizeUnitName, array('original' => $sizeUnit, 'id' => $sizeUnitId, 'row' => $row));
     array_push($arrCountryName, array('original' => $country, 'id' => $countryId, 'row' => $row));
 
 
@@ -387,7 +392,7 @@ for ($row = $detailRow; $row <= $highestRow; ++$row) {
 
     $brandLabel = '';
     $itemTypeLabel = '';
-    $mililiterLabel = '';
+    $sizeLabel = '';
     $sizeInfoLabel = '';
     $alcoholContentLabel = '';
 
@@ -399,12 +404,12 @@ for ($row = $detailRow; $row <= $highestRow; ++$row) {
         $itemTypeLabel = ', Tipe : ' . $rsItemCategoryCol['originalname'];
     }
 
-    if ($mililiter != 0) {
-        $mililiterLabel = ', ' . $mililiter . ' ML';
+    if ($size != 0) {
+        $sizeLabel = ', ' . $size . ' ';
     }
 
-    if ($mililiter != 0 && $qtyCarton != 0) {
-        $sizeInfoLabel = ', Ukuran : ' . $qtyCarton . ' X ' . $mililiter;
+    if ($size != 0 && $qtyCarton != 0) {
+        $sizeInfoLabel = ', Ukuran : ' . $qtyCarton . ' X ' . $size;
     }
 
     if ($alcoholContent != 0) {
@@ -412,12 +417,13 @@ for ($row = $detailRow; $row <= $highestRow; ++$row) {
     }
 
     $qty = $qtyPackage * $qtyCarton;
-    $label = $itemName . $mililiterLabel . $brandLabel . $itemTypeLabel . $sizeInfoLabel . $alcoholContentLabel;
+    $label = $itemName . $sizeLabel . $brandLabel . $itemTypeLabel . $sizeInfoLabel . $alcoholContentLabel;
 
     array_push($arrDetailData, array(
         'item_code' => $itemCode,
         'item_name' => $itemName,
-        'mililiter' => $mililiter,
+        'size' => $size,
+        'size_unit_id' => $rsSizeUnitCol['pkey'],
         'brand_id' => $rsBrandCol['pkey'],
         'type_id' => $rsItemCategoryCol['pkey'],
         'qty_carton' => $qtyCarton,
@@ -471,6 +477,14 @@ foreach ($arrUnitName as $row) {
 
     if (!isset($rsItemUnitCols[$row['id']]))
         array_push($arrErrorMsg, 'Unit : "' . $row['original'] . '" tidak terdaftar');
+}
+
+foreach ($arrSizeUnitName as $row) {
+    if (empty($row['original']))
+        continue;
+
+    if (!isset($rsItemUnitCols[$row['id']]))
+        array_push($arrErrorMsg, 'Unit Ukuran : "' . $row['original'] . '" tidak terdaftar');
 }
 
 foreach ($arrCountryName as $row) {
@@ -532,7 +546,9 @@ for ($i = 0; $i < count($arrHeaderData); $i++) {
     $arrParam['itemDetailName'] = array();
     $arrParam['hidDetailBrandKey'] = array();
     $arrParam['hidDetailTypeKey'] = array();
-    $arrParam['mililiter'] = array();
+    //$arrParam['mililiter'] = array();
+    $arrParam['size'] = array();
+    $arrParam['selSizeUnit'] = array();
     $arrParam['qtyCarton'] = array();
     $arrParam['qtyPackage'] = array();
     $arrParam['alcoholContent'] = array();
@@ -554,7 +570,9 @@ for ($i = 0; $i < count($arrHeaderData); $i++) {
         array_push($arrParam['hidDetailKey'], 0);
         array_push($arrParam['itemDetailCode'], $detail['item_code']);
         array_push($arrParam['itemDetailName'], $detail['item_name']);
-        array_push($arrParam['mililiter'], $detail['mililiter']);
+        //array_push($arrParam['mililiter'], $detail['mililiter']);
+        array_push($arrParam['size'], $detail['size']);
+        array_push($arrParam['selSizeUnit'], $detail['size_unit_id']);
         array_push($arrParam['hidDetailBrandKey'], $detail['brand_id']);
         array_push($arrParam['hidDetailTypeKey'], $detail['type_id']);
         array_push($arrParam['qtyCarton'], $detail['qty_carton']);

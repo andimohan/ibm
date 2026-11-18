@@ -140,10 +140,41 @@ function PutAway(tabID) {
                 tabObj.find("[name=hidWarehouseKey]").val(data.warehousekey);
                 tabObj.find("[name=warehouseName]").val(data.warehousename);
                 // tabObj.find(".baseunitname").html(data[0].baseunitname);  
+
+                thisObj.updateWarehouseLayout();
             }
         });
     }
 
+    this.updateWarehouseLayout = function updateWarehouseLayout()
+    {
+        var warehousekey = tabObj.find("[name=hidWarehouseKey]").val();
+        console.log(warehousekey, 'warehouse');
+        var selWarehouseLayoutObj = tabObj.find("[name=hidWarehouseLayoutKey]"); 
+        
+        if (selWarehouseLayoutObj.length === 0) return;
+        
+        $.ajax({
+            type: "GET",
+            url: 'ajax-warehouse-layout.php',
+            data: 'action=getDataLayout&warehousekey='+warehousekey+"&istransit=1", 
+        }).done(function (data) { 
+            var data = parseJSON(data);
+
+            var selectOpt = data;
+
+            if (selectOpt.length === 0) {
+                selectOpt.push({ pkey: "0", name: "-----" });
+            }
+            console.log(selectOpt, '----');
+            reInsertSelectBox(selWarehouseLayoutObj, selectOpt, { "key": "pkey", "label": "name" });
+
+            // if (selectOpt.length > 1)  {    
+            //     selWarehouseLayoutObj.prop('selectedIndex', 1); 
+            // } 
+
+        });
+    }
 
     this.rebindEl = function rebindEl() {
 

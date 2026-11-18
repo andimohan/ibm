@@ -54,7 +54,7 @@ function ItemReceiving(tabID, fileUpload){
         detailRow.find("[name=\"itemDetailName[]\"]").first().val(ui.item['value']);
 
     }
-
+    
     this.resetHeader = function resetHeader(){
         tabObj.find("[name=selWarehouseKey]")
         .find('option:first')
@@ -412,7 +412,12 @@ function ItemReceiving(tabID, fileUpload){
         var qtyPackage =  parseFloat(unformatCurrency(serviceRow.find("[name='qtyPackage[]']").val())) || 0;
         var qtyCarton =  parseFloat(unformatCurrency(serviceRow.find("[name='qtyCarton[]']").val())) || 0;
 
-        var total = qtyPackage * qtyCarton;
+        if (qtyCarton == 0) {
+            var total = qtyPackage ;
+        } else {
+            var total = qtyPackage * qtyCarton;
+        }
+        
 
         serviceRow.find("[name='qty[]']").val(total).blur(); 
     }
@@ -503,6 +508,22 @@ function ItemReceiving(tabID, fileUpload){
 
         thisObj.rebindEl();
     }
+
+    this.afterRemoveRowHandler = function afterRemoveRowHandler(){
+        thisObj.updateItemCode();
+    }
+
+    this.updateItemCode = function updateItemCode()
+    {
+        var invoiceNumber = $.trim(tabObj.find("[name=invoiceNumber]").val());
+
+        tabObj.find(".transaction-detail-row").each(function (index) {
+            var no   = index + 1;
+            var code = invoiceNumber != '' ? invoiceNumber + '-' + no : '';
+
+            $(this).find("[name='itemDetailCode[]']").first().val(code);
+        });
+    }
       
     this.rebindEl = function rebindEl(){   
         // bindAutoCompleteForTransactionDetail('itemDetailName[]',objAndValueForDetailAutoComplete,'ajax-item.php?action=searchData&limit=25');
@@ -529,6 +550,11 @@ function ItemReceiving(tabID, fileUpload){
         tabObj.find("[name=selWarehouseKey]").change(function() { thisObj.updateWarehouseLayout(); });
         // tabObj.find("[name=selWarehouseKey]").change();
 
+        tabObj.find("[name=invoiceNumber]")
+        .off('keyup change')
+        .on('keyup change', function () {
+            thisObj.updateItemCode();
+        });
         
         thisObj.rebindEl(); 
 
@@ -536,6 +562,7 @@ function ItemReceiving(tabID, fileUpload){
             .off('click', "[name='btnAddRow']")
             .on('click', "[name='btnAddRow']", function (e) {
                 thisObj.cloneRowDetailValue();
+                thisObj.updateItemCode();
             });
 
     }

@@ -47,7 +47,7 @@ function ItemReceivingPlan(tabID){
 
         // harus handle manual utk obj autosearch
         detailRow.find("[name=\"itemDetailName[]\"]").first().val(ui.item['value']);
-
+        
     }
 
     this.updateWarehouseLayout = function updateWarehouseLayout()
@@ -126,7 +126,11 @@ function ItemReceivingPlan(tabID){
         var qtyPackage =  parseFloat(unformatCurrency(serviceRow.find("[name='qtyPackage[]']").val())) || 0;
         var qtyCarton =  parseFloat(unformatCurrency(serviceRow.find("[name='qtyCarton[]']").val())) || 0;
 
-        var total = qtyPackage * qtyCarton;
+        if (qtyCarton == 0) {
+            var total = qtyPackage ;
+        } else {
+            var total = qtyPackage * qtyCarton;
+        }
 
         serviceRow.find("[name='qty[]']").val(total).blur(); 
     }
@@ -217,6 +221,22 @@ function ItemReceivingPlan(tabID){
 
         thisObj.rebindEl();
     }
+
+    this.afterRemoveRowHandler = function afterRemoveRowHandler(){
+        thisObj.updateItemCode();
+    }
+
+    this.updateItemCode = function updateItemCode()
+    {
+        var invoiceNumber = $.trim(tabObj.find("[name=invoiceNumber]").val());
+
+        tabObj.find(".transaction-detail-row").each(function (index) {
+            var no   = index + 1;
+            var code = invoiceNumber != '' ? invoiceNumber + '-' + no : '';
+
+            $(this).find("[name='itemDetailCode[]']").first().val(code);
+        });
+    }
       
     this.rebindEl = function rebindEl(){   
         // bindAutoCompleteForTransactionDetail('itemDetailName[]',objAndValueForDetailAutoComplete,'ajax-item.php?action=searchData&limit=25');
@@ -233,6 +253,11 @@ function ItemReceivingPlan(tabID){
         tabObj.find("[name=selWarehouseKey]").change(function() { thisObj.updateWarehouseLayout(); });
         // tabObj.find("[name=selWarehouseKey]").change();
 
+        tabObj.find("[name=invoiceNumber]")
+        .off('keyup change')
+        .on('keyup change', function () {
+            thisObj.updateItemCode();
+        });
         
         thisObj.rebindEl(); 
 
@@ -240,6 +265,7 @@ function ItemReceivingPlan(tabID){
             .off('click', "[name='btnAddRow']")
             .on('click', "[name='btnAddRow']", function (e) {
                 thisObj.cloneRowDetailValue();
+                thisObj.updateItemCode();
             });
 
     }

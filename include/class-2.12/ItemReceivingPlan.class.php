@@ -111,7 +111,6 @@ class ItemReceivingPlan extends BaseClass
         $this->printMenu = array();
         array_push($this->printMenu, array('code' => 'printTransaction', 'name' => $this->lang['printTransaction'], 'icon' => 'print', 'url' => 'print/itemReceivingPlan'));
 
-
         $this->includeClassDependencies(
             array(
                 'Customer.class.php',
@@ -157,6 +156,8 @@ class ItemReceivingPlan extends BaseClass
 					' . $this->tableName . '.statuskey = ' . $this->tableStatus . '.pkey  
  		' . $this->criteria;
         $sql .=  $this->getWarehouseCriteria();
+        $this->setLog('testing', true);
+        $this->setLog($sql, true);
 
         return $sql;
     }
@@ -172,6 +173,7 @@ class ItemReceivingPlan extends BaseClass
         $supplierkey = $arr['hidSupplierKey'];
         $warehousekey = $arr['selWarehouseKey'];
         $warehouseLayoutkey = $arr['selWarehouseLayoutKey'];
+        $invoiceNumber = $arr['invoiceNumber'];
 
         $arrItemCode = $arr['itemDetailCode'];
         $arrItemName = $arr['itemDetailName'];
@@ -186,6 +188,10 @@ class ItemReceivingPlan extends BaseClass
 
         if (empty($supplierkey)) {
             $this->addErrorList($arrayToJs, false, $this->errorMsg['supplier'][1]);
+        }
+
+        if(empty($invoiceNumber)) {
+            $this->addErrorList($arrayToJs, false, $this->errorMsg['itemReceiving'][1]);
         }
 
         if (empty($arrItemName[0])) {
@@ -307,9 +313,19 @@ class ItemReceivingPlan extends BaseClass
         }
     }
 
-
     function normalizeParameter($arrParam, $trim = false)
     {
+        
+        //overwrite item detail code
+        $invoiceNumber = $arrParam['invoiceNumber'];
+        $arrItemName = $arrParam['itemDetailName'];
+
+        for($i=0; $i<count($arrItemName); $i++) {
+            $number = ($i+1);
+            $itemDetailCode = $invoiceNumber.'-'.$number;
+            $arrParam['itemDetailCode'][$i] = $itemDetailCode;
+        }
+
         $arrParam = parent::normalizeParameter($arrParam, true);
 
         return $arrParam;

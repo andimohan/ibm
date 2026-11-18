@@ -31,7 +31,7 @@ $_POST['trDate'] = date('d / m / Y');
 $_POST['selTypeKey'] = 3;
 
 $rs = prepareOnLoadData($obj);
-
+$arrWarehouseLayout = array();
 $arrPalletDetail = array();
 if (!empty($_GET['id'])) {
     $id = $_GET['id'];
@@ -82,12 +82,23 @@ if (!empty($_GET['id'])) {
     $_POST['selStatus'] = $rs[0]['statuskey'];
     $_POST['selTypeKey'] = 3;
 
-
+     $_POST['hidWarehouseLayoutKey'] = $rs[0]['warehouselayoutkey'];
 
 }
 
 $arrStatus = $obj->generateComboboxOpt(array('data' => $obj->getAllStatus(), 'label' => 'status'));
 $arrWarehouse = $warehouse->generateComboboxOpt(null, array('criteria' => ' and (' . $warehouse->tableName . '.statuskey = 1)'));
+
+$rsWarehouse = $warehouse->searchData('', '', true, ' and (' . $warehouse->tableName . '.statuskey = 1' . $editWarehouseInactiveCriteria . ')');
+$editWarehouseLayoutInactiveCriteria = '';
+if (!empty($rs[0]['warehouselayoutkey'])) {
+    $editWarehouseLayoutInactiveCriteria = ' and ' . $warehouseLayout->tableName . '.warehousekey = ' . $obj->oDbCon->paramString($rs[0]['warehousekey']);
+} else {
+    $editWarehouseLayoutInactiveCriteria = ' and ' . $warehouseLayout->tableName . '.warehousekey = ' . $obj->oDbCon->paramString($rsWarehouse[0]['pkey']);
+}
+
+$rsWarehouseLayout = $warehouseLayout->searchData('', '', true, ' and (' . $warehouseLayout->tableName . '.statuskey = 1 and ' . $warehouseLayout->tableName . '.istransit = 1' . $editWarehouseLayoutInactiveCriteria . ')');
+$arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name');
 
 ?>
 
@@ -208,7 +219,7 @@ $arrWarehouse = $warehouse->generateComboboxOpt(null, array('criteria' => ' and 
                                 </div>
                             </div>
 
-                            <div class="form-group">
+                            <!-- <div class="form-group">
                                 <label
                                     class="col-xs-3 control-label"><?php echo ucwords($obj->lang['destinationZone']); ?></label>
                                 <div class="col-xs-9">
@@ -227,6 +238,14 @@ $arrWarehouse = $warehouse->generateComboboxOpt(null, array('criteria' => ' and 
                                         )
                                     );
                                     ?>
+                                </div>
+                            </div> -->
+
+                            <div class="form-group">
+                                <label
+                                    class="col-xs-3 control-label"><?php echo ucwords($obj->lang['destinationZone']); ?></label>
+                                <div class="col-xs-9">
+                                    <?php echo $obj->inputSelect('hidWarehouseLayoutKey', $arrWarehouseLayout); ?>
                                 </div>
                             </div>
 

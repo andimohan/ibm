@@ -156,13 +156,15 @@ class GoodsOut extends BaseClass
     {
         $arrayToJs = parent::validateForm($arr, $pkey);
 
+        $itemReceiving = new ItemReceiving();
+
         $customerkey = $arr['hidCustomerKey'];
         $recipient = $arr['recipient'];
         $recipientAddress = $arr['recipientAddress'];
         $arrReceivingDetailKey = $arr['hidRefReceivingDetailKey'];
         $arrItemReceiving = $arr['itemReceiving'];
         $arrQty = $arr['qty'];
-        $arrSubmission = $arr['submissionNumber'];
+        $arrSubmission = $arr['submissionDetailNumber'];
         $arrItemCode = $arr['itemCode'];
 
         if (empty($customerkey)) {
@@ -184,20 +186,28 @@ class GoodsOut extends BaseClass
             $arrDetails = array();
             for ($i = 0; $i < count($arrReceivingDetailKey); $i++) {
 
-                $itemReceiving = $arrItemReceiving[$i];
+                $itemReceivingCode = $arrItemReceiving[$i];
                 $submissionNumber = $arrSubmission[$i];
                 $qty = $this->unFormatNumber($arrQty[$i]);
                 $itemCode = $arrItemCode[$i];
 
                 if (in_array($arrReceivingDetailKey[$i], $arrDetails)) {
-                    $this->addErrorList($arrayToJs, false, '<strong>' . $itemReceiving . '. ' . $submissionNumber . ' - ' . $itemCode . '. </strong>' . '. ' . $this->errorMsg[215]);
+                    $this->addErrorList($arrayToJs, false, '<strong>' . $itemReceivingCode . '. ' . $submissionNumber . ' - ' . $itemCode . '. </strong>' . '. ' . $this->errorMsg[215]);
                 } else {
                     array_push($arrDetails, $arrReceivingDetailKey[$i]);
                 }
 
                 if ($qty <= 0) {
-                    $this->addErrorList($arrayToJs, false, '<strong>' . $itemReceiving . '. ' . $submissionNumber . ' - ' . $itemCode . '. </strong>' . $this->errorMsg[503]);
+                    $this->addErrorList($arrayToJs, false, '<strong>' . $itemReceivingCode . '. ' . $submissionNumber . ' - ' . $itemCode . '. </strong>' . $this->errorMsg[503]);
+                } else {
+                    $qtyOutstanding = $itemReceiving->getTotalOutstandingPicking($arrReceivingDetailKey[$i]);
+                    if($qty > $qtyOutstanding){
+                        $this->addErrorList($arrayToJs, false, '<strong>' . $itemReceivingCode . '. ' . $submissionNumber . '. </strong>' .$this->errorMsg['goodsOut'][1]);
+                    }
+                
                 }
+
+                
 
             }
         }
@@ -208,7 +218,6 @@ class GoodsOut extends BaseClass
 
     function validateConfirm($rsHeader)
     {
-
 
     }
 
@@ -234,8 +243,7 @@ class GoodsOut extends BaseClass
 
         for ($i = 0; $i < count($rsDetail); $i++) { 
             $rsWarehouseLayout = $warehouseLayout->getDataRowById($rsDetail[$i]['warehouselayoutkey']);
-            $this->setLog($rsWarehouseLayout, true);
-            $this->setLog($rsDetail[$i]['warehouselayoutkey'], true);
+      
             $itemMovement->updateItemMovement(
                             array(
                                 'refkey' => $id,
@@ -301,11 +309,17 @@ class GoodsOut extends BaseClass
                 array_push($arrErrMsg, '<strong>' . $rsDetail[$i]['receivingcode'] . '. ' . $rsDetail[$i]['submissionnumber'] . ' - ' . $rsDetail[$i]['itemcode'] . '. </strong>' . $this->errorMsg[503]);
             } else {
 
-                $rsOutstanding = $itemReceiving->getTotalUnIssuedItemReceiving($rsDetail[$i]['refreceivingdetailkey']);
+                // $rsOutstanding = $itemReceiving->getTotalUnIssuedItemReceiving($rsDetail[$i]['refreceivingdetailkey']);
 
-                if ($rsDetail[$i]['qty'] > $rsOutstanding) {
-                    array_push($arrErrMsg, '<strong>' . $rsDetail[$i]['receivingcode'] . '. ' . $rsDetail[$i]['submissionnumber'] . ' - ' . $rsDetail[$i]['itemcode'] . '. </strong>' . $this->errorMsg['goodsOut'][1]);
+                // if ($rsDetail[$i]['qty'] > $rsOutstanding) {
+                //     array_push($arrErrMsg, '<strong>' . $rsDetail[$i]['receivingcode'] . '. ' . $rsDetail[$i]['submissionnumber'] . ' - ' . $rsDetail[$i]['itemcode'] . '. </strong>' . $this->errorMsg['goodsOut'][1]);
+                // }
+
+                $qtyOutstanding = $itemReceiving->getTotalOutstandingPicking($arrReceivingDetailKey[$i]);
+                if($rsDetail[$i]['qty'] > $qtyOutstanding){
+                   array_push($arrErrMsg, '<strong>' . $rsDetail[$i]['receivingcode'] . '. ' . $rsDetail[$i]['submissionnumber'] . '. </strong>' . $this->errorMsg['goodsOut'][1]);
                 }
+
             }
         }
 

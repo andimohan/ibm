@@ -20,9 +20,9 @@ $obj = $itemReceiving;
 $securityObject = $obj->securityObject; // the value of security object is manually inserted to handle 
 // some modules that have different security object from that of their class
 
-if (!$security->isAdminLogin($securityObject, 10, true))
-    ;
+if (!$security->isAdminLogin($securityObject, 10, true));
 
+// $formAction = 'itemReceivingList';
 $formAction = 'itemReceivingList';
 
 $isQuickAdd = (isset($_GET) && !empty($_GET['quickadd'])) ? true : false;
@@ -202,6 +202,13 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
                         notEmpty: {
                             message: phpErrorMsg.shipper[1]
                         },
+                    }
+                },
+                invoiceNumber:{
+                    validators:{
+                        notEmpty:{
+                            message: phpErrorMsg.invoiceNumber[1]
+                        }
                     }
                 }
             };
@@ -578,7 +585,7 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
                         $_POST['category[]'] = $rsDetail[$i]['category'];
                         $_POST['alcoholContent[]'] = $obj->formatNumber($rsDetail[$i]['alcoholcontent'], 2);
                         // $_POST['mililiter[]'] = $obj->formatNumber($rsDetail[$i]['mililiter']);
-                        $_POST['size[]'] = $obj->formatNumber($rsDetail[$i]['size']);
+                        $_POST['size[]'] = $obj->formatNumber($rsDetail[$i]['size'], 2);
                         $_POST['selSizeUnit[]'] = $rsDetail[$i]['sizeunitkey'];
                         $_POST['qtyCarton[]'] = $obj->formatNumber($rsDetail[$i]['qtycarton']);
                         $_POST['qtyPackage[]'] = $obj->formatNumber($rsDetail[$i]['qtypackage']);
@@ -613,7 +620,7 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
                                                 <div class="div-table-col detail-col-detail" style="width:150px;"
                                                     style="vertical-align:top;">
                                                     <?php echo $obj->inputHidden('hidDetailKey[]', array('overwritePost' => $overwrite, 'etc' => $etc, 'disabled' => $disabled)); ?>
-                                                    <?php echo $obj->inputText('itemDetailCode[]', array('overwritePost' => $overwrite, 'etc' => $etc, 'class' => 'form-control mnv-barcode-input', 'disabled' => $disable)); ?>
+                                                    <?php echo $obj->inputText('itemDetailCode[]', array('overwritePost' => $overwrite, 'etc' => $etc, 'class' => 'form-control mnv-barcode-input', 'disabled' => $disable, 'readonly' => true)); ?>
                                                 </div>
                                                 <div class="div-table-col detail-col-detail" style="width:180px;"
                                                     style="vertical-align:top;">
@@ -622,7 +629,7 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
                                                 </div>
                                                 <div class="div-table-col detail-col-detail"
                                                     style="vertical-align:top; width:55px; ">
-                                                    <?php echo $obj->inputNumber('size[]', array('overwritePost' => $overwrite, 'etc' => 'style="text-align:right;" ' . $etc, 'disabled' => $disable)); ?>
+                                                    <?php echo $obj->inputDecimal('size[]', array('overwritePost' => $overwrite, 'etc' => 'style="text-align:right;" ' . $etc, 'disabled' => $disable)); ?>
                                                 </div>
                                                 <div class="div-table-col detail-col-detail"
                                                     style="vertical-align:top; width:85px; ">

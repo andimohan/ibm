@@ -53,6 +53,10 @@ class Labeling extends BaseClass
             'ItemReceiving.class.php'
         ));
 
+        $this->printMenu = array();
+        array_push($this->printMenu, array('code' => 'printTransaction', 'name' => $this->lang['printTransaction'], 'icon' => 'print', 'url' => 'print/labeling'));
+
+
         $this->overwriteConfig();
 
     }
@@ -81,10 +85,14 @@ class Labeling extends BaseClass
         $sql = 'select
 	   			' . $this->tableNameDetail . '.*,
                 ' . $this->tableItemReceivingHeader . '.code as receivingcode,
-                ' . $this->tableItemReceivingHeader . '.submissionnumber
+            ' . $this->tableItemReceivingHeader . '.submissionnumber,
+            ' . $this->tableItemReceivingDetail . '.containernumber,
+            ' . $this->tableItemUnit . '.name as unitname
                  from
 			  	    ' . $this->tableNameDetail . '
                         left join ' . $this->tableItemReceivingHeader . ' on ' . $this->tableNameDetail . '.refreceivingheaderkey = ' . $this->tableItemReceivingHeader . '.pkey
+                left join ' . $this->tableItemReceivingDetail . ' on ' . $this->tableNameDetail . '.refreceivingdetailkey = ' . $this->tableItemReceivingDetail . '.pkey
+                left join ' . $this->tableItemUnit . ' on ' . $this->tableItemReceivingDetail . '.sizeunitkey = ' . $this->tableItemUnit . '.pkey
                 where
                     ' . $this->tableNameDetail . '.refkey in (' . $this->oDbCon->paramString($pkey, ',') . ') ';
 

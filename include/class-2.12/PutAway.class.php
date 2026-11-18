@@ -294,6 +294,7 @@ class PutAway extends BaseClass
     function validateForm($arr, $pkey = '')
     {
         $arrayToJs = parent::validateForm($arr, $pkey);
+        $this->setLog($arr, true);
 
 
         $itemReceiving = new ItemReceiving();
@@ -358,6 +359,11 @@ class PutAway extends BaseClass
                 if (empty($arrItemKey[$i])) {
                     $this->addErrorList($arrayToJs, false, $this->errorMsg['item'][1]);
                 }
+                $this->setLog($rrPutAwayQty[$i], true);
+
+                if ($arrPutAwayQty[$i] <= 0) {
+                    $this->addErrorList($arrayToJs, false, '<strong>' . $itemName . '.</strong> ' . $this->errorMsg[510]);
+                }
 
                 if ($this->typekey == 1) {
                     $putAwayQty = $this->unFormatNumber($arrPutAwayQty[$i]);
@@ -382,9 +388,7 @@ class PutAway extends BaseClass
                     $arrQty = $arr['qty'];
                     $qty = $this->unFormatNumber($arrQty[$i]);
 
-                    if ($qty <= 0) {
-                        $this->addErrorList($arrayToJs, false, '<strong>' . $itemName . '.</strong> ' . $this->errorMsg[510]);
-                    }
+                    
 
                 } else if ($this->typekey == 3) {
 
@@ -671,7 +675,7 @@ class PutAway extends BaseClass
         } else if ($this->typekey == 2) {
 
         } else if ($this->typekey == 3) {
-
+            $itemReceiving->updateQtyPicking($rsHeader[0]['refkey']);
         }
     }
 

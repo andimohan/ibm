@@ -1451,7 +1451,6 @@ class Item extends BaseClass{
             '.$this->tableName.'.alcoholcontent = ' . $this->oDbCon->paramString($alcoholContent) ;
 
             $rs = $this->oDbCon->doQuery($sql);
-            $this->setLog($sql, true);
 
 
         return $rs;
@@ -4386,8 +4385,6 @@ class Item extends BaseClass{
         ';
 
         $result = $this->oDbCon->doQuery($sql);
-        $this->setLog($sql, true);
-        $this->setLog($result, true);
 
         return $result;
     }
