@@ -195,7 +195,7 @@ $arrWarehouseLayout = $obj->convertForCombobox($rsWarehouseLayout, 'pkey', 'name
                 invoiceNumber:{
                     validators:{
                         notEmpty:{
-                            message: phpErrorMsg.itemReceivingPlan[1]
+                            message: phpErrorMsg.invoiceNumber[1]
                         }
                     }
                 }
